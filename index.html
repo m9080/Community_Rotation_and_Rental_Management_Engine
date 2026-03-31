@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#6366f1">
     <meta name="description" content="OmniTask - Community Rotation & Rental Management Engine">
@@ -13,7 +12,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -36,76 +34,21 @@
         }
         .header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; padding: 20px; padding-top: max(20px, env(safe-area-inset-top, 20px)); border-radius: 0 0 30px 30px; }
         * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        .icon-emoji, .settings-icon, .quick-btn .icon, .nav-item .icon, .summary-icon, .source-avatar, .category-item .icon, .right-menu-item .icon {
-            font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Apple Color Emoji', 'Noto Color Emoji', 'Android Emoji', sans-serif !important;
-        }
-        #page-settings .main-content, #page-admin .main-content { padding-bottom: 120px !important; }
+        .icon-emoji { font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif !important; }
         
         @media screen and (max-width: 768px) {
             html { font-size: 14px; }
-            body { padding-bottom: 75px; padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px)); }
-            .header { padding: 12px 15px; padding-top: max(12px, env(safe-area-inset-top, 12px)); border-radius: 0 0 20px 20px; }
-            .header-top { margin-bottom: 15px; }
-            .header-title { font-size: 15px; }
-            .balance-card { padding: 15px; border-radius: 15px; }
-            .balance-amount { font-size: 22px; }
-            .summary-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-            .summary-card { padding: 10px; border-radius: 12px; }
-            .summary-icon { width: 32px; height: 32px; font-size: 14px; }
-            .summary-info p { font-size: 14px; }
-            .quick-actions { grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; margin-top: -20px; }
-            .quick-btn { padding: 8px 3px; border-radius: 10px; }
-            .quick-btn .icon { width: 28px; height: 28px; font-size: 13px; border-radius: 8px; }
-            .quick-btn span { font-size: 8px; }
+            body { padding-bottom: 75px; }
+            .header { padding: 12px 15px; border-radius: 0 0 20px 20px; }
             .main-content { padding: 0 10px; }
-            .section-title { font-size: 13px; }
             .card { padding: 12px; border-radius: 12px; margin-bottom: 12px; }
-            .list-item { padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
-            .modal { padding: 15px; border-radius: 20px 20px 0 0; }
-            .modal-handle { width: 35px; height: 4px; margin-bottom: 15px; }
-            .modal-title { font-size: 16px; margin-bottom: 15px; }
-            .form-group { margin-bottom: 12px; }
-            .form-label { font-size: 12px; margin-bottom: 6px; }
-            .form-control { padding: 10px 12px; font-size: 14px; border-radius: 10px; }
             .btn { padding: 12px; border-radius: 12px; font-size: 14px; }
-            .fab { width: 50px; height: 50px; font-size: 24px; bottom: 80px; right: 12px; }
-            .bottom-nav { padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom, 8px)); }
-            .nav-item { padding: 4px 5px; font-size: 9px; flex: 1; text-align: center; }
+            .bottom-nav { padding: 8px 0; }
+            .nav-item { padding: 4px 5px; font-size: 9px; }
             .nav-item .icon { font-size: 18px; }
-            input, select, textarea { font-size: 16px !important; }
-            .settings-item { padding: 10px 12px; min-height: 50px; }
-            .settings-icon { width: 32px; height: 32px; font-size: 14px; border-radius: 8px; }
-            .settings-text h4 { font-size: 12px; }
-            .settings-text span { font-size: 10px; }
-            .unit-card { padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-            .task-card { padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-            .schedule-item { padding: 10px; border-radius: 10px; margin-bottom: 8px; }
-            .ledger-item { padding: 12px; border-radius: 10px; margin-bottom: 8px; }
-            .group-card { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
-            .member-card { padding: 12px; border-radius: 10px; margin-bottom: 8px; }
-            .cycle-preview { grid-template-columns: 1fr; gap: 8px; }
         }
         
-        @media screen and (max-width: 400px) {
-            html { font-size: 13px; }
-            .header { padding: 10px 12px; }
-            .header-title { font-size: 14px; }
-            .balance-amount { font-size: 20px; }
-            .quick-actions { gap: 4px; padding: 8px; }
-            .quick-btn { padding: 6px 2px; }
-            .quick-btn .icon { width: 26px; height: 26px; font-size: 12px; }
-            .quick-btn span { font-size: 7px; }
-            .nav-item { padding: 3px 3px; font-size: 8px; }
-            .nav-item .icon { font-size: 16px; }
-            .fab { width: 45px; height: 45px; font-size: 22px; bottom: 75px; right: 10px; }
-        }
-        
-        @media screen and (max-width: 768px) {
-            input, select, textarea { font-size: 16px !important; }
-            .page { width: 100%; overflow-x: hidden; }
-            .header, .main-content { max-width: 100vw; }
-        }
-        
+        .card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: var(--shadow); }
         .balance-amount { font-size: 28px; font-weight: 700; }
         .summary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .summary-card { background: rgba(255,255,255,0.15); border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
@@ -123,9 +66,6 @@
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .section-title { font-size: 15px; font-weight: 600; color: var(--dark); }
         .section-link { font-size: 12px; color: var(--primary); text-decoration: none; cursor: pointer; }
-        .card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: var(--shadow); flex-shrink: 0; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .card-title { font-size: 16px; font-weight: 600; }
         
         .unit-card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
         .unit-avatar { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
@@ -154,8 +94,6 @@
         .task-badge.daily { background: #dcfce7; color: #16a34a; }
         .task-badge.weekly { background: #fef3c7; color: #d97706; }
         .task-badge.custom { background: #fce7f3; color: #db2777; }
-        .task-actions { display: flex; gap: 8px; margin-top: 10px; }
-        .task-action-btn { flex: 1; padding: 8px; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         
         .schedule-item { background: var(--white); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
         .schedule-date { text-align: center; min-width: 50px; }
@@ -167,15 +105,6 @@
         .schedule-status { font-size: 10px; padding: 4px 8px; border-radius: 8px; }
         .schedule-status.pending { background: #fef3c7; color: #d97706; }
         .schedule-status.completed { background: #dcfce7; color: #16a34a; }
-        .schedule-status.substitute { background: #dbeafe; color: #2563eb; }
-        .schedule-status.overdue { background: #fee2e2; color: #dc2626; }
-        
-        .member-card { background: var(--white); border-radius: 12px; padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
-        .member-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .member-info { flex: 1; }
-        .member-name { font-size: 14px; font-weight: 600; color: var(--dark); }
-        .member-debt { font-size: 11px; color: var(--gray); }
-        .member-debt.has-debt { color: var(--danger); font-weight: 600; }
         
         .ledger-item { background: var(--white); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
         .ledger-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -185,18 +114,10 @@
         .ledger-amount { font-size: 14px; font-weight: 600; }
         .ledger-amount.income { color: var(--success); }
         .ledger-amount.expense { color: var(--danger); }
-        .ledger-amount.deduction { color: var(--warning); }
-        
-        .cycle-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-        .cycle-item { background: var(--white); border-radius: 12px; padding: 12px; box-shadow: var(--shadow); }
-        .cycle-position { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
-        .cycle-unit { font-size: 13px; font-weight: 600; color: var(--dark); }
-        .cycle-date { font-size: 11px; color: var(--gray); }
         
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-radius: 20px 20px 0 0; z-index: 100; }
-        .nav-item { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: var(--gray); font-size: 11px; padding: 5px 15px; border-radius: 12px; cursor: pointer; user-select: none; transition: all 0.2s; }
-        .nav-item.active { color: var(--primary); background: rgba(99, 102, 241, 0.1); transform: scale(1.1); }
-        .nav-item:active { transform: scale(0.95); }
+        .nav-item { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: var(--gray); font-size: 11px; padding: 5px 15px; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .nav-item.active { color: var(--primary); background: rgba(99, 102, 241, 0.1); }
         .nav-item .icon { font-size: 22px; }
         
         .fab { position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border: none; border-radius: 50%; color: white; font-size: 30px; box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); cursor: pointer; z-index: 99; }
@@ -214,7 +135,6 @@
         .form-label { font-size: 13px; color: var(--gray); margin-bottom: 8px; display: block; }
         .form-control { width: 100%; padding: 14px 15px; border: 2px solid var(--light); border-radius: 12px; font-size: 15px; }
         .form-control:focus { outline: none; border-color: var(--primary); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; }
         .btn-purple { background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); color: white; }
@@ -226,13 +146,11 @@
         .type-toggle { display: flex; background: var(--light); border-radius: 15px; padding: 5px; margin-bottom: 20px; }
         .type-btn { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; }
         .type-btn.active { background: var(--white); box-shadow: var(--shadow); }
-        .type-btn.income.active { color: var(--success); }
-        .type-btn.expense.active { color: var(--danger); }
         
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
-        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--light); border-radius: 10px; cursor: pointer; font-size: 13px; }
-        .checkbox-item.selected { background: var(--primary); color: white; }
-        .checkbox-item input { display: none; }
+        .unit-select-list { max-height: 200px; overflow-y: auto; border: 2px solid var(--light); border-radius: 12px; padding: 8px; }
+        .unit-select-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .unit-select-item:hover { background: var(--light); }
+        .unit-select-item.selected { background: rgba(99, 102, 241, 0.1); border: 2px solid var(--primary); }
         
         .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); }
         .empty-state .icon { font-size: 50px; margin-bottom: 15px; }
@@ -240,15 +158,49 @@
         .empty-state p { font-size: 13px; }
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 25px; font-size: 14px; z-index: 300; }
         
-        .settings-group { background: var(--white); border-radius: 16px; overflow: hidden; margin-bottom: 15px; box-shadow: var(--shadow); }
-        .settings-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--light); cursor: pointer; }
-        .settings-item:last-child { border-bottom: none; }
-        .settings-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .settings-text { flex: 1; }
-        .settings-text h4 { font-size: 14px; font-weight: 500; }
-        .settings-text span { font-size: 12px; color: var(--gray); }
+        /* Sync Status Styles */
+        .sync-container { background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow); }
+        .sync-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sync-status { display: flex; align-items: center; gap: 10px; }
+        .sync-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .sync-dot.connected { background: var(--success); animation: pulse 2s infinite; }
+        .sync-dot.disconnected { background: var(--danger); }
+        .sync-dot.syncing { background: var(--warning); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         
-        .right-menu-btn { position: fixed; right: 0; bottom: 90px; width: 45px; height: 45px; background: var(--primary); border: none; border-radius: 50% 0 0 50%; color: white; font-size: 20px; cursor: pointer; z-index: 150; display: flex; align-items: center; justify-content: center; box-shadow: -3px 0 15px rgba(0,0,0,0.2); }
+        .sync-info { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+        .sync-buttons { display: flex; gap: 10px; }
+        .sync-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .sync-btn.signin { background: #dbeafe; color: #2563eb; }
+        .sync-btn.signout { background: #fee2e2; color: #dc2626; }
+        .sync-btn.sync { background: #dcfce7; color: #16a34a; }
+        
+        .device-list { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--light); }
+        .device-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+        .device-icon { font-size: 20px; }
+        .device-name { flex: 1; font-size: 13px; }
+        .device-time { font-size: 11px; color: var(--gray); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+        .stat-card { background: var(--white); border-radius: 12px; padding: 15px; text-align: center; box-shadow: var(--shadow); }
+        .stat-card .value { font-size: 24px; font-weight: 700; }
+        .stat-card .label { font-size: 11px; color: var(--gray); margin-top: 5px; }
+        .stat-card.primary .value { color: var(--primary); }
+        .stat-card.success .value { color: var(--success); }
+        .stat-card.warning .value { color: var(--warning); }
+        
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; }
+        .admin-tab { padding: 8px 16px; border: none; background: var(--light); border-radius: 10px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .admin-tab.active { background: var(--primary); color: white; }
+        
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--light); border-radius: 10px; cursor: pointer; font-size: 13px; }
+        .checkbox-item.selected { background: var(--primary); color: white; }
+        
+        .file-upload { border: 2px dashed var(--light); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .file-upload:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+        .file-upload input { display: none; }
+        
+        .right-menu-btn { position: fixed; right: 0; bottom: 90px; width: 45px; height: 45px; background: var(--primary); border: none; border-radius: 50% 0 0 50%; color: white; font-size: 20px; cursor: pointer; z-index: 150; display: flex; align-items: center; justify-content: center; }
         .right-menu-panel { position: fixed; right: -200px; top: 0; bottom: 0; width: 200px; background: var(--white); z-index: 160; transition: right 0.3s; box-shadow: -5px 0 20px rgba(0,0,0,0.15); overflow-y: auto; padding-top: 50px; }
         .right-menu-panel.open { right: 0; }
         .right-menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 155; display: none; }
@@ -257,44 +209,16 @@
         .right-menu-item .icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .right-menu-close { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; border: none; background: var(--light); border-radius: 50%; cursor: pointer; font-size: 18px; }
         
-        .file-upload { border: 2px dashed var(--light); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .file-upload:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
-        .file-upload input { display: none; }
-        .file-preview { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .file-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 2px solid var(--light); cursor: pointer; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--white); border-radius: 12px; padding: 15px; text-align: center; box-shadow: var(--shadow); }
-        .stat-card .value { font-size: 24px; font-weight: 700; }
-        .stat-card .label { font-size: 11px; color: var(--gray); margin-top: 5px; }
-        .stat-card.primary .value { color: var(--primary); }
-        .stat-card.success .value { color: var(--success); }
-        .stat-card.danger .value { color: var(--danger); }
-        .stat-card.warning .value { color: var(--warning); }
-        
-        .admin-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .admin-tab { padding: 8px 16px; border: none; background: var(--light); border-radius: 10px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-        .admin-tab.active { background: var(--primary); color: white; }
-        
-        .json-editor { width: 100%; min-height: 150px; padding: 12px; border: 2px solid var(--light); border-radius: 12px; font-family: monospace; font-size: 12px; resize: vertical; }
-        
-        .debt-badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
-        
-        .swipe-hint { font-size: 11px; color: var(--gray); text-align: center; padding: 8px; }
-        
-        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 500; }
-        .badge-success { background: #dcfce7; color: #16a34a; }
-        .badge-danger { background: #fee2e2; color: #dc2626; }
-        .badge-warning { background: #fef3c7; color: #d97706; }
-        .badge-info { background: #dbeafe; color: #2563eb; }
-        
-        .unit-select-list { max-height: 200px; overflow-y: auto; border: 2px solid var(--light); border-radius: 12px; padding: 8px; }
-        .unit-select-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
-        .unit-select-item:hover { background: var(--light); }
-        .unit-select-item.selected { background: rgba(99, 102, 241, 0.1); border: 2px solid var(--primary); }
+        .qr-code { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; margin: 15px 0; }
+        .qr-code canvas { max-width: 200px; margin: 0 auto; }
     </style>
 </head>
 <body>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <!-- Dashboard Page -->
     <div id="page-dashboard" class="page active">
         <div class="header">
@@ -304,8 +228,8 @@
                     <div class="header-date" id="currentDate"></div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div id="syncStatus" style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 10px; color: white;">
-                        <span id="syncStatusText">📱 Local Storage</span>
+                    <div id="syncStatus" style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 10px; color: white; cursor: pointer;" onclick="showTab('sync')">
+                        <span id="syncStatusText">⚡ Sync</span>
                     </div>
                     <div onclick="showTab('settings')" style="cursor: pointer; font-size: 20px;">⚙️</div>
                 </div>
@@ -350,7 +274,6 @@
                 <a class="section-link" onclick="showTab('schedule')">See All →</a>
             </div>
             <div id="dashboardSchedule"></div>
-            
             <div class="section-header">
                 <h2 class="section-title">🏠 Recent Units</h2>
                 <a class="section-link" onclick="showTab('units')">Manage →</a>
@@ -366,10 +289,6 @@
                 <div style="font-size: 18px; font-weight: 600;">🏠 Unit Manager</div>
                 <div style="font-size: 22px; cursor: pointer;" onclick="openModal('unit')">+</div>
             </div>
-            <div style="margin-top: 15px;">
-                <div class="balance-label">Total Units</div>
-                <div class="balance-amount" id="unitsPageCount">0</div>
-            </div>
         </div>
         <div class="main-content" style="margin-top: 20px;">
             <div id="allUnitsList"></div>
@@ -382,10 +301,6 @@
             <div class="header-top">
                 <div style="font-size: 18px; font-weight: 600;">👥 Group Builder</div>
                 <div style="font-size: 22px; cursor: pointer;" onclick="openModal('group')">+</div>
-            </div>
-            <div style="margin-top: 15px;">
-                <div class="balance-label">Total Groups</div>
-                <div class="balance-amount" id="groupsPageCount">0</div>
             </div>
         </div>
         <div class="main-content" style="margin-top: 20px;">
@@ -412,28 +327,9 @@
             <div class="header-top">
                 <div style="font-size: 18px; font-weight: 600;">📅 Rotation Schedule</div>
             </div>
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <select id="scheduleTaskFilter" style="flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderSchedule()">
-                    <option value="">All Tasks</option>
-                </select>
-                <select id="scheduleMonthFilter" style="padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderSchedule()">
-                </select>
-            </div>
         </div>
         <div class="main-content" style="margin-top: 20px;">
             <div id="fullSchedule"></div>
-        </div>
-    </div>
-
-    <!-- Cycle Preview Page -->
-    <div id="page-cycle" class="page">
-        <div class="header" style="padding-top: 30px;">
-            <div class="header-top">
-                <div style="font-size: 18px; font-weight: 600;">🔄 Cycle Preview</div>
-            </div>
-        </div>
-        <div class="main-content" style="margin-top: 20px;">
-            <div id="cyclePreviewContainer"></div>
         </div>
     </div>
 
@@ -444,11 +340,6 @@
                 <div style="font-size: 18px; font-weight: 600;">💰 Financial Ledger</div>
                 <div style="font-size: 22px; cursor: pointer;" onclick="openModal('ledger')">+</div>
             </div>
-            <div style="margin-top: 15px;">
-                <select id="ledgerUnitFilter" style="width: 100%; padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderLedger()">
-                    <option value="">All Units</option>
-                </select>
-            </div>
         </div>
         <div class="main-content" style="margin-top: 20px;">
             <div class="stats-grid" id="ledgerStats"></div>
@@ -456,43 +347,57 @@
         </div>
     </div>
 
-    <!-- Issues Page -->
-    <div id="page-issues" class="page">
-        <div class="header" style="padding-top: 30px;">
+    <!-- Sync Page -->
+    <div id="page-sync" class="page">
+        <div class="header" style="background: linear-gradient(135deg, var(--cyan) 0%, var(--info) 100%); padding-top: 30px;">
             <div class="header-top">
-                <div style="font-size: 18px; font-weight: 600;">🔧 Maintenance Issues</div>
-                <div style="font-size: 22px; cursor: pointer;" onclick="openModal('issue')">+</div>
-            </div>
-            <div style="margin-top: 15px;">
-                <select id="issueStatusFilter" style="width: 100%; padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderIssues()">
-                    <option value="">All Issues</option>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                </select>
+                <div style="font-size: 18px; font-weight: 600;">⚡ Cloud Sync</div>
             </div>
         </div>
         <div class="main-content" style="margin-top: 20px;">
-            <div id="allIssues"></div>
-        </div>
-    </div>
-
-    <!-- Admin Page -->
-    <div id="page-admin" class="page">
-        <div class="header" style="background: linear-gradient(135deg, var(--orange) 0%, var(--warning) 100%); padding-top: 30px;">
-            <div class="header-top">
-                <div style="font-size: 18px; font-weight: 600;">⚙️ Admin Panel</div>
+            <div class="sync-container">
+                <div class="sync-header">
+                    <div class="sync-status">
+                        <div class="sync-dot" id="syncDot"></div>
+                        <span id="syncStatusLabel">Disconnected</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--gray);">
+                        Last sync: <span id="lastSyncTime">Never</span>
+                    </div>
+                </div>
+                
+                <div id="authSection">
+                    <p class="sync-info">Sign in to sync your data across devices (mobile + PC). Your data is stored securely in Firebase cloud.</p>
+                    <div class="sync-buttons">
+                        <button class="sync-btn signin" onclick="signInWithGoogle()">🔐 Sign in with Google</button>
+                    </div>
+                </div>
+                
+                <div id="syncSection" style="display: none;">
+                    <p class="sync-info">You are signed in as <strong id="userEmail"></strong></p>
+                    <div class="sync-buttons">
+                        <button class="sync-btn sync" onclick="syncToCloud()">☁️ Sync Now</button>
+                        <button class="sync-btn signout" onclick="signOut()">🚪 Sign Out</button>
+                    </div>
+                    
+                    <div class="device-list">
+                        <h4 style="font-size: 13px; margin-bottom: 10px;">Recent Syncs</h4>
+                        <div id="syncHistory"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="main-content" style="margin-top: 20px;">
-            <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('units')">Units</button>
-                <button class="admin-tab" onclick="switchAdminTab('groups')">Groups</button>
-                <button class="admin-tab" onclick="switchAdminTab('tasks')">Tasks</button>
-                <button class="admin-tab" onclick="switchAdminTab('debts')">Debts</button>
-                <button class="admin-tab" onclick="switchAdminTab('data')">Data</button>
+            
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 10px;">📱 Manual Backup</h3>
+                <p style="font-size: 12px; color: var(--gray); margin-bottom: 15px;">
+                    Export your data to a file or import from a backup.
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-outline btn-small" onclick="exportData()">📤 Export JSON</button>
+                    <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">📥 Import</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                </div>
             </div>
-            <div id="adminContent"></div>
         </div>
     </div>
 
@@ -501,76 +406,63 @@
         <div class="header" style="padding-top: 30px;">
             <div class="header-top"><div style="font-size: 18px; font-weight: 600;">⚙️ Settings</div></div>
         </div>
-        <div class="main-content" style="margin-top: 20px; padding-bottom: 20px;">
+        <div class="main-content" style="margin-top: 20px;">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">📤 Export / Import</h3>
-                </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-outline btn-small" onclick="exportData()">📤 Export JSON</button>
-                    <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
-                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-                </div>
-            </div>
-            
-            <div class="card" style="margin-top: 15px;">
-                <div class="card-header">
-                    <h3 class="card-title">🔄 Regenerate Schedules</h3>
-                </div>
+                <h3 style="margin-bottom: 15px;">🔄 Regenerate Schedules</h3>
                 <button class="btn btn-primary" onclick="regenerateAllSchedules()">🔄 Regenerate All Schedules</button>
             </div>
             
             <div class="card" style="margin-top: 15px;">
-                <div class="card-header">
-                    <h3 class="card-title">⚠️ Danger Zone</h3>
-                </div>
+                <h3 style="margin-bottom: 15px;">⚠️ Danger Zone</h3>
                 <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
             </div>
             
             <div class="card" style="margin-top: 15px;">
-                <div class="card-header">
-                    <h3 class="card-title">ℹ️ About</h3>
-                </div>
-                <p style="font-size: 13px; color: var(--gray);">OmniTask v1.0<br>Community Rotation & Rental Management Engine<br>PWA - Works Offline</p>
+                <h3 style="margin-bottom: 10px;">ℹ️ About</h3>
+                <p style="font-size: 13px; color: var(--gray);">
+                    OmniTask v2.0<br>
+                    Community Rotation & Rental Management Engine<br>
+                    PWA - Works Offline + Cloud Sync
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- Right Side Quick Menu -->
+    <!-- Right Menu -->
     <div class="right-menu-overlay" onclick="toggleRightMenu()"></div>
     <div class="right-menu-panel" id="rightMenuPanel">
         <button class="right-menu-close" onclick="toggleRightMenu()">×</button>
         <div class="right-menu-item" onclick="showTab('dashboard'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white;">🏠</div>
-            <div class="text"><strong>Dashboard</strong></div>
+            <div><strong>Dashboard</strong></div>
         </div>
         <div class="right-menu-item" onclick="showTab('units'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--success) 0%, #34d399 100%); color: white;">🏠</div>
-            <div class="text"><strong>Units</strong></div>
+            <div><strong>Units</strong></div>
         </div>
         <div class="right-menu-item" onclick="showTab('groups'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); color: white;">👥</div>
-            <div class="text"><strong>Groups</strong></div>
+            <div><strong>Groups</strong></div>
         </div>
         <div class="right-menu-item" onclick="showTab('schedule'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--cyan) 0%, #22d3ee 100%); color: white;">📅</div>
-            <div class="text"><strong>Schedule</strong></div>
+            <div><strong>Schedule</strong></div>
         </div>
         <div class="right-menu-item" onclick="showTab('ledger'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%); color: white;">💰</div>
-            <div class="text"><strong>Ledger</strong></div>
+            <div><strong>Ledger</strong></div>
         </div>
-        <div class="right-menu-item" onclick="showTab('admin'); toggleRightMenu();">
-            <div class="icon" style="background: linear-gradient(135deg, var(--orange) 0%, var(--warning) 100%); color: white;">⚙️</div>
-            <div class="text"><strong>Admin</strong></div>
+        <div class="right-menu-item" onclick="showTab('sync'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--info) 0%, #60a5fa 100%); color: white;">⚡</div>
+            <div><strong>Cloud Sync</strong></div>
         </div>
         <div class="right-menu-item" onclick="showTab('settings'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--dark) 0%, #4b5563 100%); color: white;">⚙️</div>
-            <div class="text"><strong>Settings</strong></div>
+            <div><strong>Settings</strong></div>
         </div>
     </div>
 
-    <!-- Modal Overlay -->
+    <!-- Modal -->
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
         <div class="modal" id="modalContent" onclick="event.stopPropagation()">
             <div class="modal-handle"></div>
@@ -579,14 +471,37 @@
         </div>
     </div>
 
-    <!-- Toast -->
     <div class="toast" id="toast" style="display: none;"></div>
 
     <script>
+        // ==================== FIREBASE CONFIGURATION ====================
+        // IMPORTANT: Replace with your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDemo-REPLACE-WITH-YOUR-KEY",
+            authDomain: "omnitask-demo.firebaseapp.com",
+            projectId: "omnitask-demo",
+            storageBucket: "omnitask-demo.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+
+        // Initialize Firebase
+        let app, auth, db;
+        let currentUser = null;
+        let isSyncing = false;
+
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+        } catch (e) {
+            console.log('Firebase not configured - running in offline mode');
+        }
+
         // ==================== DATABASE ====================
         const DB_NAME = 'OmniTaskDB';
         const DB_VERSION = 1;
-        let db = null;
+        let dbInstance = null;
 
         const STORES = {
             units: 'units',
@@ -595,23 +510,16 @@
             schedules: 'schedules',
             ledger: 'ledger',
             issues: 'issues',
-            debts: 'debts',
-            config: 'config'
+            debts: 'debts'
         };
 
         async function initDB() {
             return new Promise((resolve, reject) => {
                 const request = indexedDB.open(DB_NAME, DB_VERSION);
-                
                 request.onerror = () => reject(request.error);
-                request.onsuccess = () => {
-                    db = request.result;
-                    resolve(db);
-                };
-                
+                request.onsuccess = () => { dbInstance = request.result; resolve(dbInstance); };
                 request.onupgradeneeded = (event) => {
                     const database = event.target.result;
-                    
                     Object.values(STORES).forEach(storeName => {
                         if (!database.objectStoreNames.contains(storeName)) {
                             database.createObjectStore(storeName, { keyPath: 'id' });
@@ -621,19 +529,9 @@
             });
         }
 
-        async function dbGet(storeName, id) {
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction(storeName, 'readonly');
-                const store = tx.objectStore(storeName);
-                const request = store.get(id);
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
         async function dbGetAll(storeName) {
             return new Promise((resolve, reject) => {
-                const tx = db.transaction(storeName, 'readonly');
+                const tx = dbInstance.transaction(storeName, 'readonly');
                 const store = tx.objectStore(storeName);
                 const request = store.getAll();
                 request.onsuccess = () => resolve(request.result);
@@ -643,7 +541,7 @@
 
         async function dbPut(storeName, data) {
             return new Promise((resolve, reject) => {
-                const tx = db.transaction(storeName, 'readwrite');
+                const tx = dbInstance.transaction(storeName, 'readwrite');
                 const store = tx.objectStore(storeName);
                 const request = store.put(data);
                 request.onsuccess = () => resolve(request.result);
@@ -653,7 +551,7 @@
 
         async function dbDelete(storeName, id) {
             return new Promise((resolve, reject) => {
-                const tx = db.transaction(storeName, 'readwrite');
+                const tx = dbInstance.transaction(storeName, 'readwrite');
                 const store = tx.objectStore(storeName);
                 const request = store.delete(id);
                 request.onsuccess = () => resolve();
@@ -663,11 +561,154 @@
 
         async function dbClear(storeName) {
             return new Promise((resolve, reject) => {
-                const tx = db.transaction(storeName, 'readwrite');
+                const tx = dbInstance.transaction(storeName, 'readwrite');
                 const store = tx.objectStore(storeName);
                 const request = store.clear();
                 request.onsuccess = () => resolve();
                 request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ==================== FIREBASE SYNC ====================
+        function updateSyncUI() {
+            const dot = document.getElementById('syncDot');
+            const label = document.getElementById('syncStatusLabel');
+            const statusText = document.getElementById('syncStatusText');
+            const authSection = document.getElementById('authSection');
+            const syncSection = document.getElementById('syncSection');
+            const userEmail = document.getElementById('userEmail');
+
+            if (currentUser) {
+                dot.className = 'sync-dot connected';
+                label.textContent = 'Connected';
+                statusText.textContent = '✓ Synced';
+                authSection.style.display = 'none';
+                syncSection.style.display = 'block';
+                userEmail.textContent = currentUser.email || 'Anonymous';
+            } else {
+                dot.className = 'sync-dot disconnected';
+                label.textContent = 'Disconnected';
+                statusText.textContent = '⚡ Sync';
+                authSection.style.display = 'block';
+                syncSection.style.display = 'none';
+            }
+        }
+
+        async function signInWithGoogle() {
+            if (!auth || !db) {
+                showToast('Firebase not configured. Use manual export/import instead.');
+                return;
+            }
+            
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                await auth.signInWithPopup(provider);
+                showToast('Signed in successfully!');
+            } catch (error) {
+                console.error('Sign in error:', error);
+                showToast('Sign in failed: ' + error.message);
+            }
+        }
+
+        async function signOut() {
+            if (!auth) return;
+            try {
+                await auth.signOut();
+                showToast('Signed out');
+            } catch (error) {
+                console.error('Sign out error:', error);
+            }
+        }
+
+        async function syncToCloud() {
+            if (!currentUser || isSyncing) return;
+            isSyncing = true;
+            
+            const dot = document.getElementById('syncDot');
+            dot.className = 'sync-dot syncing';
+            
+            try {
+                // Gather all local data
+                const data = {
+                    units: await dbGetAll('units'),
+                    groups: await dbGetAll('groups'),
+                    tasks: await dbGetAll('tasks'),
+                    schedules: await dbGetAll('schedules'),
+                    ledger: await dbGetAll('ledger'),
+                    issues: await dbGetAll('issues'),
+                    debts: await dbGetAll('debts'),
+                    lastModified: Date.now(),
+                    deviceId: getDeviceId()
+                };
+                
+                // Save to Firebase
+                await db.collection('users').doc(currentUser.uid).set({
+                    data: data,
+                    lastSync: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                // Update last sync time
+                localStorage.setItem('lastSyncTime', new Date().toLocaleString());
+                document.getElementById('lastSyncTime').textContent = localStorage.getItem('lastSyncTime') || 'Just now';
+                
+                showToast('Synced to cloud!');
+            } catch (error) {
+                console.error('Sync error:', error);
+                showToast('Sync failed: ' + error.message);
+            } finally {
+                isSyncing = false;
+                dot.className = 'sync-dot connected';
+            }
+        }
+
+        async function loadFromCloud() {
+            if (!currentUser) return;
+            
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get();
+                if (doc.exists && doc.data().data) {
+                    const cloudData = doc.data().data;
+                    
+                    // Clear local and import cloud data
+                    for (const store of Object.values(STORES)) {
+                        await dbClear(store);
+                    }
+                    
+                    for (const [key, items] of Object.entries(cloudData)) {
+                        if (STORES[key] && Array.isArray(items)) {
+                            for (const item of items) {
+                                await dbPut(key, item);
+                            }
+                        }
+                    }
+                    
+                    showToast('Data loaded from cloud!');
+                    updateCache();
+                    renderDashboard();
+                }
+            } catch (error) {
+                console.error('Load from cloud error:', error);
+                showToast('Failed to load from cloud');
+            }
+        }
+
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('deviceId');
+            if (!deviceId) {
+                deviceId = 'device_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('deviceId', deviceId);
+            }
+            return deviceId;
+        }
+
+        // Firebase auth state listener
+        if (auth) {
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                updateSyncUI();
+                if (user) {
+                    loadFromCloud();
+                }
             });
         }
 
@@ -677,7 +718,7 @@
         }
 
         function formatDate(date) {
-            return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
 
         function formatCurrency(amount) {
@@ -689,6 +730,15 @@
             toast.textContent = message;
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // Cache for sync access
+        let dataCache = { units: [], groups: [], tasks: [], schedules: [], ledger: [], issues: [], debts: [] };
+
+        async function updateCache() {
+            for (const store of Object.values(STORES)) {
+                dataCache[store] = await dbGetAll(store);
+            }
         }
 
         // ==================== NAVIGATION ====================
@@ -704,10 +754,8 @@
             if (tabName === 'groups') renderGroups();
             if (tabName === 'tasks') renderTasks();
             if (tabName === 'schedule') renderSchedule();
-            if (tabName === 'cycle') renderCyclePreview();
             if (tabName === 'ledger') renderLedger();
-            if (tabName === 'issues') renderIssues();
-            if (tabName === 'admin') renderAdmin();
+            if (tabName === 'sync') updateSyncUI();
         }
 
         function toggleRightMenu() {
@@ -722,32 +770,12 @@
             const body = document.getElementById('modalBody');
             
             switch(type) {
-                case 'unit':
-                    title.textContent = '➕ Add Unit';
-                    body.innerHTML = getUnitForm();
-                    break;
-                case 'group':
-                    title.textContent = '👥 Create Group';
-                    body.innerHTML = getGroupForm();
-                    break;
-                case 'task':
-                    title.textContent = '📝 Create Task';
-                    body.innerHTML = getTaskForm();
-                    break;
-                case 'issue':
-                    title.textContent = '🔧 Report Issue';
-                    body.innerHTML = getIssueForm();
-                    break;
-                case 'ledger':
-                    title.textContent = '💰 Add Ledger Entry';
-                    body.innerHTML = getLedgerForm();
-                    break;
-                case 'swap':
-                    title.textContent = '🔄 Smart Swap';
-                    body.innerHTML = getSwapForm();
-                    break;
+                case 'unit': title.textContent = '➕ Add Unit'; body.innerHTML = getUnitForm(); break;
+                case 'group': title.textContent = '👥 Create Group'; body.innerHTML = getGroupForm(); break;
+                case 'task': title.textContent = '📝 Create Task'; body.innerHTML = getTaskForm(); break;
+                case 'issue': title.textContent = '🔧 Report Issue'; body.innerHTML = getIssueForm(); break;
+                case 'ledger': title.textContent = '💰 Add Ledger Entry'; body.innerHTML = getLedgerForm(); break;
             }
-            
             overlay.classList.add('show');
         }
 
@@ -757,156 +785,114 @@
         }
 
         // ==================== FORMS ====================
-        function getUnitForm(existing = null) {
+        function getUnitForm() {
             return `
-                <form onsubmit="saveUnit(event, '${existing?.id || ''}')">
+                <form onsubmit="saveUnit(event)">
                     <div class="form-group">
                         <label class="form-label">Unit Name *</label>
-                        <input type="text" class="form-control" id="unitName" value="${existing?.name || ''}" placeholder="e.g., Unit 101, Flat A" required>
+                        <input type="text" class="form-control" id="unitName" placeholder="e.g., Unit 101" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Occupant Name</label>
-                        <input type="text" class="form-control" id="unitOccupant" value="${existing?.occupantName || ''}" placeholder="Current tenant name">
+                        <input type="text" class="form-control" id="unitOccupant" placeholder="Current tenant name">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Status</label>
                         <div class="type-toggle">
-                            <button type="button" class="type-btn ${existing?.status === 'active' || !existing ? 'active' : ''}" onclick="setToggleActive(this, 'unitStatus', 'active')">Active</button>
-                            <button type="button" class="type-btn ${existing?.status === 'vacant' ? 'active' : ''}" onclick="setToggleActive(this, 'unitStatus', 'vacant')">Vacant</button>
+                            <button type="button" class="type-btn active" onclick="this.parentElement.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('unitStatus').value='active'">Active</button>
+                            <button type="button" class="type-btn" onclick="this.parentElement.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('unitStatus').value='vacant'">Vacant</button>
                         </div>
-                        <input type="hidden" id="unitStatus" value="${existing?.status || 'active'}">
+                        <input type="hidden" id="unitStatus" value="active">
                     </div>
-                    <button type="submit" class="btn btn-primary">${existing ? 'Update' : 'Add'} Unit</button>
+                    <button type="submit" class="btn btn-primary">Add Unit</button>
                 </form>
             `;
         }
 
-        function getGroupForm(existing = null) {
+        function getGroupForm() {
+            const units = dataCache.units || [];
             return `
-                <form onsubmit="saveGroup(event, '${existing?.id || ''}')">
+                <form onsubmit="saveGroup(event)">
                     <div class="form-group">
                         <label class="form-label">Group Name *</label>
-                        <input type="text" class="form-control" id="groupName" value="${existing?.name || ''}" placeholder="e.g., Set A, Block 1" required>
+                        <input type="text" class="form-control" id="groupName" placeholder="e.g., Set A" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Assign Units</label>
-                        <div class="unit-select-list" id="groupUnitSelect">
-                            ${getUnitSelectOptions(existing?.unitIds)}
+                        <div class="unit-select-list">
+                            ${units.map(u => `
+                                <div class="unit-select-item" onclick="this.classList.toggle('selected');this.querySelector('input').checked=this.classList.contains('selected')">
+                                    <input type="checkbox" value="${u.id}" style="display:none">
+                                    <span>🏠 ${u.name}</span>
+                                </div>
+                            `).join('') || '<p style="color:var(--gray);padding:10px;">No units available</p>'}
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">${existing ? 'Update' : 'Create'} Group</button>
+                    <button type="submit" class="btn btn-primary">Create Group</button>
                 </form>
             `;
         }
 
-        function getUnitSelectOptions(selectedIds = []) {
-            const units = dbGetAllSync('units') || [];
-            if (units.length === 0) {
-                return '<p style="padding: 10px; color: var(--gray); font-size: 12px;">No units available. Add units first.</p>';
-            }
-            return units.map(unit => `
-                <div class="unit-select-item ${selectedIds.includes(unit.id) ? 'selected' : ''}" onclick="toggleUnitSelect(this, '${unit.id}')">
-                    <input type="checkbox" value="${unit.id}" ${selectedIds.includes(unit.id) ? 'checked' : ''}>
-                    <span>🏠 ${unit.name}</span>
-                    ${unit.occupantName ? `<span style="color: var(--gray); font-size: 11px;">- ${unit.occupantName}</span>` : ''}
-                </div>
-            `).join('');
-        }
-
-        function toggleUnitSelect(element, unitId) {
-            element.classList.toggle('selected');
-            const checkbox = element.querySelector('input');
-            checkbox.checked = element.classList.contains('selected');
-        }
-
-        function getTaskForm(existing = null) {
+        function getTaskForm() {
+            const groups = dataCache.groups || [];
+            const units = dataCache.units || [];
             return `
-                <form onsubmit="saveTask(event, '${existing?.id || ''}')">
+                <form onsubmit="saveTask(event)">
                     <div class="form-group">
                         <label class="form-label">Task Name *</label>
-                        <input type="text" class="form-control" id="taskName" value="${existing?.name || ''}" placeholder="e.g., Water Pump, Street Cleaning" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <input type="text" class="form-control" id="taskDescription" value="${existing?.description || ''}" placeholder="Optional description">
+                        <input type="text" class="form-control" id="taskName" placeholder="e.g., Water Pump" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Frequency</label>
                         <div class="type-toggle">
-                            <button type="button" class="type-btn ${existing?.frequency?.type === 'daily' || !existing ? 'active' : ''}" onclick="setToggleActive(this, 'taskFreqType', 'daily')">Daily</button>
-                            <button type="button" class="type-btn ${existing?.frequency?.type === 'weekly' ? 'active' : ''}" onclick="setToggleActive(this, 'taskFreqType', 'weekly')">Weekly</button>
-                            <button type="button" class="type-btn ${existing?.frequency?.type === 'custom' ? 'active' : ''}" onclick="setToggleActive(this, 'taskFreqType', 'custom')">Custom</button>
+                            <button type="button" class="type-btn active" onclick="setToggle(this,'taskFreqType','daily')">Daily</button>
+                            <button type="button" class="type-btn" onclick="setToggle(this,'taskFreqType','weekly')">Weekly</button>
+                            <button type="button" class="type-btn" onclick="setToggle(this,'taskFreqType','custom')">Custom</button>
                         </div>
-                        <input type="hidden" id="taskFreqType" value="${existing?.frequency?.type || 'daily'}">
-                    </div>
-                    <div class="form-group" id="customIntervalGroup" style="display: ${existing?.frequency?.type === 'custom' ? 'block' : 'none'};">
-                        <label class="form-label">Every X Days</label>
-                        <input type="number" class="form-control" id="taskInterval" value="${existing?.frequency?.interval || 2}" min="1" max="365">
+                        <input type="hidden" id="taskFreqType" value="daily">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Assignment Type</label>
+                        <label class="form-label">Assignment</label>
                         <div class="type-toggle">
-                            <button type="button" class="type-btn ${existing?.assignment?.type === 'all_units' || !existing ? 'active' : ''}" onclick="setToggleActive(this, 'taskAssignType', 'all_units')">All Units</button>
-                            <button type="button" class="type-btn ${existing?.assignment?.type === 'specific_group' ? 'active' : ''}" onclick="setToggleActive(this, 'taskAssignType', 'specific_group')">Specific Group</button>
-                            <button type="button" class="type-btn ${existing?.assignment?.type === 'independent_only' ? 'active' : ''}" onclick="setToggleActive(this, 'taskAssignType', 'independent_only')">Independent</button>
+                            <button type="button" class="type-btn active" onclick="setToggle(this,'taskAssignType','all_units')">All</button>
+                            <button type="button" class="type-btn" onclick="setToggle(this,'taskAssignType','specific_group')">Group</button>
+                            <button type="button" class="type-btn" onclick="setToggle(this,'taskAssignType','independent_only')">Ind.</button>
                         </div>
-                        <input type="hidden" id="taskAssignType" value="${existing?.assignment?.type || 'all_units'}">
+                        <input type="hidden" id="taskAssignType" value="all_units">
                     </div>
-                    <div class="form-group" id="taskGroupSelect" style="display: ${existing?.assignment?.type === 'specific_group' ? 'block' : 'none'};">
+                    <div class="form-group" id="taskGroupSelect" style="display:none">
                         <label class="form-label">Select Group</label>
                         <select class="form-control" id="taskTargetGroup">
-                            ${getGroupOptions(existing?.assignment?.targetGroupId)}
+                            ${groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Exclude Units (Optional)</label>
-                        <div class="unit-select-list" style="max-height: 120px;">
-                            ${getUnitSelectOptionsForExclude(existing?.assignment?.excludedUnitIds)}
+                        <div class="unit-select-list" style="max-height:100px;">
+                            ${units.map(u => `
+                                <label class="checkbox-item" onclick="this.classList.toggle('selected');this.querySelector('input').checked=this.classList.contains('selected')">
+                                    <input type="checkbox" value="${u.id}" style="display:none">
+                                    ${u.name}
+                                </label>
+                            `).join('')}
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Rotation Order</label>
-                        <select class="form-control" id="taskRotationOrder">
-                            <option value="ascending" ${existing?.rotationOrder === 'ascending' || !existing ? 'selected' : ''}>Ascending (1, 2, 3...)</option>
-                            <option value="descending" ${existing?.rotationOrder === 'descending' ? 'selected' : ''}>Descending (3, 2, 1...)</option>
-                            <option value="random" ${existing?.rotationOrder === 'random' ? 'selected' : ''}>Random</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">${existing ? 'Update' : 'Create'} Task</button>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
                 </form>
             `;
         }
 
-        function getGroupOptions(selectedId = null) {
-            const groups = dbGetAllSync('groups') || [];
-            return groups.map(g => `<option value="${g.id}" ${selectedId === g.id ? 'selected' : ''}>${g.name}</option>`).join('');
-        }
-
-        function getUnitSelectOptionsForExclude(selectedIds = []) {
-            const units = dbGetAllSync('units') || [];
-            return units.map(unit => `
-                <label class="checkbox-item ${selectedIds.includes(unit.id) ? 'selected' : ''}">
-                    <input type="checkbox" value="${unit.id}" ${selectedIds.includes(unit.id) ? 'checked' : ''} onchange="this.parentElement.classList.toggle('selected', this.checked)">
-                    ${unit.name}
-                </label>
-            `).join('');
-        }
-
-        function setToggleActive(btn, inputId, value) {
+        function setToggle(btn, inputId, value) {
             btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById(inputId).value = value;
-            
-            if (inputId === 'taskFreqType') {
-                document.getElementById('customIntervalGroup').style.display = value === 'custom' ? 'block' : 'none';
-            }
             if (inputId === 'taskAssignType') {
                 document.getElementById('taskGroupSelect').style.display = value === 'specific_group' ? 'block' : 'none';
             }
         }
 
         function getIssueForm() {
-            const units = dbGetAllSync('units') || [];
+            const units = dataCache.units || [];
             return `
                 <form onsubmit="saveIssue(event)">
                     <div class="form-group">
@@ -917,11 +903,10 @@
                             <option value="drainage_fix">Drainage Fix</option>
                             <option value="plumbing">Plumbing</option>
                             <option value="electrical">Electrical</option>
-                            <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Affected Unit *</label>
+                        <label class="form-label">Unit *</label>
                         <select class="form-control" id="issueUnit" required>
                             <option value="">Select Unit</option>
                             ${units.map(u => `<option value="${u.id}">${u.name}</option>`).join('')}
@@ -933,15 +918,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control" id="issueDescription" rows="2" placeholder="Describe the issue..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Upload Receipt (Optional)</label>
-                        <div class="file-upload" onclick="document.getElementById('issueFile').click()">
-                            <input type="file" id="issueFile" accept="image/*,.pdf" onchange="handleFileUpload(this, 'issuePreview')">
-                            <p style="font-size: 12px; color: var(--gray);">Tap to upload receipt</p>
-                        </div>
-                        <div class="file-preview" id="issuePreview"></div>
+                        <textarea class="form-control" id="issueDescription" rows="2"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Issue</button>
                 </form>
@@ -949,15 +926,15 @@
         }
 
         function getLedgerForm() {
-            const units = dbGetAllSync('units') || [];
+            const units = dataCache.units || [];
             return `
                 <form onsubmit="saveLedgerEntry(event)">
                     <div class="form-group">
-                        <label class="form-label">Entry Type *</label>
+                        <label class="form-label">Entry Type</label>
                         <div class="type-toggle">
-                            <button type="button" class="type-btn income active" onclick="setLedgerType('rent', this)">Rent</button>
-                            <button type="button" class="type-btn expense" onclick="setLedgerType('eb_bill', this)">EB Bill</button>
-                            <button type="button" class="type-btn" onclick="setLedgerType('maintenance', this)">Maint.</button>
+                            <button type="button" class="type-btn active" onclick="setLedgerType('rent',this)">Rent</button>
+                            <button type="button" class="type-btn" onclick="setLedgerType('eb_bill',this)">EB Bill</button>
+                            <button type="button" class="type-btn" onclick="setLedgerType('maintenance',this)">Maint.</button>
                         </div>
                         <input type="hidden" id="ledgerType" value="rent">
                     </div>
@@ -972,18 +949,6 @@
                         <label class="form-label">Amount *</label>
                         <input type="number" class="form-control" id="ledgerAmount" placeholder="0" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <input type="text" class="form-control" id="ledgerDescription" placeholder="Optional note">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Upload Bill/Receipt (Optional)</label>
-                        <div class="file-upload" onclick="document.getElementById('ledgerFile').click()">
-                            <input type="file" id="ledgerFile" accept="image/*,.pdf" onchange="handleFileUpload(this, 'ledgerPreview')">
-                            <p style="font-size: 12px; color: var(--gray);">Tap to upload</p>
-                        </div>
-                        <div class="file-preview" id="ledgerPreview"></div>
-                    </div>
                     <button type="submit" class="btn btn-primary">Add Entry</button>
                 </form>
             `;
@@ -993,377 +958,121 @@
             btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active', 'income', 'expense'));
             btn.classList.add('active');
             if (type === 'rent') btn.classList.add('income');
-            if (type === 'eb_bill' || type === 'maintenance') btn.classList.add('expense');
+            if (type === 'eb_bill') btn.classList.add('expense');
             document.getElementById('ledgerType').value = type;
         }
 
-        function getSwapForm(scheduleId = null, originalUnitId = null) {
-            const units = dbGetAllSync('units') || [];
-            const filteredUnits = units.filter(u => u.id !== originalUnitId);
-            
-            return `
-                <form onsubmit="processSwap(event, '${scheduleId}', '${originalUnitId}')">
-                    <p style="font-size: 13px; color: var(--gray); margin-bottom: 15px;">Select a substitute to take over this task. The system will schedule a debt repayment.</p>
-                    <div class="form-group">
-                        <label class="form-label">Select Substitute *</label>
-                        <select class="form-control" id="swapSubstitute" required>
-                            <option value="">Choose someone...</option>
-                            ${filteredUnits.map(u => `<option value="${u.id}">${u.name}${u.occupantName ? ' - ' + u.occupantName : ''}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Reason (Optional)</label>
-                        <input type="text" class="form-control" id="swapReason" placeholder="e.g., Out of town">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Confirm Swap</button>
-                </form>
-            `;
-        }
-
-        function handleFileUpload(input, previewId) {
-            const preview = document.getElementById(previewId);
-            preview.innerHTML = '';
-            
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = (e) => {
-                    if (file.type.startsWith('image/')) {
-                        preview.innerHTML = `<img src="${e.target.result}" class="file-thumb" onclick="previewImage(this.src)">`;
-                    } else {
-                        preview.innerHTML = `<div style="padding: 10px; background: var(--light); border-radius: 8px; font-size: 12px;">📄 ${file.name}</div>`;
-                    }
-                    preview.dataset.fileData = e.target.result;
-                    preview.dataset.fileName = file.name;
-                    preview.dataset.fileType = file.type;
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function previewImage(src) {
-            const modal = document.createElement('div');
-            modal.style = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:500;display:flex;align-items:center;justify-content:center;';
-            modal.onclick = () => modal.remove();
-            modal.innerHTML = `<img src="${src}" style="max-width:90%;max-height:90%;border-radius:10px;">`;
-            document.body.appendChild(modal);
-        }
-
         // ==================== DATA OPERATIONS ====================
-        function dbGetAllSync(storeName) {
-            return new XMLHttpRequest ? [] : [];
-        }
-
-        async function saveUnit(event, existingId) {
+        async function saveUnit(event) {
             event.preventDefault();
-            
             const unit = {
-                id: existingId || generateId(),
+                id: generateId(),
                 name: document.getElementById('unitName').value,
                 occupantName: document.getElementById('unitOccupant').value,
                 status: document.getElementById('unitStatus').value,
-                createdAt: existingId ? (await dbGet('units', existingId))?.createdAt : Date.now()
+                createdAt: Date.now()
             };
-            
             await dbPut('units', unit);
             await updateCache();
             closeModal();
-            showToast(existingId ? 'Unit updated!' : 'Unit added!');
+            showToast('Unit added!');
             renderDashboard();
-            renderUnits();
         }
 
-        async function saveGroup(event, existingId) {
+        async function saveGroup(event) {
             event.preventDefault();
-            
-            const selectedUnits = Array.from(document.querySelectorAll('#groupUnitSelect input:checked')).map(i => i.value);
-            
+            const selectedUnits = Array.from(document.querySelectorAll('#modalBody input:checked')).map(i => i.value);
             const group = {
-                id: existingId || generateId(),
+                id: generateId(),
                 name: document.getElementById('groupName').value,
                 unitIds: selectedUnits,
-                createdAt: existingId ? (await dbGet('groups', existingId))?.createdAt : Date.now()
+                createdAt: Date.now()
             };
-            
             await dbPut('groups', group);
-            
-            // Update units with group assignment
-            const allUnits = await dbGetAll('units');
-            for (const unit of allUnits) {
-                if (selectedUnits.includes(unit.id)) {
-                    unit.groupId = group.id;
-                } else if (unit.groupId === group.id) {
-                    delete unit.groupId;
-                }
-                await dbPut('units', unit);
-            }
-            
             await updateCache();
             closeModal();
-            showToast(existingId ? 'Group updated!' : 'Group created!');
+            showToast('Group created!');
             renderGroups();
-            renderDashboard();
         }
 
-        async function saveTask(event, existingId) {
+        async function saveTask(event) {
             event.preventDefault();
-            
-            const excludedUnits = Array.from(document.querySelectorAll('#groupUnitSelect input[type="checkbox"]:not(#groupUnitSelect .unit-select-item input)'))
-                .filter(i => i.checked)
-                .map(i => i.value);
-            
-            const realExcludedUnits = Array.from(document.querySelectorAll('.checkbox-item input:checked'))
-                .map(i => i.value);
-            
+            const excludedUnits = Array.from(document.querySelectorAll('#modalBody .checkbox-item input:checked')).map(i => i.value);
             const task = {
-                id: existingId || generateId(),
+                id: generateId(),
                 name: document.getElementById('taskName').value,
-                description: document.getElementById('taskDescription').value,
-                frequency: {
-                    type: document.getElementById('taskFreqType').value,
-                    interval: parseInt(document.getElementById('taskInterval').value) || 2
-                },
+                frequency: { type: document.getElementById('taskFreqType').value, interval: 1 },
                 assignment: {
                     type: document.getElementById('taskAssignType').value,
                     targetGroupId: document.getElementById('taskTargetGroup')?.value || null,
-                    excludedUnitIds: realExcludedUnits
+                    excludedUnitIds: excludedUnits
                 },
-                rotationOrder: document.getElementById('taskRotationOrder').value,
-                createdAt: existingId ? (await dbGet('tasks', existingId))?.createdAt : Date.now()
+                rotationOrder: 'ascending',
+                createdAt: Date.now()
             };
-            
             await dbPut('tasks', task);
-            
-            // Regenerate schedule for this task
             await generateSchedule(task.id);
             await updateCache();
-            
             closeModal();
-            showToast(existingId ? 'Task updated!' : 'Task created!');
+            showToast('Task created!');
             renderTasks();
-            renderDashboard();
-            renderSchedule();
         }
 
         async function saveIssue(event) {
             event.preventDefault();
-            
-            const preview = document.getElementById('issuePreview');
-            
             const issue = {
                 id: generateId(),
                 type: document.getElementById('issueType').value,
                 unitId: document.getElementById('issueUnit').value,
                 amount: parseFloat(document.getElementById('issueAmount').value),
                 description: document.getElementById('issueDescription').value,
-                attachment: preview.dataset?.fileData || null,
-                attachmentName: preview.dataset?.fileName || null,
                 status: 'pending',
                 createdAt: Date.now()
             };
-            
             await dbPut('issues', issue);
             await updateCache();
             closeModal();
             showToast('Issue reported!');
-            renderIssues();
-        }
-
-        async function approveIssue(issueId) {
-            const issue = await dbGet('issues', issueId);
-            if (!issue) return;
-            
-            issue.status = 'approved';
-            await dbPut('issues', issue);
-            
-            // Create deduction entry in ledger
-            const ledgerEntry = {
-                id: generateId(),
-                type: 'deduction',
-                unitId: issue.unitId,
-                amount: issue.amount,
-                description: `${issue.type.replace('_', ' ')} - Approved`,
-                relatedIssueId: issueId,
-                status: 'pending',
-                createdAt: Date.now()
-            };
-            await dbPut('ledger', ledgerEntry);
-            await updateCache();
-            
-            showToast('Issue approved! Deduction created.');
-            renderIssues();
-            renderLedger();
-        }
-
-        async function rejectIssue(issueId) {
-            const issue = await dbGet('issues', issueId);
-            if (!issue) return;
-            
-            issue.status = 'rejected';
-            await dbPut('issues', issue);
-            await updateCache();
-            
-            showToast('Issue rejected.');
-            renderIssues();
         }
 
         async function saveLedgerEntry(event) {
             event.preventDefault();
-            
-            const preview = document.getElementById('ledgerPreview');
-            
             const entry = {
                 id: generateId(),
                 type: document.getElementById('ledgerType').value,
                 unitId: document.getElementById('ledgerUnit').value,
                 amount: parseFloat(document.getElementById('ledgerAmount').value),
-                description: document.getElementById('ledgerDescription').value,
-                attachment: preview.dataset?.fileData || null,
-                attachmentName: preview.dataset?.fileName || null,
                 status: 'paid',
                 createdAt: Date.now()
             };
-            
             await dbPut('ledger', entry);
             await updateCache();
             closeModal();
-            showToast('Ledger entry added!');
+            showToast('Entry added!');
             renderLedger();
-        }
-
-        // ==================== SMART SHIFT ALGORITHM ====================
-        async function processSwap(event, scheduleId, originalUnitId) {
-            event.preventDefault();
-            
-            const substituteId = document.getElementById('swapSubstitute').value;
-            const reason = document.getElementById('swapReason').value;
-            
-            if (!substituteId) {
-                showToast('Please select a substitute');
-                return;
-            }
-            
-            // 1. Get schedule entry
-            const schedule = await dbGet('schedules', scheduleId);
-            if (!schedule) return;
-            
-            // 2. Mark as completed by substitute
-            schedule.status = 'completed';
-            schedule.completedBy = substituteId;
-            schedule.completedAs = 'substitute';
-            schedule.swapReason = reason;
-            schedule.completedAt = Date.now();
-            await dbPut('schedules', schedule);
-            
-            // 3. Create debt record
-            const debt = {
-                id: generateId(),
-                fromUnitId: originalUnitId,
-                toUnitId: substituteId,
-                taskId: schedule.taskId,
-                scheduleId: scheduleId,
-                reason: reason,
-                status: 'pending',
-                createdAt: Date.now()
-            };
-            await dbPut('debts', debt);
-            
-            // 4. Swap next slots
-            const task = await dbGet('tasks', schedule.taskId);
-            const eligibleUnits = await getEligibleUnits(task);
-            
-            // Find current index and swap with next
-            const currentIndex = eligibleUnits.findIndex(u => u.id === originalUnitId);
-            const substituteIndex = eligibleUnits.findIndex(u => u.id === substituteId);
-            
-            if (currentIndex !== -1 && substituteIndex !== -1) {
-                // Find next occurrence of originalUnitId
-                const nextOriginalSchedules = (await dbGetAll('schedules'))
-                    .filter(s => s.taskId === task.id && s.unitId === originalUnitId && s.date > schedule.date)
-                    .sort((a, b) => a.date - b.date);
-                
-                // Find next occurrence of substituteId
-                const nextSubstituteSchedules = (await dbGetAll('schedules'))
-                    .filter(s => s.taskId === task.id && s.unitId === substituteId && s.date > schedule.date)
-                    .sort((a, b) => a.date - b.date);
-                
-                if (nextSubstituteSchedules.length > 0) {
-                    const nextSub = nextSubstituteSchedules[0];
-                    nextSub.unitId = originalUnitId;
-                    nextSub.assignedAt = Date.now();
-                    await dbPut('schedules', nextSub);
-                }
-            }
-            
-            await updateCache();
-            closeModal();
-            showToast('Swap completed! Debt recorded.');
-            renderSchedule();
-            renderDebts();
-        }
-
-        async function markTaskComplete(scheduleId) {
-            const schedule = await dbGet('schedules', scheduleId);
-            if (!schedule) return;
-            
-            schedule.status = 'completed';
-            schedule.completedAt = Date.now();
-            await dbPut('schedules', schedule);
-            await updateCache();
-            
-            showToast('Task marked as complete!');
-            renderSchedule();
-            renderDashboard();
-        }
-
-        async function markTaskUnavailable(scheduleId, unitId) {
-            openModal('swap');
-            document.getElementById('modalBody').innerHTML = getSwapForm(scheduleId, unitId);
         }
 
         // ==================== SCHEDULE GENERATION ====================
         async function getEligibleUnits(task) {
-            let units = await dbGetAll('units');
+            let units = dataCache.units.filter(u => u.status === 'active');
             
-            // Filter by status
-            units = units.filter(u => u.status === 'active');
-            
-            // Filter by assignment type
             if (task.assignment.type === 'specific_group') {
-                const group = await dbGet('groups', task.assignment.targetGroupId);
-                if (group) {
-                    units = units.filter(u => group.unitIds.includes(u.id));
-                }
+                const group = dataCache.groups.find(g => g.id === task.assignment.targetGroupId);
+                if (group) units = units.filter(u => group.unitIds.includes(u.id));
             } else if (task.assignment.type === 'independent_only') {
                 units = units.filter(u => !u.groupId);
             }
             
-            // Apply exclusions
             if (task.assignment.excludedUnitIds?.length > 0) {
                 units = units.filter(u => !task.assignment.excludedUnitIds.includes(u.id));
-            }
-            
-            // Apply rotation order
-            if (task.rotationOrder === 'random') {
-                units = units.sort(() => Math.random() - 0.5);
             }
             
             return units;
         }
 
         async function generateSchedule(taskId) {
-            const task = await dbGet('tasks', taskId);
+            const task = dataCache.tasks.find(t => t.id === taskId);
             if (!task) return;
-            
-            // Remove existing schedules for this task
-            const existingSchedules = await dbGetAll('schedules');
-            for (const s of existingSchedules) {
-                if (s.taskId === taskId) {
-                    await dbDelete('schedules', s.id);
-                }
-            }
             
             const units = await getEligibleUnits(task);
             if (units.length === 0) return;
@@ -1371,21 +1080,13 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
-            // Generate schedules for next 90 days
             for (let day = 0; day < 90; day++) {
                 const date = new Date(today);
                 date.setDate(date.getDate() + day);
                 
-                // Check if task should run on this day
                 let shouldRun = false;
-                
-                if (task.frequency.type === 'daily') {
-                    shouldRun = true;
-                } else if (task.frequency.type === 'weekly') {
-                    shouldRun = date.getDay() === 1; // Monday
-                } else if (task.frequency.type === 'custom') {
-                    shouldRun = day % task.frequency.interval === 0;
-                }
+                if (task.frequency.type === 'daily') shouldRun = true;
+                else if (task.frequency.type === 'weekly' && date.getDay() === 1) shouldRun = true;
                 
                 if (shouldRun) {
                     const unitIndex = day % units.length;
@@ -1403,127 +1104,148 @@
         }
 
         async function regenerateAllSchedules() {
-            const tasks = await dbGetAll('tasks');
-            for (const task of tasks) {
+            const schedules = await dbGetAll('schedules');
+            for (const s of schedules) {
+                await dbDelete('schedules', s.id);
+            }
+            for (const task of dataCache.tasks) {
                 await generateSchedule(task.id);
             }
             await updateCache();
-            showToast('All schedules regenerated!');
-            renderSchedule();
+            showToast('Schedules regenerated!');
             renderDashboard();
+        }
+
+        async function markTaskComplete(scheduleId) {
+            const schedules = await dbGetAll('schedules');
+            const schedule = schedules.find(s => s.id === scheduleId);
+            if (schedule) {
+                schedule.status = 'completed';
+                schedule.completedAt = Date.now();
+                await dbPut('schedules', schedule);
+                await updateCache();
+                showToast('Task completed!');
+                renderDashboard();
+            }
         }
 
         // ==================== RENDER FUNCTIONS ====================
         async function renderDashboard() {
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
             
-            const units = await dbGetAll('units');
-            const groups = await dbGetAll('groups');
-            const tasks = await dbGetAll('tasks');
-            const schedules = await dbGetAll('schedules');
+            await updateCache();
             
-            document.getElementById('totalUnitsCount').textContent = units.length;
-            document.getElementById('totalGroupsCount').textContent = groups.length;
-            document.getElementById('totalTasksCount').textContent = tasks.length;
+            document.getElementById('totalUnitsCount').textContent = dataCache.units.length;
+            document.getElementById('totalGroupsCount').textContent = dataCache.groups.length;
+            document.getElementById('totalTasksCount').textContent = dataCache.tasks.length;
             
             const today = new Date().toISOString().split('T')[0];
-            const todaySchedules = schedules.filter(s => s.date === today);
-            const pendingSchedules = schedules.filter(s => s.status === 'pending');
+            const todaySchedules = dataCache.schedules.filter(s => s.date === today);
+            const pendingSchedules = dataCache.schedules.filter(s => s.status === 'pending');
             
             document.getElementById('todayTasksCount').textContent = todaySchedules.length;
             document.getElementById('pendingTasksCount').textContent = pendingSchedules.length;
             
             // Today's schedule
-            const dashboardSchedule = document.getElementById('dashboardSchedule');
+            const dashSchedule = document.getElementById('dashboardSchedule');
             if (todaySchedules.length === 0) {
-                dashboardSchedule.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📅</div>
-                        <h3>No tasks today</h3>
-                        <p>Enjoy your day!</p>
-                    </div>
-                `;
+                dashSchedule.innerHTML = '<div class="empty-state"><div class="icon">📅</div><h3>No tasks today</h3></div>';
             } else {
-                dashboardSchedule.innerHTML = todaySchedules.map(s => {
-                    const task = tasks.find(t => t.id === s.taskId);
-                    const unit = units.find(u => u.id === s.unitId);
-                    const assignee = s.completedBy ? units.find(u => u.id === s.completedBy) : null;
-                    
+                dashSchedule.innerHTML = todaySchedules.map(s => {
+                    const task = dataCache.tasks.find(t => t.id === s.taskId);
+                    const unit = dataCache.units.find(u => u.id === s.unitId);
                     return `
                         <div class="task-card">
                             <div class="task-header">
-                                <div class="task-icon" style="background: ${getTaskColor(task?.name)};">${getTaskIcon(task?.name)}</div>
+                                <div class="task-icon" style="background:#dbeafe;">📋</div>
                                 <div>
-                                    <div class="task-title">${task?.name || 'Unknown Task'}</div>
-                                    <div class="task-meta">
-                                        <span>🏠 ${unit?.name || 'Unknown'}</span>
-                                        ${assignee ? `<span class="badge badge-info">Sub: ${assignee.name}</span>` : ''}
-                                    </div>
+                                    <div class="task-title">${task?.name || 'Task'}</div>
+                                    <div class="task-meta">🏠 ${unit?.name || 'Unit'}</div>
                                 </div>
                             </div>
-                            ${s.status === 'pending' ? `
-                                <div class="task-actions">
-                                    <button class="task-action-btn" style="background: #dcfce7; color: #16a34a;" onclick="markTaskComplete('${s.id}')">✅ Done</button>
-                                    <button class="task-action-btn" style="background: #fef3c7; color: #d97706;" onclick="markTaskUnavailable('${s.id}', '${s.unitId}')">🔄 Swap</button>
-                                </div>
-                            ` : `<span class="badge badge-success">✅ Completed</span>`}
+                            ${s.status === 'pending' ? `<button class="btn btn-success btn-small" onclick="markTaskComplete('${s.id}')">✅ Done</button>` : '<span style="color:var(--success)">✓ Done</span>'}
                         </div>
                     `;
                 }).join('');
             }
             
             // Recent units
-            const dashboardUnits = document.getElementById('dashboardUnits');
-            const recentUnits = units.slice(-3).reverse();
+            const dashUnits = document.getElementById('dashboardUnits');
+            const recentUnits = dataCache.units.slice(-3).reverse();
             if (recentUnits.length === 0) {
-                dashboardUnits.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">🏠</div>
-                        <h3>No units yet</h3>
-                        <p>Add your first unit</p>
-                    </div>
-                `;
+                dashUnits.innerHTML = '<div class="empty-state"><div class="icon">🏠</div><h3>No units yet</h3></div>';
             } else {
-                dashboardUnits.innerHTML = recentUnits.map(unit => `
+                dashUnits.innerHTML = recentUnits.map(u => `
                     <div class="unit-card" onclick="showTab('units')">
-                        <div class="unit-avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white;">🏠</div>
+                        <div class="unit-avatar" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;">🏠</div>
                         <div class="unit-info">
-                            <div class="unit-name">${unit.name}</div>
-                            <div class="unit-occupant">${unit.occupantName || 'No occupant'}</div>
+                            <div class="unit-name">${u.name}</div>
+                            <div class="unit-occupant">${u.occupantName || 'No occupant'}</div>
                         </div>
-                        <span class="unit-status ${unit.status}">${unit.status}</span>
+                        <span class="unit-status ${u.status}">${u.status}</span>
                     </div>
                 `).join('');
             }
         }
 
         async function renderUnits() {
-            const units = await dbGetAll('units');
-            document.getElementById('unitsPageCount').textContent = units.length;
-            
+            await updateCache();
             const container = document.getElementById('allUnitsList');
-            if (units.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">🏠</div>
-                        <h3>No units yet</h3>
-                        <p>Tap + to add your first unit</p>
-                    </div>
-                `;
+            if (dataCache.units.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">🏠</div><h3>No units yet</h3></div>';
             } else {
-                container.innerHTML = units.map(unit => `
+                container.innerHTML = dataCache.units.map(u => `
                     <div class="unit-card">
-                        <div class="unit-avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white;">🏠</div>
+                        <div class="unit-avatar" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;">🏠</div>
                         <div class="unit-info">
-                            <div class="unit-name">${unit.name}</div>
-                            <div class="unit-occupant">${unit.occupantName || 'No occupant'}</div>
-                            ${unit.groupId ? `<span class="task-badge group">In Group</span>` : ''}
+                            <div class="unit-name">${u.name}</div>
+                            <div class="unit-occupant">${u.occupantName || 'No occupant'}</div>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                            <span class="unit-status ${unit.status}">${unit.status}</span>
-                            <div style="display: flex; gap: 5px;">
-                                <button onclick="editUnit('${unit.id}')" style="background: var(--light); border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px;">Edit</button>
-                                <button onclick="deleteUnit('${unit.id}')" style="background: #fee2e2; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; color: #dc2626;">Del</button>
+                        <span class="unit-status ${u.status}">${u.status}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function renderGroups() {
+            await updateCache();
+            const container = document.getElementById('allGroupsList');
+            if (dataCache.groups.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">👥</div><h3>No groups yet</h3></div>';
+            } else {
+                container.innerHTML = dataCache.groups.map(g => {
+                    const groupUnits = dataCache.units.filter(u => g.unitIds.includes(u.id));
+                    return `
+                        <div class="group-card">
+                            <div class="group-header">
+                                <div class="group-name">${g.name}</div>
+                                <div class="group-count">${g.unitIds.length} units</div>
+                            </div>
+                            <div class="group-units">
+                                ${groupUnits.map(u => `<span class="group-unit-chip">🏠 ${u.name}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function renderTasks() {
+            await updateCache();
+            const container = document.getElementById('allTasksList');
+            if (dataCache.tasks.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">📝</div><h3>No tasks yet</h3></div>';
+            } else {
+                container.innerHTML = dataCache.tasks.map(task => `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon" style="background:#fef3c7;">📋</div>
+                            <div style="flex:1;">
+                                <div class="task-title">${task.name}</div>
+                                <div class="task-meta">
+                                    <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
+                                    <span class="task-badge ${task.assignment.type}">${task.assignment.type.replace('_',' ')}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1531,688 +1253,77 @@
             }
         }
 
-        async function editUnit(unitId) {
-            const unit = await dbGet('units', unitId);
-            if (!unit) return;
-            
-            const overlay = document.getElementById('modalOverlay');
-            document.getElementById('modalTitle').textContent = '✏️ Edit Unit';
-            document.getElementById('modalBody').innerHTML = getUnitForm(unit);
-            overlay.classList.add('show');
-        }
-
-        async function deleteUnit(unitId) {
-            if (!confirm('Delete this unit? This will also remove from schedules.')) return;
-            
-            await dbDelete('units', unitId);
-            
-            // Remove from groups
-            const groups = await dbGetAll('groups');
-            for (const group of groups) {
-                if (group.unitIds.includes(unitId)) {
-                    group.unitIds = group.unitIds.filter(id => id !== unitId);
-                    await dbPut('groups', group);
-                }
-            }
-            
-            await updateCache();
-            showToast('Unit deleted!');
-            renderUnits();
-            renderDashboard();
-        }
-
-        async function renderGroups() {
-            const groups = await dbGetAll('groups');
-            const units = await dbGetAll('units');
-            
-            document.getElementById('groupsPageCount').textContent = groups.length;
-            
-            const container = document.getElementById('allGroupsList');
-            if (groups.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">👥</div>
-                        <h3>No groups yet</h3>
-                        <p>Create groups to organize units</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = groups.map(group => {
-                    const groupUnits = units.filter(u => group.unitIds.includes(u.id));
-                    return `
-                        <div class="group-card">
-                            <div class="group-header">
-                                <div class="group-name">${group.name}</div>
-                                <div class="group-count">${group.unitIds.length} units</div>
-                            </div>
-                            <div class="group-units">
-                                ${groupUnits.map(u => `<span class="group-unit-chip">🏠 ${u.name}</span>`).join('')}
-                            </div>
-                            <div style="margin-top: 10px; display: flex; gap: 8px;">
-                                <button onclick="editGroup('${group.id}')" class="btn btn-small" style="background: rgba(255,255,255,0.2); color: white;">Edit</button>
-                                <button onclick="deleteGroup('${group.id}')" class="btn btn-small" style="background: rgba(239,68,68,0.3); color: white;">Delete</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-
-        async function editGroup(groupId) {
-            const group = await dbGet('groups', groupId);
-            if (!group) return;
-            
-            const overlay = document.getElementById('modalOverlay');
-            document.getElementById('modalTitle').textContent = '✏️ Edit Group';
-            document.getElementById('modalBody').innerHTML = getGroupForm(group);
-            overlay.classList.add('show');
-        }
-
-        async function deleteGroup(groupId) {
-            if (!confirm('Delete this group? Units will become independent.')) return;
-            
-            const group = await dbGet('groups', groupId);
-            if (group) {
-                // Remove group reference from units
-                const units = await dbGetAll('units');
-                for (const unit of units) {
-                    if (unit.groupId === groupId) {
-                        delete unit.groupId;
-                        await dbPut('units', unit);
-                    }
-                }
-            }
-            
-            await dbDelete('groups', groupId);
-            await updateCache();
-            showToast('Group deleted!');
-            renderGroups();
-            renderDashboard();
-        }
-
-        async function renderTasks() {
-            const tasks = await dbGetAll('tasks');
-            const groups = await dbGetAll('groups');
-            
-            const container = document.getElementById('allTasksList');
-            if (tasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📝</div>
-                        <h3>No tasks yet</h3>
-                        <p>Create your first task configuration</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = tasks.map(task => {
-                    const group = task.assignment.type === 'specific_group' ? groups.find(g => g.id === task.assignment.targetGroupId) : null;
-                    return `
-                        <div class="task-card">
-                            <div class="task-header">
-                                <div class="task-icon" style="background: ${getTaskColor(task.name)};">${getTaskIcon(task.name)}</div>
-                                <div style="flex: 1;">
-                                    <div class="task-title">${task.name}</div>
-                                    <div class="task-meta">
-                                        <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
-                                        <span class="task-badge ${task.assignment.type}">${task.assignment.type.replace('_', ' ')}</span>
-                                        ${group ? `<span>→ ${group.name}</span>` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            ${task.description ? `<p style="font-size: 12px; color: var(--gray); margin-bottom: 10px;">${task.description}</p>` : ''}
-                            <div style="display: flex; gap: 8px;">
-                                <button onclick="editTask('${task.id}')" class="btn btn-small btn-outline">Edit</button>
-                                <button onclick="regenerateTaskSchedule('${task.id}')" class="btn btn-small btn-purple" style="color: white;">🔄 Regenerate</button>
-                                <button onclick="deleteTask('${task.id}')" class="btn btn-small btn-danger">Delete</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-
-        async function editTask(taskId) {
-            const task = await dbGet('tasks', taskId);
-            if (!task) return;
-            
-            const overlay = document.getElementById('modalOverlay');
-            document.getElementById('modalTitle').textContent = '✏️ Edit Task';
-            document.getElementById('modalBody').innerHTML = getTaskForm(task);
-            overlay.classList.add('show');
-        }
-
-        async function regenerateTaskSchedule(taskId) {
-            await generateSchedule(taskId);
-            await updateCache();
-            showToast('Schedule regenerated!');
-            renderSchedule();
-        }
-
-        async function deleteTask(taskId) {
-            if (!confirm('Delete this task and its schedules?')) return;
-            
-            // Delete schedules
-            const schedules = await dbGetAll('schedules');
-            for (const s of schedules) {
-                if (s.taskId === taskId) {
-                    await dbDelete('schedules', s.id);
-                }
-            }
-            
-            await dbDelete('tasks', taskId);
-            await updateCache();
-            showToast('Task deleted!');
-            renderTasks();
-            renderDashboard();
-        }
-
         async function renderSchedule() {
-            const schedules = await dbGetAll('schedules');
-            const tasks = await dbGetAll('tasks');
-            const units = await dbGetAll('units');
-            
-            const taskFilter = document.getElementById('scheduleTaskFilter');
-            const monthFilter = document.getElementById('scheduleMonthFilter');
-            
-            // Populate filters
-            taskFilter.innerHTML = '<option value="">All Tasks</option>' + tasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-            
-            const months = [...new Set(schedules.map(s => s.date.substring(0, 7)))].sort();
-            monthFilter.innerHTML = months.map(m => `<option value="${m}">${m}</option>`).join('');
-            
-            // Filter schedules
-            let filtered = schedules;
-            if (taskFilter.value) {
-                filtered = filtered.filter(s => s.taskId === taskFilter.value);
-            }
-            if (monthFilter.value) {
-                filtered = filtered.filter(s => s.date.startsWith(monthFilter.value));
-            }
-            
-            // Sort by date
-            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-            
+            await updateCache();
             const container = document.getElementById('fullSchedule');
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">📅</div>
-                        <h3>No schedules</h3>
-                        <p>Create tasks to generate schedules</p>
-                    </div>
-                `;
+            const upcoming = dataCache.schedules.filter(s => s.date >= new Date().toISOString().split('T')[0]).slice(0, 30);
+            
+            if (upcoming.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">📅</div><h3>No schedules</h3></div>';
             } else {
-                container.innerHTML = filtered.slice(0, 50).map(s => {
-                    const task = tasks.find(t => t.id === s.taskId);
-                    const unit = units.find(u => u.id === s.unitId);
+                container.innerHTML = upcoming.map(s => {
+                    const task = dataCache.tasks.find(t => t.id === s.taskId);
+                    const unit = dataCache.units.find(u => u.id === s.unitId);
                     const date = new Date(s.date);
-                    const isToday = s.date === new Date().toISOString().split('T')[0];
-                    const isPast = new Date(s.date) < new Date() && !isToday;
-                    
-                    let statusClass = s.status;
-                    let statusText = s.status;
-                    
-                    if (s.completedAs === 'substitute') {
-                        statusClass = 'substitute';
-                        statusText = 'Substitute';
-                    } else if (isPast && s.status === 'pending') {
-                        statusClass = 'overdue';
-                        statusText = 'Overdue';
-                    }
-                    
-                    const assignee = s.completedBy ? units.find(u => u.id === s.completedBy) : null;
-                    
                     return `
-                        <div class="schedule-item" style="${isToday ? 'border-left: 3px solid var(--primary);' : ''}">
+                        <div class="schedule-item">
                             <div class="schedule-date">
                                 <div class="schedule-day">${date.getDate()}</div>
-                                <div class="schedule-month">${date.toLocaleString('en', { month: 'short' })}</div>
+                                <div class="schedule-month">${date.toLocaleString('en',{month:'short'})}</div>
                             </div>
                             <div class="schedule-info">
-                                <div class="schedule-task">${task?.name || 'Unknown'}</div>
-                                <div class="schedule-assignee">
-                                    🏠 ${unit?.name || 'Unknown'}
-                                    ${assignee ? `<span style="color: var(--info);"> → ${assignee.name}</span>` : ''}
-                                </div>
+                                <div class="schedule-task">${task?.name || 'Task'}</div>
+                                <div class="schedule-assignee">🏠 ${unit?.name || 'Unit'}</div>
                             </div>
-                            <span class="schedule-status ${statusClass}">${statusText}</span>
+                            <span class="schedule-status ${s.status}">${s.status}</span>
                         </div>
                     `;
                 }).join('');
             }
-        }
-
-        async function renderCyclePreview() {
-            const tasks = await dbGetAll('tasks');
-            const units = await dbGetAll('units');
-            const container = document.getElementById('cyclePreviewContainer');
-            
-            if (tasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">🔄</div>
-                        <h3>No tasks configured</h3>
-                        <p>Create tasks to see cycle preview</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            for (const task of tasks) {
-                const eligibleUnits = await getEligibleUnits(task);
-                
-                html += `
-                    <div class="card" style="margin-bottom: 15px;">
-                        <div class="card-header">
-                            <h3 class="card-title">${getTaskIcon(task.name)} ${task.name}</h3>
-                            <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
-                        </div>
-                        <div class="cycle-preview">
-                            ${eligibleUnits.slice(0, 10).map((u, i) => `
-                                <div class="cycle-item">
-                                    <div class="cycle-position">#${i + 1}</div>
-                                    <div class="cycle-unit">🏠 ${u.name}</div>
-                                    <div class="cycle-date">${u.occupantName || 'No occupant'}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            container.innerHTML = html;
         }
 
         async function renderLedger() {
-            const ledger = await dbGetAll('ledger');
-            const units = await dbGetAll('units');
-            
-            const unitFilter = document.getElementById('ledgerUnitFilter');
-            unitFilter.innerHTML = '<option value="">All Units</option>' + units.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
-            
-            let filtered = ledger;
-            if (unitFilter.value) {
-                filtered = ledger.filter(e => e.unitId === unitFilter.value);
-            }
-            
-            filtered.sort((a, b) => b.createdAt - a.createdAt);
-            
-            // Stats
-            const totalRent = filtered.filter(e => e.type === 'rent').reduce((sum, e) => sum + e.amount, 0);
-            const totalBills = filtered.filter(e => e.type === 'eb_bill').reduce((sum, e) => sum + e.amount, 0);
-            const totalDeductions = filtered.filter(e => e.type === 'deduction').reduce((sum, e) => sum + e.amount, 0);
+            await updateCache();
+            const totalRent = dataCache.ledger.filter(e => e.type === 'rent').reduce((sum, e) => sum + e.amount, 0);
+            const totalBills = dataCache.ledger.filter(e => e.type === 'eb_bill').reduce((sum, e) => sum + e.amount, 0);
             
             document.getElementById('ledgerStats').innerHTML = `
-                <div class="stat-card primary">
-                    <div class="value">${formatCurrency(totalRent)}</div>
-                    <div class="label">Total Rent</div>
-                </div>
-                <div class="stat-card warning">
-                    <div class="value">${formatCurrency(totalBills)}</div>
-                    <div class="label">EB Bills</div>
-                </div>
-                <div class="stat-card danger">
-                    <div class="value">${formatCurrency(totalDeductions)}</div>
-                    <div class="label">Deductions</div>
-                </div>
-                <div class="stat-card success">
-                    <div class="value">${formatCurrency(totalRent - totalBills - totalDeductions)}</div>
-                    <div class="label">Net</div>
-                </div>
+                <div class="stat-card primary"><div class="value">${formatCurrency(totalRent)}</div><div class="label">Total Rent</div></div>
+                <div class="stat-card warning"><div class="value">${formatCurrency(totalBills)}</div><div class="label">EB Bills</div></div>
             `;
             
             const container = document.getElementById('allLedgerEntries');
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">💰</div>
-                        <h3>No ledger entries</h3>
-                        <p>Add rent or bills to track finances</p>
-                    </div>
-                `;
+            if (dataCache.ledger.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="icon">💰</div><h3>No entries</h3></div>';
             } else {
-                container.innerHTML = filtered.map(entry => {
-                    const unit = units.find(u => u.id === entry.unitId);
-                    const isExpense = entry.type === 'eb_bill' || entry.type === 'maintenance' || entry.type === 'deduction';
-                    
+                container.innerHTML = dataCache.ledger.map(e => {
+                    const unit = dataCache.units.find(u => u.id === e.unitId);
+                    const isExpense = e.type !== 'rent';
                     return `
                         <div class="ledger-item">
-                            <div class="ledger-icon" style="background: ${isExpense ? '#fee2e2' : '#dcfce7'}; color: ${isExpense ? '#dc2626' : '#16a34a'};">
-                                ${entry.type === 'rent' ? '🏠' : entry.type === 'eb_bill' ? '💡' : entry.type === 'deduction' ? '➖' : '🔧'}
-                            </div>
+                            <div class="ledger-icon" style="background:${isExpense?'#fee2e2':'#dcfce7'};color:${isExpense?'#dc2626':'#16a34a'};">${e.type==='rent'?'🏠':e.type==='eb_bill'?'💡':'🔧'}</div>
                             <div class="ledger-info">
-                                <div class="ledger-title">${entry.type.replace('_', ' ').toUpperCase()}</div>
-                                <div class="ledger-date">
-                                    🏠 ${unit?.name || 'Unknown'} • ${formatDate(entry.createdAt)}
-                                    ${entry.description ? ` • ${entry.description}` : ''}
-                                </div>
+                                <div class="ledger-title">${e.type.toUpperCase()}</div>
+                                <div class="ledger-date">🏠 ${unit?.name || 'Unknown'} • ${formatDate(e.createdAt)}</div>
                             </div>
-                            <div class="ledger-amount ${isExpense ? 'expense' : 'income'}">
-                                ${isExpense ? '-' : '+'}${formatCurrency(entry.amount)}
-                            </div>
+                            <div class="ledger-amount ${isExpense?'expense':'income'}">${isExpense?'-':'+'}${formatCurrency(e.amount)}</div>
                         </div>
                     `;
                 }).join('');
             }
-        }
-
-        async function renderIssues() {
-            const issues = await dbGetAll('issues');
-            const units = await dbGetAll('units');
-            
-            let filtered = issues;
-            const statusFilter = document.getElementById('issueStatusFilter').value;
-            if (statusFilter) {
-                filtered = issues.filter(i => i.status === statusFilter);
-            }
-            
-            filtered.sort((a, b) => b.createdAt - a.createdAt);
-            
-            const container = document.getElementById('allIssues');
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">🔧</div>
-                        <h3>No issues</h3>
-                        <p>Maintenance issues will appear here</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = filtered.map(issue => {
-                    const unit = units.find(u => u.id === issue.unitId);
-                    const typeLabels = {
-                        motor_repair: 'Motor Repair',
-                        drainage_fix: 'Drainage Fix',
-                        plumbing: 'Plumbing',
-                        electrical: 'Electrical',
-                        other: 'Other'
-                    };
-                    
-                    return `
-                        <div class="card">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                                <div>
-                                    <strong>${typeLabels[issue.type] || issue.type}</strong>
-                                    <div style="font-size: 12px; color: var(--gray);">🏠 ${unit?.name || 'Unknown'}</div>
-                                </div>
-                                <span class="badge badge-${issue.status === 'approved' ? 'success' : issue.status === 'rejected' ? 'danger' : 'warning'}">
-                                    ${issue.status}
-                                </span>
-                            </div>
-                            <div style="font-size: 18px; font-weight: 600; color: var(--danger); margin-bottom: 10px;">
-                                ${formatCurrency(issue.amount)}
-                            </div>
-                            ${issue.description ? `<p style="font-size: 12px; color: var(--gray); margin-bottom: 10px;">${issue.description}</p>` : ''}
-                            ${issue.attachment ? `<img src="${issue.attachment}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="previewImage('${issue.attachment}')">` : ''}
-                            <div style="font-size: 11px; color: var(--gray); margin-top: 10px;">${formatDate(issue.createdAt)}</div>
-                            ${issue.status === 'pending' ? `
-                                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                                    <button onclick="approveIssue('${issue.id}')" class="btn btn-small btn-success">✅ Approve</button>
-                                    <button onclick="rejectIssue('${issue.id}')" class="btn btn-small btn-danger">❌ Reject</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-
-        async function renderDebts() {
-            const debts = await dbGetAll('debts');
-            const units = await dbGetAll('units');
-            
-            const container = document.getElementById('adminDebts');
-            if (debts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">🔄</div>
-                        <h3>No debts</h3>
-                        <p>Swap records will appear here</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = debts.map(debt => {
-                    const fromUnit = units.find(u => u.id === debt.fromUnitId);
-                    const toUnit = units.find(u => u.id === debt.toUnitId);
-                    
-                    return `
-                        <div class="card" style="margin-bottom: 10px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>${fromUnit?.name || '?'}</span>
-                                <span style="color: var(--gray);">→</span>
-                                <span>${toUnit?.name || '?'}</span>
-                                <span class="debt-badge">${debt.status}</span>
-                            </div>
-                            ${debt.reason ? `<div style="font-size: 11px; color: var(--gray); margin-top: 5px;">${debt.reason}</div>` : ''}
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-
-        async function renderAdmin(tab = 'units') {
-            switchAdminTab(tab);
-        }
-
-        function switchAdminTab(tab) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            event?.target?.classList?.add('active') || document.querySelector(`.admin-tab[onclick="switchAdminTab('${tab}')"]`)?.classList.add('active');
-            
-            const content = document.getElementById('adminContent');
-            
-            switch(tab) {
-                case 'units':
-                    renderAdminUnits(content);
-                    break;
-                case 'groups':
-                    renderAdminGroups(content);
-                    break;
-                case 'tasks':
-                    renderAdminTasks(content);
-                    break;
-                case 'debts':
-                    content.innerHTML = '<div id="adminDebts"></div>';
-                    renderDebts();
-                    break;
-                case 'data':
-                    renderAdminData(content);
-                    break;
-            }
-        }
-
-        async function renderAdminUnits(container) {
-            const units = await dbGetAll('units');
-            const groups = await dbGetAll('groups');
-            
-            container.innerHTML = `
-                <div class="card">
-                    <h3 style="margin-bottom: 15px;">📊 Units Overview</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card primary">
-                            <div class="value">${units.length}</div>
-                            <div class="label">Total Units</div>
-                        </div>
-                        <div class="stat-card success">
-                            <div class="value">${units.filter(u => u.status === 'active').length}</div>
-                            <div class="label">Active</div>
-                        </div>
-                        <div class="stat-card danger">
-                            <div class="value">${units.filter(u => u.status === 'vacant').length}</div>
-                            <div class="label">Vacant</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="value">${groups.length}</div>
-                            <div class="label">Groups</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card" style="margin-top: 15px;">
-                    <h3 style="margin-bottom: 15px;">🏠 Unit Details</h3>
-                    ${units.map(u => {
-                        const group = groups.find(g => g.id === u.groupId);
-                        return `
-                            <div style="padding: 10px; border-bottom: 1px solid var(--light); display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <strong>${u.name}</strong>
-                                    <div style="font-size: 11px; color: var(--gray);">
-                                        ${u.occupantName || 'No occupant'} • ${u.status}
-                                        ${group ? ` • ${group.name}` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        }
-
-        async function renderAdminGroups(container) {
-            const groups = await dbGetAll('groups');
-            const units = await dbGetAll('units');
-            
-            container.innerHTML = `
-                <div class="card">
-                    <h3 style="margin-bottom: 15px;">👥 Groups Configuration</h3>
-                    ${groups.map(g => {
-                        const members = units.filter(u => g.unitIds.includes(u.id));
-                        return `
-                            <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); border-radius: 12px; color: white;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <strong>${g.name}</strong>
-                                    <span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 8px; font-size: 11px;">${g.unitIds.length} units</span>
-                                </div>
-                                <div style="font-size: 12px; opacity: 0.9;">
-                                    ${members.map(m => `• ${m.name}`).join('<br>') || 'No units assigned'}
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                    ${groups.length === 0 ? '<p style="color: var(--gray); text-align: center;">No groups created yet</p>' : ''}
-                </div>
-            `;
-        }
-
-        async function renderAdminTasks(container) {
-            const tasks = await dbGetAll('tasks');
-            const groups = await dbGetAll('groups');
-            const units = await dbGetAll('units');
-            
-            container.innerHTML = `
-                <div class="card">
-                    <h3 style="margin-bottom: 15px;">📝 Task JSON Configuration</h3>
-                    <p style="font-size: 12px; color: var(--gray); margin-bottom: 15px;">
-                        Each task's JSON configuration. You can edit the JSON directly.
-                    </p>
-                    ${tasks.map(task => {
-                        const eligibleUnits = units.filter(u => {
-                            if (task.assignment.type === 'specific_group') {
-                                const group = groups.find(g => g.id === task.assignment.targetGroupId);
-                                return group?.unitIds.includes(u.id);
-                            }
-                            if (task.assignment.type === 'independent_only') {
-                                return !u.groupId;
-                            }
-                            return true;
-                        }).filter(u => !task.assignment.excludedUnitIds?.includes(u.id));
-                        
-                        return `
-                            <div style="margin-bottom: 15px; padding: 12px; background: var(--light); border-radius: 10px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <strong>${task.name}</strong>
-                                    <span style="font-size: 11px; color: var(--gray);">${eligibleUnits.length} eligible</span>
-                                </div>
-                                <details>
-                                    <summary style="cursor: pointer; font-size: 12px; color: var(--primary);">View JSON Config</summary>
-                                    <pre style="margin-top: 10px; padding: 10px; background: var(--dark); color: #a5f3fc; border-radius: 8px; font-size: 10px; overflow-x: auto;">${JSON.stringify(task, null, 2)}</pre>
-                                </details>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        }
-
-        function renderAdminData(container) {
-            container.innerHTML = `
-                <div class="card">
-                    <h3 style="margin-bottom: 15px;">💾 Data Management</h3>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <h4 style="font-size: 13px; margin-bottom: 8px;">Export All Data</h4>
-                        <button class="btn btn-outline" onclick="exportData()">📤 Export to JSON</button>
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <h4 style="font-size: 13px; margin-bottom: 8px;">Import Data</h4>
-                        <input type="file" accept=".json" style="display:none" id="adminImportFile" onchange="importData(event)">
-                        <button class="btn btn-outline" onclick="document.getElementById('adminImportFile').click()">📥 Import JSON</button>
-                    </div>
-                    
-                    <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border-radius: 10px;">
-                        <h4 style="font-size: 13px; color: #dc2626; margin-bottom: 8px;">⚠️ Danger Zone</h4>
-                        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ==================== UTILITY FUNCTIONS ====================
-        function getTaskColor(taskName) {
-            const colors = {
-                'water': '#dbeafe',
-                'pump': '#dbeafe',
-                'street': '#fef3c7',
-                'cleaning': '#fef3c7',
-                'drainage': '#fce7f3',
-                'drain': '#fce7f3',
-                'garbage': '#dcfce7',
-                'waste': '#dcfce7',
-                'electrical': '#fef3c7',
-                'default': '#f3f4f6'
-            };
-            
-            const name = (taskName || '').toLowerCase();
-            for (const [key, color] of Object.entries(colors)) {
-                if (name.includes(key)) return color;
-            }
-            return colors.default;
-        }
-
-        function getTaskIcon(taskName) {
-            const icons = {
-                'water': '💧',
-                'pump': '💧',
-                'street': '🧹',
-                'cleaning': '🧹',
-                'drainage': '🚰',
-                'drain': '🚰',
-                'garbage': '🗑️',
-                'waste': '🗑️',
-                'electrical': '💡',
-                'motor': '⚙️',
-                'plumbing': '🔧',
-                'default': '📋'
-            };
-            
-            const name = (taskName || '').toLowerCase();
-            for (const [key, icon] of Object.entries(icons)) {
-                if (name.includes(key)) return icon;
-            }
-            return icons.default;
         }
 
         // ==================== DATA EXPORT/IMPORT ====================
         async function exportData() {
+            await updateCache();
             const data = {
-                units: await dbGetAll('units'),
-                groups: await dbGetAll('groups'),
-                tasks: await dbGetAll('tasks'),
-                schedules: await dbGetAll('schedules'),
-                ledger: await dbGetAll('ledger'),
-                issues: await dbGetAll('issues'),
-                debts: await dbGetAll('debts'),
+                units: dataCache.units,
+                groups: dataCache.groups,
+                tasks: dataCache.tasks,
+                schedules: dataCache.schedules,
+                ledger: dataCache.ledger,
+                issues: dataCache.issues,
+                debts: dataCache.debts,
                 exportedAt: Date.now()
             };
             
@@ -2223,112 +1334,39 @@
             a.download = `omnitask-backup-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             URL.revokeObjectURL(url);
-            
             showToast('Data exported!');
         }
 
         async function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    
-                    // Clear existing data
-                    for (const store of Object.values(STORES)) {
-                        await dbClear(store);
+                    for (const store of Object.values(STORES)) { await dbClear(store); }
+                    for (const [key, items] of Object.entries(data)) {
+                        if (STORES[key] && Array.isArray(items)) {
+                            for (const item of items) { await dbPut(key, item); }
+                        }
                     }
-                    
-                    // Import data
-                    if (data.units) for (const u of data.units) await dbPut('units', u);
-                    if (data.groups) for (const g of data.groups) await dbPut('groups', g);
-                    if (data.tasks) for (const t of data.tasks) await dbPut('tasks', t);
-                    if (data.schedules) for (const s of data.schedules) await dbPut('schedules', s);
-                    if (data.ledger) for (const l of data.ledger) await dbPut('ledger', l);
-                    if (data.issues) for (const i of data.issues) await dbPut('issues', i);
-                    if (data.debts) for (const d of data.debts) await dbPut('debts', d);
-                    
                     await updateCache();
-                    showToast('Data imported successfully!');
+                    showToast('Data imported!');
                     renderDashboard();
-                    renderUnits();
-                    renderGroups();
-                    renderTasks();
-                    renderSchedule();
-                    renderLedger();
-                    renderIssues();
-                } catch (err) {
-                    showToast('Error importing data!');
-                    console.error(err);
-                }
+                } catch (err) { showToast('Import failed!'); }
             };
             reader.readAsText(file);
         }
 
         async function clearAllData() {
-            if (!confirm('Are you sure? This will delete ALL data permanently!')) return;
-            if (!confirm('Last warning! Type "DELETE" in the next prompt to confirm.')) return;
-            
-            for (const store of Object.values(STORES)) {
-                await dbClear(store);
-            }
-            
+            if (!confirm('Delete ALL data?')) return;
+            for (const store of Object.values(STORES)) { await dbClear(store); }
             await updateCache();
-            showToast('All data cleared!');
+            showToast('Data cleared!');
             renderDashboard();
-            renderUnits();
-            renderGroups();
-            renderTasks();
-            renderSchedule();
-            renderLedger();
-            renderIssues();
         }
 
-        // ==================== INITIALIZATION ====================
-        async function init() {
-            try {
-                await initDB();
-                await renderDashboard();
-                showToast('OmniTask loaded!');
-                
-                // Register service worker
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register('sw.js').catch(() => {});
-                }
-            } catch (err) {
-                console.error('Init error:', err);
-                showToast('Error loading app');
-            }
-        }
-
-        // Override dbGetAllSync for synchronous access
-        // Cache for sync-like access
-        let dataCache = {
-            units: [],
-            groups: [],
-            tasks: [],
-            schedules: [],
-            ledger: [],
-            issues: [],
-            debts: []
-        };
-
-        async function updateCache() {
-            dataCache.units = await dbGetAll('units');
-            dataCache.groups = await dbGetAll('groups');
-            dataCache.tasks = await dbGetAll('tasks');
-            dataCache.schedules = await dbGetAll('schedules');
-            dataCache.ledger = await dbGetAll('ledger');
-            dataCache.issues = await dbGetAll('issues');
-            dataCache.debts = await dbGetAll('debts');
-        }
-
-        function dbGetAllSync(storeName) {
-            return dataCache[storeName] || [];
-        }
-
+        // ==================== INIT ====================
         async function init() {
             try {
                 await initDB();
@@ -2336,7 +1374,6 @@
                 await renderDashboard();
                 showToast('OmniTask loaded!');
                 
-                // Register service worker
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('sw.js').catch(() => {});
                 }
@@ -2351,37 +1388,14 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-        <a class="nav-item active" onclick="showTab('dashboard')">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a class="nav-item" onclick="showTab('units')">
-            <span class="icon">🏠</span>
-            <span>Units</span>
-        </a>
-        <a class="nav-item" onclick="showTab('groups')">
-            <span class="icon">👥</span>
-            <span>Groups</span>
-        </a>
-        <a class="nav-item" onclick="showTab('schedule')">
-            <span class="icon">📅</span>
-            <span>Schedule</span>
-        </a>
-        <a class="nav-item" onclick="showTab('cycle')">
-            <span class="icon">🔄</span>
-            <span>Cycles</span>
-        </a>
-        <a class="nav-item" onclick="showTab('ledger')">
-            <span class="icon">💰</span>
-            <span>Ledger</span>
-        </a>
-        <a class="nav-item" onclick="showTab('admin')">
-            <span class="icon">⚙️</span>
-            <span>Admin</span>
-        </a>
+        <a class="nav-item active" onclick="showTab('dashboard')"><span class="icon">🏠</span><span>Home</span></a>
+        <a class="nav-item" onclick="showTab('units')"><span class="icon">🏠</span><span>Units</span></a>
+        <a class="nav-item" onclick="showTab('groups')"><span class="icon">👥</span><span>Groups</span></a>
+        <a class="nav-item" onclick="showTab('schedule')"><span class="icon">📅</span><span>Schedule</span></a>
+        <a class="nav-item" onclick="showTab('ledger')"><span class="icon">💰</span><span>Ledger</span></a>
+        <a class="nav-item" onclick="showTab('sync')"><span class="icon">⚡</span><span>Sync</span></a>
     </div>
 
-    <!-- FAB Button -->
     <button class="fab" onclick="toggleRightMenu()">☰</button>
 </body>
 </html>

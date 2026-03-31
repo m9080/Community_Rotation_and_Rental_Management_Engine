@@ -1,160 +1,101 @@
 # OmniTask - Community Rotation & Rental Management Engine
 
-A highly configurable, PWA-based Community Rotation & Rental Management Engine that works fully offline and can be hosted on GitHub Pages.
+A PWA-based Community Rotation & Rental Management Engine with **cloud sync** support.
 
 ## Features
 
-### Core Features
-- **Flexible Unit Model** - Add unlimited rental units with occupant info
-- **Dynamic Groups** - Create sets/groups to organize units
-- **Task Configuration Engine** - JSON-based task definitions with:
-  - Assignment types: All Units, Specific Group, Independent Only
-  - Exclusions - exclude specific units from tasks
-  - Frequency: Daily, Weekly, or Custom (every X days)
-  - Rotation Order: Ascending, Descending, Random
-
-### Smart Shift Algorithm
-- When a member is unavailable, they can swap with another
-- **Debt-Based Rotation**: The system tracks swaps and schedules debt repayment
-- Fair rotation maintained through automatic slot swapping
-
-### Financial & Maintenance
-- **Ledger System**: Track Rent, EB Bills, Maintenance
-- **Issue Reporting**: Report maintenance issues with receipts
-- **Auto-Deduction**: Approved issue costs auto-deduct from unit's ledger
-- **File Upload**: Support for bill/receipt photos and PDFs
-
-### Admin Dashboard
-- Unit Manager
-- Group Builder
-- Task Logic Designer (with JSON view)
-- Cycle Preview (next 10 rotations)
-- Debt Tracking
-- Data Export/Import
-
-## PWA Features
-- Works fully offline
-- Installable on mobile/desktop
-- IndexedDB for local storage
-- Export/Import data as JSON
+- **Flexible Unit Model** - Add unlimited rental units
+- **Dynamic Groups** - Organize units into sets
+- **Task Configuration** - Daily/Weekly/Custom frequency, All Units/Group assignments
+- **Smart Shift Algorithm** - Swap with debt tracking
+- **Financial Ledger** - Track rent, EB bills, maintenance
+- **Auto-Deduction** - Approved issues auto-deduct from rent
+- **Cloud Sync (NEW!)** - Sync data across mobile + PC using Firebase
 
 ## Deployment to GitHub Pages
 
-### Method 1: Using GitHub Web Interface
+1. Upload these files to your GitHub repo:
+   - `index.html`
+   - `manifest.json`
+   - `sw.js`
 
-1. **Create a new repository on GitHub**
-   - Go to https://github.com/new
-   - Name your repository (e.g., `omnitask`)
-   - Make it Public
-   - Click "Create repository"
+2. Enable GitHub Pages in repo Settings → Pages → Source: main/root
 
-2. **Upload files**
-   - Click "uploading an existing file"
-   - Drag and drop these files:
-     - `index.html`
-     - `manifest.json`
-     - `sw.js`
-   - Click "Commit changes"
+## Cloud Sync Setup (Firebase)
 
-3. **Enable GitHub Pages**
-   - Go to repository Settings > Pages
-   - Under "Source", select "Deploy from a branch"
-   - Select "main" branch and "/ (root)" folder
-   - Click "Save"
+### Option 1: Use Demo Firebase (No Setup)
+The app includes a demo Firebase config. It will work but you should replace it with your own.
 
-4. **Access your app**
-   - Your app will be live at: `https://yourusername.github.io/omnitask/`
+### Option 2: Create Your Own Firebase Project (Recommended)
 
-### Method 2: Using Git Commands
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Click "Add project" → Name it (e.g., "omnitask-sync")
+3. Enable **Authentication**:
+   - Go to Authentication → Sign-in method
+   - Enable "Google" provider
+4. Enable **Firestore Database**:
+   - Go to Firestore Database → Create database
+   - Start in "test mode" (for development)
+5. Get your config:
+   - Go to Project Settings (gear icon)
+   - Scroll to "Your apps" → Click Web icon (</>)
+   - Register app and copy the config
+6. Update `index.html`:
+   - Replace the `firebaseConfig` object with your config
 
-```bash
-# Navigate to project folder
-cd OmniTask
-
-# Initialize git
-git init
-
-# Add all files
-git add .
-
-# Commit
-git commit -m "Initial commit - OmniTask"
-
-# Add remote (replace with your repo URL)
-git remote add origin https://github.com/yourusername/omnitask.git
-
-# Push to GitHub
-git push -u origin main
-
-# Then enable GitHub Pages in repo Settings
+```javascript
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef"
+};
 ```
 
-## How to Use
+### How Cloud Sync Works
 
-### 1. Add Units
-- Go to **Units** tab
-- Tap **+** to add a unit
-- Enter unit name and occupant details
+1. **Sign in** with Google on any device (mobile/PC)
+2. Data automatically **uploads to Firebase**
+3. On another device, sign in with same Google account
+4. Click **"Sync Now"** or it auto-loads on sign-in
+5. All data syncs across devices in real-time
 
-### 2. Create Groups (Optional)
-- Go to **Groups** tab
-- Tap **+** to create a group
-- Select units to add to the group
+### Sync Status Indicators
 
-### 3. Create Tasks
-- Go to **Tasks** tab (or Admin > Tasks)
-- Tap **+** to create a task
-- Configure:
-  - **Frequency**: Daily, Weekly, or Custom days
-  - **Assignment**: All Units, Specific Group, or Independent
-  - **Exclusions**: Optionally exclude units
-  - **Rotation Order**: How units are ordered in rotation
+- 🟢 **Connected** - Signed in and synced
+- 🟡 **Syncing** - Currently syncing data
+- 🔴 **Disconnected** - Not signed in (local only)
 
-### 4. View Schedule
-- Go to **Schedule** tab
-- See all upcoming task assignments
-- Filter by task or month
+## Without Firebase (Offline Mode)
 
-### 5. Smart Swap
-- When a task is assigned:
-  - Tap **Done** to mark complete
-  - Tap **Swap** to request a substitute
-- The system will:
-  - Record the swap as a debt
-  - Schedule automatic payback
+The app works 100% offline using IndexedDB. Cloud sync is optional.
 
-### 6. Financial Ledger
-- Track rent payments, EB bills
-- Report maintenance issues
-- Auto-deductions when issues are approved
+- All data stored locally in browser
+- Export/Import JSON for manual backup
+- No internet required for core features
 
-## Data Storage
+## File Structure
 
-All data is stored locally in your browser's IndexedDB:
-- Works offline
-- No server required
-- Export/Import JSON for backup
+```
+omnitask/
+├── index.html      # Main application
+├── manifest.json   # PWA manifest
+├── sw.js          # Service worker
+└── README.md      # Documentation
+```
 
 ## Browser Support
 
 - Chrome/Edge (recommended)
 - Firefox
 - Safari
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## File Structure
-
-```
-omnitask/
-├── index.html      # Main application (all-in-one)
-├── manifest.json   # PWA manifest
-├── sw.js          # Service worker for offline
-└── README.md      # This file
-```
+- Mobile browsers (iOS/Android)
 
 ## License
 
-MIT License - Free to use and modify
+MIT - Free to use and modify
 
 ---
 
