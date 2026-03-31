@@ -1023,38 +1023,58 @@
 
             const todayStr = today();
             
-            const tasksWithTodayDuty = data.tasks.filter(t => 
-                data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
+            const autoTasksWithTodayDuty = data.tasks.filter(t => 
+                t.recurring !== false && data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
             );
-            const tasksWithoutTodayDuty = data.tasks.filter(t => 
-                !data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
+            const autoTasksWithoutTodayDuty = data.tasks.filter(t => 
+                t.recurring !== false && !data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
             );
+            const manualTasks = data.tasks.filter(t => t.recurring === false);
             
             let html = '';
             
-            if (tasksWithTodayDuty.length > 0) {
+            if (autoTasksWithTodayDuty.length > 0) {
                 html += `
                     <div class="mb-6">
                         <h4 class="text-xs font-bold text-success uppercase mb-3 flex items-center gap-2">
                             <span class="w-2 h-2 bg-success rounded-full animate-pulse"></span>
-                            Active Now - ${tasksWithTodayDuty.length} Task${tasksWithTodayDuty.length > 1 ? 's' : ''}
+                            Active Now - ${autoTasksWithTodayDuty.length} Task${autoTasksWithTodayDuty.length > 1 ? 's' : ''}
                         </h4>
                         <div class="space-y-4">`;
                 
-                tasksWithTodayDuty.forEach(task => {
+                autoTasksWithTodayDuty.forEach(task => {
                     html += renderPipelineTaskCard(task, todayStr, true);
                 });
                 
                 html += `</div></div>`;
             }
             
-            if (tasksWithoutTodayDuty.length > 0) {
+            if (autoTasksWithoutTodayDuty.length > 0) {
                 html += `
-                    <div>
-                        <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Other Tasks - ${tasksWithoutTodayDuty.length}</h4>
+                    <div class="mb-6">
+                        <h4 class="text-xs font-bold text-primary uppercase mb-3 flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            Scheduled - ${autoTasksWithoutTodayDuty.length} Task${autoTasksWithoutTodayDuty.length > 1 ? 's' : ''}
+                        </h4>
                         <div class="space-y-4">`;
                 
-                tasksWithoutTodayDuty.forEach(task => {
+                autoTasksWithoutTodayDuty.forEach(task => {
+                    html += renderPipelineTaskCard(task, todayStr, false);
+                });
+                
+                html += `</div></div>`;
+            }
+            
+            if (manualTasks.length > 0) {
+                html += `
+                    <div>
+                        <h4 class="text-xs font-bold text-warning uppercase mb-3 flex items-center gap-2">
+                            <i data-lucide="hand" class="w-4 h-4"></i>
+                            Manual Mode - ${manualTasks.length} Task${manualTasks.length > 1 ? 's' : ''}
+                        </h4>
+                        <div class="space-y-4">`;
+                
+                manualTasks.forEach(task => {
                     html += renderPipelineTaskCard(task, todayStr, false);
                 });
                 
@@ -1095,7 +1115,8 @@
             
             const freqLabel = task.frequency.type === 'daily' ? 'Every day' : 
                              task.frequency.type === 'weekly' ? 'Weekly' : 
-                             task.frequency.type === 'monthly' ? 'Monthly' : 'Custom';
+                             task.frequency.type === 'monthly' ? 'Monthly' : 
+                             task.frequency.type === 'custom' ? `Every ${task.frequency.customDays} days` : 'Custom';
             
             const priorityUnitsHtml = activeUnits.map((uid, idx) => {
                 const unit = data.units.find(u => u.id === uid);
@@ -1104,6 +1125,7 @@
             }).join('');
             
             const cardBg = isCurrentlyActive ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-success border-l-4' : 'bg-white border-gray-200';
+            const dutyId = todayDuty ? todayDuty.id : '';
             
             return `
                 <div class="rounded-xl p-4 border ${cardBg}">
@@ -1133,11 +1155,21 @@
                         `}
                     </div>
                     
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 mb-3 border border-blue-100">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="calendar-range" class="w-4 h-4 text-primary"></i>
+                            <span class="text-xs text-gray-600">Schedule Period:</span>
+                            <span class="text-xs font-bold text-primary">${periodStart}</span>
+                            <span class="text-xs text-gray-400">to</span>
+                            <span class="text-xs font-bold text-primary">${periodEnd}</span>
+                        </div>
+                    </div>
+                    
                     ${todayDuty ? `
                     <div class="bg-success rounded-lg p-4 mb-3 text-white">
                         <div class="flex justify-between items-center">
                             <div>
-                                <p class="text-xs opacity-80">Assigned for Today</p>
+                                <p class="text-xs opacity-80">Currently Active - ${todayFormatted()}</p>
                                 <p class="font-bold text-xl">${currentUnit?.name || '?'} - ${currentUnit?.occupantName || 'No occupant'}</p>
                             </div>
                             <div class="text-right">
@@ -1159,15 +1191,22 @@
                     </div>
                     ` : ''}
                     
-                    <div class="grid grid-cols-2 gap-2 mb-3">
-                        <button onclick="openCommentModal('${task.id}', '${todayDuty?.id || ''}')" class="text-xs bg-info/10 text-info px-3 py-2 rounded-lg hover:bg-info/20 transition flex items-center justify-center gap-1">
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <button onclick="openCommentModal('${task.id}', '${dutyId}')" class="text-xs bg-info/10 text-info px-3 py-2 rounded-lg hover:bg-info/20 transition flex items-center justify-center gap-1">
                             <i data-lucide="message-square" class="w-3 h-3"></i> Comment
                         </button>
-                        ${currentUnit ? `
-                        <button onclick="openPipelineSwapModal('${task.id}', '${todayDuty.id}')" class="text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1">
+                        ${currentUnit && dutyId ? `
+                        <button onclick="openPipelineSwapModal('${task.id}', '${dutyId}')" class="text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1">
                             <i data-lucide="refresh-cw" class="w-3 h-3"></i> Swap
                         </button>
-                        ` : ''}
+                        ` : `
+                        <button onclick="openSwapForTask('${task.id}')" class="text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1">
+                            <i data-lucide="plus" class="w-3 h-3"></i> Add Duty
+                        </button>
+                        `}
+                        <button onclick="editTask('${task.id}')" class="text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-1">
+                            <i data-lucide="settings" class="w-3 h-3"></i> Edit
+                        </button>
                     </div>
                     
                     ${next7Days.length > 0 ? `
@@ -2142,6 +2181,86 @@
             $('swap-reason').value = '';
             $('swap-modal').classList.remove('hidden');
             lucide.createIcons();
+        }
+
+        function openSwapForTask(taskId) {
+            const task = data.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            const unitSelect = document.createElement('div');
+            unitSelect.innerHTML = `
+                <div id="quick-add-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div class="bg-white w-full max-w-sm rounded-2xl shadow-modal overflow-hidden">
+                        <div class="bg-gradient-to-r from-success to-emerald-500 px-6 py-4 text-white flex justify-between items-center">
+                            <h3 class="font-bold text-lg">Add Duty for ${task.name}</h3>
+                            <button onclick="closeQuickAddModal()" class="text-white/80 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <label class="form-label">Select Unit</label>
+                                <select id="quick-add-unit" class="input-field cursor-pointer">
+                                    <option value="">Select unit...</option>
+                                    ${data.units.map(u => `<option value="${u.id}">${u.name} - ${u.occupantName || 'No occupant'}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Date</label>
+                                <input type="date" id="quick-add-date" value="${today()}" class="input-field cursor-pointer">
+                            </div>
+                            <div class="flex gap-3 pt-4">
+                                <button onclick="closeQuickAddModal()" class="flex-1 px-4 py-3 bg-gray-100 text-grayTxt rounded-xl font-medium hover:bg-gray-200 transition">Cancel</button>
+                                <button onclick="saveQuickAddDuty('${taskId}')" class="flex-1 px-4 py-3 bg-success text-white rounded-xl font-medium hover:bg-emerald-600 transition">Add Duty</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(unitSelect);
+            lucide.createIcons();
+        }
+
+        function closeQuickAddModal() {
+            const modal = document.getElementById('quick-add-modal');
+            if (modal) modal.remove();
+        }
+
+        function saveQuickAddDuty(taskId) {
+            const unitId = $('quick-add-unit').value;
+            const date = $('quick-add-date').value;
+            
+            if (!unitId) {
+                showToast('Please select a unit!');
+                return;
+            }
+            
+            if (!date) {
+                showToast('Please select a date!');
+                return;
+            }
+            
+            const task = data.tasks.find(t => t.id === taskId);
+            const unit = data.units.find(u => u.id === unitId);
+            
+            const existingDuty = data.schedules.find(s => s.taskId === taskId && s.date === date);
+            if (existingDuty) {
+                existingDuty.unitId = unitId;
+            } else {
+                data.schedules.push({
+                    id: generateId(),
+                    taskId: taskId,
+                    unitId: unitId,
+                    date: date,
+                    status: 'pending',
+                    priority: 1,
+                    createdAt: Date.now()
+                });
+            }
+            
+            closeQuickAddModal();
+            save().then(() => {
+                renderTaskPipeline();
+                renderDashboard();
+                showToast('Duty added for ' + unit?.name);
+            });
         }
 
         function closeSwapModal() {
