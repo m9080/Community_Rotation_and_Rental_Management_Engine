@@ -150,9 +150,13 @@
 
                     <div class="space-y-6">
                         <div id="sync-card" class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 text-center shadow-sm">
-                            <i data-lucide="cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i>
+                            <div id="sync-icon-container" class="relative inline-block">
+                                <i data-lucide="cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i>
+                                <span id="sync-indicator" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-white"></span>
+                            </div>
                             <h3 class="font-bold text-dark text-base">Cloud Sync</h3>
                             <p id="sync-card-text" class="text-xs text-grayTxt mt-1">Connect to GitHub to sync data across devices.</p>
+                            <p id="sync-timestamp" class="text-xs text-success font-medium mt-2 hidden">Last synced: Just now</p>
                             <button id="sync-card-btn" onclick="switchView('settings')" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
                                 Connect Now
                             </button>
@@ -1318,6 +1322,8 @@
             return localStorage.getItem('omniTaskToken');
         }
 
+        let lastSyncTime = null;
+
         function updateSyncStatus() {
             const token = getToken();
             const statusText = $('sync-status-text');
@@ -1325,6 +1331,8 @@
             const syncCard = $('sync-card');
             const syncCardText = $('sync-card-text');
             const syncCardBtn = $('sync-card-btn');
+            const syncTimestamp = $('sync-timestamp');
+            const syncIndicator = $('sync-indicator');
             const tokenStatus = $('token-status');
             const clearBtn = $('clear-token-btn');
 
@@ -1332,18 +1340,33 @@
                 statusText.textContent = 'Connected ✓';
                 statusBadge.innerHTML = '<i data-lucide="cloud-check" class="w-5 h-5"></i>';
                 syncCardText.textContent = 'Your data is synced to GitHub.';
+                syncCardText.classList.remove('text-grayTxt');
+                syncCardText.classList.add('text-success');
                 syncCardBtn.textContent = 'Sync Now';
                 syncCardBtn.onclick = autoSync;
-                if (tokenStatus) tokenStatus.textContent = '✅ Token configured';
+                if (tokenStatus) tokenStatus.innerHTML = '<span class="text-success">✅ Connected</span>';
                 if (clearBtn) clearBtn.classList.remove('hidden');
+                if (syncTimestamp) {
+                    syncTimestamp.classList.remove('hidden');
+                    if (lastSyncTime) {
+                        syncTimestamp.textContent = 'Last synced: ' + lastSyncTime;
+                    } else {
+                        syncTimestamp.textContent = 'Last synced: Just now';
+                    }
+                }
+                if (syncIndicator) syncIndicator.classList.remove('hidden');
             } else {
                 statusText.textContent = 'Not connected';
                 statusBadge.innerHTML = '<i data-lucide="cloud" class="w-5 h-5"></i>';
                 syncCardText.textContent = 'Connect to GitHub to sync data across devices.';
+                syncCardText.classList.remove('text-success');
+                syncCardText.classList.add('text-grayTxt');
                 syncCardBtn.textContent = 'Connect Now';
                 syncCardBtn.onclick = () => switchView('settings');
-                if (tokenStatus) tokenStatus.textContent = '⚠️ No token configured';
+                if (tokenStatus) tokenStatus.innerHTML = '<span class="text-warning">⚠️ Not connected</span>';
                 if (clearBtn) clearBtn.classList.add('hidden');
+                if (syncTimestamp) syncTimestamp.classList.add('hidden');
+                if (syncIndicator) syncIndicator.classList.add('hidden');
             }
             lucide.createIcons();
         }
@@ -1403,10 +1426,14 @@
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
+                
+                lastSyncTime = new Date().toLocaleTimeString();
                 updateSyncStatus();
+                showToast('Synced to GitHub!');
             } catch (e) {
                 console.error('Sync error:', e);
                 updateSyncStatus();
+                showToast('Sync failed!');
             }
         }
 
