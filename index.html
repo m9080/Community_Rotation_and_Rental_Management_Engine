@@ -755,20 +755,22 @@
             }
 
             const todayStr = today();
-            const futureDate = new Date();
-            futureDate.setDate(futureDate.getDate() + 30);
-            const futureStr = futureDate.toISOString().split('T')[0];
 
             container.innerHTML = data.units.map(unit => {
-                const todayDuty = data.schedules.find(s => s.date === todayStr && s.unitId === unit.id && s.status !== 'missed');
-                const task = todayDuty ? data.tasks.find(t => t.id === todayDuty.taskId) : null;
+                // Get all schedules for this unit grouped by task
+                const unitSchedules = data.schedules.filter(s => s.unitId === unit.id).sort((a, b) => new Date(a.date) - new Date(b.date));
                 
-                const upcomingDuties = data.schedules
-                    .filter(s => s.date > todayStr && s.date <= futureStr && s.unitId === unit.id)
-                    .slice(0, 1);
-                const nextDuty = upcomingDuties[0] || null;
-                const nextTask = nextDuty ? data.tasks.find(t => t.id === nextDuty.taskId) : null;
-
+                // Group by task and get first/last date
+                const taskScheduleMap = {};
+                unitSchedules.forEach(s => {
+                    if (!taskScheduleMap[s.taskId]) {
+                        taskScheduleMap[s.taskId] = { start: s.date, end: s.date, status: s.status };
+                    } else {
+                        taskScheduleMap[s.taskId].end = s.date;
+                        if (s.status === 'completed') taskScheduleMap[s.taskId].status = 'completed';
+                    }
+                });
+                
                 const hasSwap = data.swaps.some(s => s.unitId === unit.id && !s.settled);
                 const owesSwap = data.swaps.filter(s => s.helperUnitId === unit.id && !s.settled).length;
 
@@ -779,24 +781,29 @@
                             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center text-white font-bold">
                                 ${unit.name.slice(-2) || 'U'}
                             </div>
-                            <div>
-                                <h4 class="font-bold text-sm">${unit.name}</h4>
-                                <p class="text-xs text-grayTxt">${unit.occupantName || 'No occupant'}</p>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-sm truncate">${unit.name}</h4>
+                                <p class="text-xs text-grayTxt truncate">${unit.occupantName || 'No occupant'}</p>
                             </div>
-                            ${hasSwap ? '<span class="absolute top-2 right-2 w-3 h-3 bg-warning rounded-full" title="Has pending swap"></span>' : ''}
+                            ${hasSwap ? '<span class="w-3 h-3 bg-warning rounded-full shrink-0" title="Has pending swap"></span>' : ''}
                         </div>
                         
-                        <div class="space-y-2">
-                            <div class="text-xs">
-                                <span class="text-grayTxt">Current:</span>
-                                <p class="font-medium ${task ? 'text-success' : 'text-gray-400'}">${task?.name || 'No duty'}</p>
-                            </div>
-                            <div class="text-xs">
-                                <span class="text-grayTxt">Next:</span>
-                                <p class="font-medium ${nextTask ? 'text-info' : 'text-gray-400'}">${nextTask?.name || 'No upcoming'} ${nextDuty ? `(${formatDate(nextDuty.date)})` : ''}</p>
-                            </div>
-                            ${owesSwap > 0 ? `<div class="text-xs text-warning font-medium">Owes ${owesSwap} swap(s)</div>` : ''}
+                        <div class="space-y-1.5">
+                            ${Object.keys(taskScheduleMap).length > 0 ? Object.entries(taskScheduleMap).map(([taskId, schedule]) => {
+                                const task = data.tasks.find(t => t.id === taskId);
+                                const isActive = schedule.start <= todayStr && schedule.end >= todayStr;
+                                return `
+                                    <div class="bg-gray-50 rounded-lg p-2 text-xs">
+                                        <div class="flex justify-between items-start">
+                                            <p class="font-medium truncate flex-1 ${isActive ? 'text-success' : 'text-gray-600'}">${task?.name || 'Task'}</p>
+                                            ${isActive ? '<span class="text-[8px] bg-success/20 text-success px-1.5 py-0.5 rounded">Active</span>' : ''}
+                                        </div>
+                                        <p class="text-gray-400 mt-0.5">${formatDate(schedule.start)} - ${formatDate(schedule.end)}</p>
+                                    </div>`;
+                            }).join('') : '<p class="text-xs text-gray-400 text-center py-2">No tasks assigned</p>'}
                         </div>
+                        
+                        ${owesSwap > 0 ? `<div class="mt-2 text-xs text-warning font-medium bg-warning/10 rounded-lg p-2 text-center">Owes ${owesSwap} swap(s)</div>` : ''}
                         
                         <div class="mt-3 flex gap-2">
                             <button onclick="openSwapModal('${unit.id}')" class="flex-1 text-xs bg-gray-50 hover:bg-gray-100 py-1.5 rounded-lg transition">
@@ -812,11 +819,13 @@
             const unit = data.units.find(u => u.id === unitId);
             if (!unit) return;
             
-            const allDuties = data.schedules.filter(s => s.unitId === unitId).slice(0, 10);
-            const dutiesHtml = allDuties.map(s => {
+            const unitSchedules = data.schedules.filter(s => s.unitId === unitId).sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            const tasksHtml = unitSchedules.map(s => {
                 const task = data.tasks.find(t => t.id === s.taskId);
-                return `<div class="flex justify-between gap-4 py-1 ${s.status === 'completed' ? 'text-success line-through' : s.status === 'missed' ? 'text-danger' : ''}">
-                    <span>${task?.name || 'Task'}</span>
+                const statusIcon = s.status === 'completed' ? '✓' : s.status === 'missed' ? '✗' : '○';
+                return `<div class="flex justify-between items-center gap-4 py-1 ${s.status === 'completed' ? 'text-success' : s.status === 'missed' ? 'text-danger' : ''}">
+                    <span>${statusIcon} ${task?.name || 'Task'}</span>
                     <span>${formatDate(s.date)}</span>
                 </div>`;
             }).join('') || '<p class="text-gray-400">No duties</p>';
@@ -830,11 +839,11 @@
             }
             
             tooltip.innerHTML = `
-                <h4 class="font-bold mb-2">${unit.name}</h4>
+                <h4 class="font-bold mb-1">${unit.name}</h4>
                 <p class="text-gray-300 mb-2">${unit.occupantName || 'No occupant'}</p>
                 <div class="border-t border-gray-600 pt-2 mt-2">
-                    <p class="text-gray-400 mb-1">Duty History:</p>
-                    ${dutiesHtml}
+                    <p class="text-gray-400 mb-1">Duty Schedule:</p>
+                    ${tasksHtml}
                 </div>`;
             tooltip.classList.remove('hidden');
             
