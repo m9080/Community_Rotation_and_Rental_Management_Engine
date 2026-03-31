@@ -149,7 +149,7 @@
                             <i data-lucide="cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i>
                             <h3 class="font-bold text-dark text-base">Cloud Sync</h3>
                             <p id="sync-card-text" class="text-xs text-grayTxt mt-1">Connect to GitHub to sync data across devices.</p>
-                            <button onclick="switchView('settings')" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
+                            <button id="sync-card-btn" onclick="switchView('settings')" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
                                 Connect Now
                             </button>
                         </div>
@@ -1310,6 +1310,7 @@
             const statusBadge = $('sync-status-badge');
             const syncCard = $('sync-card');
             const syncCardText = $('sync-card-text');
+            const syncCardBtn = $('sync-card-btn');
             const tokenStatus = $('token-status');
             const clearBtn = $('clear-token-btn');
 
@@ -1317,14 +1318,16 @@
                 statusText.textContent = 'Connected ✓';
                 statusBadge.innerHTML = '<i data-lucide="cloud-check" class="w-5 h-5"></i>';
                 syncCardText.textContent = 'Your data is synced to GitHub.';
-                syncCard.querySelector('button').textContent = 'Sync Now';
+                syncCardBtn.textContent = 'Sync Now';
+                syncCardBtn.onclick = autoSync;
                 if (tokenStatus) tokenStatus.textContent = '✅ Token configured';
                 if (clearBtn) clearBtn.classList.remove('hidden');
             } else {
                 statusText.textContent = 'Not connected';
                 statusBadge.innerHTML = '<i data-lucide="cloud" class="w-5 h-5"></i>';
                 syncCardText.textContent = 'Connect to GitHub to sync data across devices.';
-                syncCard.querySelector('button').textContent = 'Connect Now';
+                syncCardBtn.textContent = 'Connect Now';
+                syncCardBtn.onclick = () => switchView('settings');
                 if (tokenStatus) tokenStatus.textContent = '⚠️ No token configured';
                 if (clearBtn) clearBtn.classList.add('hidden');
             }
@@ -1363,6 +1366,9 @@
             const token = getToken();
             if (!token) return;
             try {
+                document.getElementById('sync-status-badge').innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>';
+                lucide.createIcons();
+                
                 let sha = null;
                 try {
                     const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${DATA_FILE}?ref=${GITHUB_BRANCH}`, {
@@ -1383,30 +1389,37 @@
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
-                showToast('Synced to GitHub!');
+                updateSyncStatus();
             } catch (e) {
                 console.error('Sync error:', e);
+                updateSyncStatus();
             }
         }
 
         async function loadFromCloud() {
             const token = getToken();
-            if (!token) return;
+            if (!token) {
+                updateSyncStatus();
+                return;
+            }
             try {
+                document.getElementById('sync-status-badge').innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>';
+                lucide.createIcons();
+                
                 const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${DATA_FILE}?ref=${GITHUB_BRANCH}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
                 if (res.ok) {
                     const result = await res.json();
                     const content = JSON.parse(decodeURIComponent(escape(atob(result.content))));
-                    if (content.units?.length > 0 || content.tasks?.length > 0) {
+                    if (content && (content.units?.length > 0 || content.tasks?.length > 0 || content.ledger?.length > 0)) {
                         data = content;
-                        showToast('Data loaded from cloud!');
                     }
                 }
             } catch (e) {
                 console.error('Load error:', e);
             }
+            updateSyncStatus();
         }
 
         async function save() {
