@@ -496,6 +496,16 @@
                     <label class="form-label">Select Units</label>
                     <div id="task-units-select" class="max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1"></div>
                 </div>
+                <div>
+                    <label class="form-label">Start Rotation From</label>
+                    <select id="task-start-unit" class="input-field cursor-pointer">
+                        <option value="0">First in list</option>
+                        <option value="1">Second in list</option>
+                        <option value="2">Third in list</option>
+                        <option value="3">Fourth in list</option>
+                        <option value="4">Fifth in list</option>
+                    </select>
+                </div>
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="deleteTask()" id="delete-task-btn" class="hidden flex-1 px-4 py-3 bg-danger text-white rounded-xl font-medium hover:bg-red-600 transition">Delete</button>
                     <button type="submit" class="flex-1 px-4 py-3 bg-info text-white rounded-xl font-medium hover:bg-blue-600 transition">Save Rule</button>
@@ -1079,6 +1089,7 @@
                     excludedUnitIds: mode === 'exclude' ? selectedUnits : [],
                     includedUnitIds: mode === 'include' ? selectedUnits : []
                 },
+                startIndex: parseInt($('task-start-unit').value) || 0,
                 createdAt: Date.now()
             };
 
@@ -1319,10 +1330,11 @@
                 }
                 
                 if (shouldRun) {
+                    const startIdx = task.startIndex || 0;
                     data.schedules.push({
                         id: generateId(),
                         taskId: task.id,
-                        unitId: units[day % units.length].id,
+                        unitId: units[(startIdx + day) % units.length].id,
                         date: date.toISOString().split('T')[0],
                         status: 'pending',
                         createdAt: Date.now()
