@@ -79,6 +79,7 @@
             <button onclick="switchView('groups')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-light" data-target="groups"><i data-lucide="users" class="w-5 h-5"></i> Manage Groups</button>
             <button onclick="switchView('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-light" data-target="tasks"><i data-lucide="clipboard-list" class="w-5 h-5"></i> Tasks</button>
             <button onclick="switchView('duty')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-light" data-target="duty"><i data-lucide="calendar-days" class="w-5 h-5"></i> Duty Schedule</button>
+            <button onclick="switchView('reports')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-light" data-target="reports"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> Reports</button>
             <button onclick="switchView('ledger')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-light" data-target="ledger"><i data-lucide="wallet" class="w-5 h-5"></i> Ledger</button>
             <button onclick="switchView('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-light" data-target="settings"><i data-lucide="settings" class="w-5 h-5"></i> Settings</button>
         </nav>
@@ -325,6 +326,72 @@
                 </div>
             </div>
 
+            <!-- Reports View -->
+            <div id="view-reports" class="view-section space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-dark text-lg">Duty Reports & History</h3>
+                </div>
+
+                <div class="flex gap-2 overflow-x-auto pb-2">
+                    <button onclick="setReportType('all')" class="report-tab active px-4 py-2 rounded-lg text-sm font-medium bg-primary text-white whitespace-nowrap" data-report="all">All History</button>
+                    <button onclick="setReportType('unit')" class="report-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 whitespace-nowrap" data-report="unit">By Unit</button>
+                    <button onclick="setReportType('task')" class="report-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 whitespace-nowrap" data-report="task">By Task</button>
+                    <button onclick="setReportType('summary')" class="report-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 whitespace-nowrap" data-report="summary">Summary</button>
+                    <button onclick="setReportType('comments')" class="report-tab px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 whitespace-nowrap" data-report="comments">Comments</button>
+                </div>
+
+                <div id="report-filters" class="hidden bg-white rounded-xl p-4 shadow-card border border-gray-100">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">From Date</label>
+                            <input type="date" id="report-from-date" class="input-field" onchange="renderReport()">
+                        </div>
+                        <div>
+                            <label class="form-label">To Date</label>
+                            <input type="date" id="report-to-date" class="input-field" onchange="renderReport()">
+                        </div>
+                    </div>
+                    <div id="report-filter-unit" class="hidden mt-4">
+                        <label class="form-label">Select Unit</label>
+                        <select id="report-unit-select" class="input-field" onchange="renderReport()">
+                            <option value="">All Units</option>
+                        </select>
+                    </div>
+                    <div id="report-filter-task" class="hidden mt-4">
+                        <label class="form-label">Select Task</label>
+                        <select id="report-task-select" class="input-field" onchange="renderReport()">
+                            <option value="">All Tasks</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="report-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-card border border-gray-100">
+                        <p class="text-xs text-grayTxt">Total Duties</p>
+                        <p id="report-total" class="text-2xl font-bold text-primary">0</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-card border border-gray-100">
+                        <p class="text-xs text-grayTxt">Completed</p>
+                        <p id="report-completed" class="text-2xl font-bold text-success">0</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-card border border-gray-100">
+                        <p class="text-xs text-grayTxt">Missed</p>
+                        <p id="report-missed" class="text-2xl font-bold text-danger">0</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-card border border-gray-100">
+                        <p class="text-xs text-grayTxt">Pending</p>
+                        <p id="report-pending" class="text-2xl font-bold text-warning">0</p>
+                    </div>
+                </div>
+
+                <div id="report-content" class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
+                    <div class="text-center py-12 text-grayTxt">
+                        <i data-lucide="bar-chart-2" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                        <p>Select report type to view</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings View -->
             <div id="view-settings" class="view-section space-y-6">
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 text-center shadow-sm">
@@ -476,6 +543,19 @@
                         <label class="form-label">Task Name</label>
                         <input type="text" id="task-name" placeholder="e.g., Water Pump Operation" class="input-field" required>
                     </div>
+                    
+                    <div class="flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50 p-3 rounded-lg border border-indigo-100">
+                        <div>
+                            <label class="form-label text-indigo-600 mb-0">Auto-Schedule</label>
+                            <p class="text-xs text-grayTxt">Toggle ON for auto rotation</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="task-recurring" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            <span id="recurring-status" class="ml-2 text-xs font-medium text-success">ON</span>
+                        </label>
+                    </div>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="form-label">Target</label>
@@ -519,6 +599,18 @@
                         <label class="form-label text-purple-600">Set Priority Order</label>
                         <p class="text-xs text-grayTxt mb-2">Set rotation order. Priority 1 goes first.</p>
                         <div id="priority-list" class="space-y-2"></div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <label class="form-label text-info mb-0">Comments</label>
+                            <button type="button" onclick="openTaskCommentModal()" class="text-xs bg-info/10 text-info px-3 py-1.5 rounded-lg hover:bg-info/20 transition">
+                                <i data-lucide="plus" class="w-3 h-3 inline mr-1"></i> Add
+                            </button>
+                        </div>
+                        <div id="task-comments-list" class="space-y-2 max-h-32 overflow-y-auto">
+                            <p class="text-xs text-gray-400 text-center py-2">No comments yet</p>
+                        </div>
                     </div>
                 </div>
                 <div class="flex gap-3 p-4 border-t border-gray-200 bg-white">
@@ -571,6 +663,44 @@
                 <div class="flex gap-3 pt-4">
                     <button onclick="closeSwapModal()" class="flex-1 px-4 py-3 bg-gray-100 text-grayTxt rounded-xl font-medium hover:bg-gray-200 transition">Cancel</button>
                     <button onclick="saveSwap()" class="flex-1 px-4 py-3 bg-warning text-white rounded-xl font-medium hover:bg-orange-600 transition">Save Swap</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="comment-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-modal overflow-hidden">
+            <div class="bg-gradient-to-r from-info to-cyan-500 px-6 py-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="message-square" class="w-5 h-5"></i> Add Comment</h3>
+                <button onclick="closeCommentModal()" class="text-white/80 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="form-label">Task</label>
+                    <p id="comment-task-name" class="font-medium text-info">-</p>
+                </div>
+                
+                <div>
+                    <label class="form-label">Unit</label>
+                    <select id="comment-unit" class="input-field cursor-pointer">
+                        <option value="">Select unit...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="form-label">Date</label>
+                    <input type="date" id="comment-date" class="input-field cursor-pointer">
+                </div>
+                
+                <div>
+                    <label class="form-label">Comment</label>
+                    <textarea id="comment-text" class="input-field h-24 resize-none" placeholder="Enter your comment..."></textarea>
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeCommentModal()" class="flex-1 px-4 py-3 bg-gray-100 text-grayTxt rounded-xl font-medium hover:bg-gray-200 transition">Cancel</button>
+                    <button onclick="saveComment()" class="flex-1 px-4 py-3 bg-info text-white rounded-xl font-medium hover:bg-blue-600 transition">Save Comment</button>
                 </div>
             </div>
         </div>
@@ -659,7 +789,8 @@
             schedules: [],
             ledger: [],
             debts: [],
-            swaps: []
+            swaps: [],
+            comments: []
         };
 
         let currentView = 'home';
@@ -683,6 +814,7 @@
             'groups': 'Manage Groups',
             'tasks': 'Task Rules',
             'duty': 'Duty Schedule',
+            'reports': 'Reports',
             'ledger': 'Financial Ledger',
             'settings': 'Settings'
         };
@@ -719,6 +851,7 @@
                 case 'groups': renderGroups(); break;
                 case 'tasks': renderTasks(); break;
                 case 'duty': renderDutyView(); break;
+                case 'reports': initReports(); break;
                 case 'ledger': renderLedger(); break;
             }
         }
@@ -878,13 +1011,11 @@
                 const todayDuty = taskSchedules.find(s => s.date === todayStr);
                 const currentUnit = todayDuty ? data.units.find(u => u.id === todayDuty.unitId) : null;
                 
-                // Get schedule period
                 const firstSchedule = taskSchedules[0];
                 const lastSchedule = taskSchedules[taskSchedules.length - 1];
                 const periodStart = firstSchedule ? formatDate(firstSchedule.date) : '-';
                 const periodEnd = lastSchedule ? formatDate(lastSchedule.date) : '-';
                 
-                // Get upcoming duties for next 7 days
                 const next7Days = [];
                 for (let i = 1; i <= 7; i++) {
                     const d = new Date();
@@ -897,8 +1028,8 @@
                     }
                 }
                 
-                // Get recent completed duties
                 const recentCompleted = taskSchedules.filter(s => s.status === 'completed').slice(-3);
+                const taskComments = (data.comments || []).filter(c => c.taskId === task.id);
                 
                 const freqLabel = task.frequency.type === 'daily' ? 'Every day' : 
                                  task.frequency.type === 'weekly' ? 'Weekly' : 
@@ -923,19 +1054,16 @@
                             </div>
                         </div>
                         
-                        ${currentUnit ? `
-                        <div class="bg-indigo-50 rounded-lg p-3 mb-3">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="text-xs text-indigo-600 mb-1">Currently Assigned:</p>
-                                    <p class="font-bold text-indigo-800">${currentUnit.name} - ${currentUnit.occupantName || 'No occupant'}</p>
-                                </div>
-                                <button onclick="openPipelineSwapModal('${task.id}', '${todayDuty.id}')" class="text-xs bg-warning text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition">
-                                    <i data-lucide="refresh-cw" class="w-3 h-3 inline mr-1"></i> Swap
-                                </button>
-                            </div>
+                        <div class="flex gap-2 mb-3">
+                            <button onclick="openCommentModal('${task.id}', '${todayDuty?.id || ''}')" class="flex-1 text-xs bg-info/10 text-info px-3 py-2 rounded-lg hover:bg-info/20 transition flex items-center justify-center gap-1">
+                                <i data-lucide="message-square" class="w-3 h-3"></i> Comment
+                            </button>
+                            ${currentUnit ? `
+                            <button onclick="openPipelineSwapModal('${task.id}', '${todayDuty.id}')" class="flex-1 text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1">
+                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Swap
+                            </button>
+                            ` : ''}
                         </div>
-                        ` : ''}
                         
                         <div class="border-t border-gray-100 pt-3">
                             <p class="text-xs text-gray-500 mb-2 flex items-center gap-1">
@@ -947,9 +1075,12 @@
                                         <p class="text-[10px] text-gray-400">${new Date(d.date).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</p>
                                         <p class="text-xs font-bold">${d.unit?.name || '?'}</p>
                                         <p class="text-[10px] ${d.status === 'completed' ? 'text-success' : 'text-amber-600'}">${d.status === 'completed' ? '✓ Done' : 'Pending'}</p>
-                                        ${d.status !== 'completed' ? `
-                                        <button onclick="openPipelineSwapModal('${task.id}', '${d.dutyId}')" class="text-[10px] text-warning hover:underline mt-1">Swap</button>
-                                        ` : ''}
+                                        <div class="flex flex-col gap-1 mt-1">
+                                            <button onclick="openCommentModal('${task.id}', '${d.dutyId}')" class="text-[10px] text-info hover:underline">Comment</button>
+                                            ${d.status !== 'completed' ? `
+                                            <button onclick="openPipelineSwapModal('${task.id}', '${d.dutyId}')" class="text-[10px] text-warning hover:underline">Swap</button>
+                                            ` : ''}
+                                        </div>
                                     </div>
                                 `).join('') : '<p class="text-xs text-gray-400">No upcoming duties</p>'}
                             </div>
@@ -962,6 +1093,21 @@
                                 ${recentCompleted.map(d => {
                                     const unit = data.units.find(u => u.id === d.unitId);
                                     return `<span class="text-[10px] bg-success/10 text-success px-2 py-0.5 rounded-full">${unit?.name || '?'} (${formatDate(d.date)})</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${taskComments.length > 0 ? `
+                        <div class="border-t border-gray-100 pt-2 mt-2">
+                            <p class="text-xs text-gray-500 mb-1 flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> Comments (${taskComments.length}):</p>
+                            <div class="space-y-1">
+                                ${taskComments.slice(-2).map(c => {
+                                    const commentUnit = data.units.find(u => u.id === c.unitId);
+                                    return `<div class="bg-blue-50 rounded p-2 text-xs">
+                                        <span class="font-medium text-info">${commentUnit?.name || '?'}</span> • ${formatDate(c.date)}
+                                        <p class="text-gray-600 mt-1">${c.text}</p>
+                                    </div>`;
                                 }).join('')}
                             </div>
                         </div>
@@ -1344,6 +1490,8 @@
                 container.innerHTML = data.tasks.map(t => {
                     const group = t.assignment.type === 'specific_group' ? data.groups.find(g => g.id === t.assignment.targetGroupId) : null;
                     const modeText = t.assignment.includedUnitIds?.length > 0 ? `Include ${t.assignment.includedUnitIds.length}` : t.assignment.excludedUnitIds?.length > 0 ? `Exclude ${t.assignment.excludedUnitIds.length}` : 'All units';
+                    const commentCount = (data.comments || []).filter(c => c.taskId === t.id).length;
+                    const recurringStatus = t.recurring !== false ? '<span class="bg-success/10 text-success px-2 py-1 rounded font-medium">Auto</span>' : '<span class="bg-warning/10 text-warning px-2 py-1 rounded font-medium">Manual</span>';
                     return `
                         <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-card hover-scale group relative overflow-hidden cursor-pointer" onclick="editTask('${t.id}')">
                             <div class="absolute left-0 top-0 h-full w-1 bg-info"></div>
@@ -1352,7 +1500,8 @@
                                     <h3 class="font-bold text-dark text-base">${t.name}</h3>
                                     <div class="flex gap-2 text-xs mt-1">
                                         <span class="bg-gray-100 text-grayTxt px-2 py-1 rounded font-medium">${t.frequency.type}</span>
-                                        <span class="bg-blue-50 text-info px-2 py-1 rounded font-medium">${group ? group.name : 'All units'}</span>
+                                        ${recurringStatus}
+                                        ${commentCount > 0 ? `<span class="bg-info/10 text-info px-2 py-1 rounded font-medium flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> ${commentCount}</span>` : ''}
                                     </div>
                                 </div>
                                 <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1387,24 +1536,20 @@
             $('task-edit-id').value = id || '';
             $('delete-task-btn').classList.toggle('hidden', !id);
             
-            // Populate group dropdown
             const targetSelect = $('task-target');
             targetSelect.innerHTML = '<option value="all">All Units</option>' + 
                 data.groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
 
-            // Add event listener to update units when target changes
             targetSelect.onchange = () => {
                 updateUnitsForTarget();
                 updatePriorityMapping();
             };
 
-            // Add event listener to frequency changes
             const freqSelect = $('task-freq');
             freqSelect.onchange = () => {
                 updateScheduleDates();
             };
 
-            // Initialize units based on current target
             updateUnitsForTarget();
 
             if (id) {
@@ -1414,13 +1559,19 @@
                     $('task-target').value = task.assignment.type === 'specific_group' ? task.assignment.targetGroupId : 'all';
                     $('task-freq').value = task.frequency.type;
                     
-                    // Set schedule dates
+                    const recurringToggle = $('task-recurring');
+                    if (task.recurring !== undefined) {
+                        recurringToggle.checked = task.recurring;
+                    } else {
+                        recurringToggle.checked = true;
+                    }
+                    recurringToggle.dispatchEvent(new Event('change'));
+                    
                     if (task.scheduleStart) {
                         $('schedule-start-date').value = task.scheduleStart;
                         $('schedule-end-date').value = task.scheduleEnd || '';
                     }
                     
-                    // Set selected units
                     const selectedIds = task.assignment.includedUnitIds || [];
                     document.querySelectorAll('.unit-checkbox').forEach(c => {
                         c.checked = selectedIds.includes(c.value);
@@ -1428,10 +1579,13 @@
                 }
             } else {
                 $('task-form').reset();
+                $('task-recurring').checked = true;
+                $('task-recurring').dispatchEvent(new Event('change'));
                 updateScheduleDates();
             }
             
             updatePriorityMapping();
+            renderTaskComments();
             $('task-modal').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -1582,13 +1736,13 @@
             const id = $('task-edit-id').value;
             const selectedUnits = Array.from($('task-units-select').querySelectorAll('.unit-checkbox:checked')).map(c => c.value);
             const freq = $('task-freq').value;
+            const isRecurring = $('task-recurring').checked;
             
             if (selectedUnits.length === 0) {
                 showToast('Please select at least one unit!');
                 return;
             }
             
-            // Get priority order from the priority selects
             const prioritySelects = Array.from($('priority-list').querySelectorAll('.priority-select'));
             let priorityOrder = selectedUnits;
             
@@ -1609,6 +1763,7 @@
                     type: freq,
                     customDays: freq === 'custom' ? parseInt($('custom-days').value) : null
                 },
+                recurring: isRecurring,
                 scheduleStart: $('schedule-start-date').value,
                 scheduleEnd: $('schedule-end-date').value,
                 assignment: {
@@ -1622,13 +1777,19 @@
 
             if (id) {
                 const index = data.tasks.findIndex(t => t.id === id);
-                if (index > -1) data.tasks[index] = taskData;
+                if (index > -1) {
+                    taskData.createdAt = data.tasks[index].createdAt;
+                    data.tasks[index] = taskData;
+                }
                 data.schedules = data.schedules.filter(s => s.taskId !== id);
             } else {
                 data.tasks.push(taskData);
             }
 
-            await generateSchedule(taskData.id);
+            if (isRecurring) {
+                await generateSchedule(taskData.id);
+            }
+            
             closeTaskModal();
             save().then(() => {
                 renderTasks();
@@ -1665,6 +1826,27 @@
             if (e.target.value === 'monthly' && !$('monthly-day').value) {
                 const todayDate = new Date();
                 $('monthly-day').value = todayDate.toISOString().split('T')[0];
+            }
+        });
+
+        $('task-recurring').addEventListener('change', (e) => {
+            const status = $('recurring-status');
+            const freqSelect = $('task-freq');
+            const customContainer = $('custom-freq-container');
+            const datesContainer = $('schedule-dates-container');
+            
+            if (e.target.checked) {
+                status.textContent = 'ON';
+                status.classList.remove('text-danger');
+                status.classList.add('text-success');
+                freqSelect.disabled = false;
+                customContainer.classList.toggle('hidden', freqSelect.value !== 'custom');
+                datesContainer.classList.remove('hidden');
+            } else {
+                status.textContent = 'OFF';
+                status.classList.remove('text-success');
+                status.classList.add('text-danger');
+                freqSelect.disabled = false;
             }
         });
 
@@ -1829,6 +2011,8 @@
         }
         // ==================== SWAP FUNCTIONS ====================
         let currentSwapDutyId = null;
+        let currentCommentTaskId = null;
+        let currentCommentDutyId = null;
 
         function openSwapModal(unitId) {
             const unit = data.units.find(u => u.id === unitId);
@@ -1887,7 +2071,6 @@
                 return;
             }
             
-            // Create swap record
             data.swaps.push({
                 id: generateId(),
                 taskId: duty.taskId,
@@ -1900,7 +2083,6 @@
                 createdAt: Date.now()
             });
             
-            // Update the schedule
             const originalUnitId = duty.unitId;
             duty.unitId = helperUnitId;
             duty.swappedFrom = originalUnitId;
@@ -1909,6 +2091,136 @@
             save().then(() => {
                 renderDashboard();
                 showToast('Swap saved!');
+            });
+        }
+
+        // ==================== COMMENT FUNCTIONS ====================
+        let currentCommentTaskId = null;
+
+        function openTaskCommentModal(taskId = null) {
+            currentCommentTaskId = taskId || $('task-edit-id').value;
+            const task = data.tasks.find(t => t.id === currentCommentTaskId);
+            
+            $('comment-task-name').textContent = task ? task.name : '-';
+            
+            const unitSelect = $('comment-unit');
+            unitSelect.innerHTML = '<option value="">Select unit...</option>' + 
+                data.units.map(u => `<option value="${u.id}">${u.name} - ${u.occupantName || 'No occupant'}</option>`).join('');
+            
+            $('comment-date').value = today();
+            $('comment-text').value = '';
+            
+            $('comment-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function openCommentModal(taskId, dutyId) {
+            currentCommentTaskId = taskId;
+            currentCommentDutyId = dutyId;
+            
+            const task = data.tasks.find(t => t.id === taskId);
+            const duty = data.schedules.find(s => s.id === dutyId);
+            
+            $('comment-task-name').textContent = task ? task.name : '-';
+            
+            const unitSelect = $('comment-unit');
+            unitSelect.innerHTML = '<option value="">Select unit...</option>' + 
+                data.units.map(u => `<option value="${u.id}">${u.name} - ${u.occupantName || 'No occupant'}</option>`).join('');
+            
+            if (duty) {
+                $('comment-date').value = duty.date;
+                unitSelect.value = duty.unitId;
+            } else {
+                $('comment-date').value = today();
+            }
+            
+            $('comment-text').value = '';
+            $('comment-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeCommentModal() {
+            $('comment-modal').classList.add('hidden');
+            currentCommentTaskId = null;
+            currentCommentDutyId = null;
+        }
+
+        function saveComment() {
+            const unitId = $('comment-unit').value;
+            const date = $('comment-date').value;
+            const text = $('comment-text').value.trim();
+            
+            if (!unitId) {
+                showToast('Please select a unit!');
+                return;
+            }
+            
+            if (!text) {
+                showToast('Please enter a comment!');
+                return;
+            }
+            
+            if (!currentCommentTaskId) {
+                showToast('No task selected!');
+                return;
+            }
+            
+            data.comments = data.comments || [];
+            data.comments.push({
+                id: generateId(),
+                taskId: currentCommentTaskId,
+                unitId: unitId,
+                date: date || today(),
+                text: text,
+                createdAt: Date.now()
+            });
+            
+            closeCommentModal();
+            save().then(() => {
+                renderTaskPipeline();
+                renderTaskComments();
+                showToast('Comment saved!');
+            });
+        }
+
+        function renderTaskComments() {
+            const taskId = $('task-edit-id').value;
+            const container = $('task-comments-list');
+            
+            if (!taskId) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">No comments yet</p>';
+                return;
+            }
+            
+            const comments = (data.comments || []).filter(c => c.taskId === taskId);
+            
+            if (comments.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">No comments yet</p>';
+                return;
+            }
+            
+            container.innerHTML = comments.sort((a, b) => b.createdAt - a.createdAt).map(c => {
+                const unit = data.units.find(u => u.id === c.unitId);
+                return `
+                    <div class="bg-blue-50 rounded-lg p-2 text-xs relative group">
+                        <button onclick="deleteComment('${c.id}')" class="absolute top-1 right-1 text-gray-400 hover:text-danger opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </button>
+                        <p class="font-medium text-info">${unit?.name || '?'}</p>
+                        <p class="text-gray-500 text-[10px]">${formatDate(c.date)}</p>
+                        <p class="text-gray-700 mt-1">${c.text}</p>
+                    </div>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function deleteComment(commentId) {
+            if (!confirm('Delete this comment?')) return;
+            data.comments = (data.comments || []).filter(c => c.id !== commentId);
+            save().then(() => {
+                renderTaskPipeline();
+                renderTaskComments();
+                showToast('Comment deleted!');
             });
         }
 
@@ -2155,11 +2467,11 @@
                     const content = JSON.parse(decodeURIComponent(escape(atob(result.content))));
                     if (content && (content.units?.length > 0 || content.tasks?.length > 0 || content.ledger?.length > 0)) {
                         data = content;
-                        // Ensure all required arrays exist
                         data.swaps = data.swaps || [];
                         data.debts = data.debts || [];
                         data.schedules = data.schedules || [];
                         data.ledger = data.ledger || [];
+                        data.comments = data.comments || [];
                     }
                 }
             } catch (e) {
@@ -2201,11 +2513,330 @@
 
         function clearAllData() {
             if (!confirm('Delete ALL data?')) return;
-            data = { units: [], groups: [], tasks: [], schedules: [], ledger: [], debts: [] };
+            data = { units: [], groups: [], tasks: [], schedules: [], ledger: [], debts: [], swaps: [], comments: [] };
             save().then(() => {
                 switchView('home');
                 showToast('All data cleared!');
             });
+        }
+
+        // ==================== REPORTS ====================
+        let currentReportType = 'all';
+
+        function initReports() {
+            // Set default dates (last 30 days)
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            $('report-from-date').value = thirtyDaysAgo.toISOString().split('T')[0];
+            $('report-to-date').value = today.toISOString().split('T')[0];
+            
+            // Populate dropdowns
+            $('report-unit-select').innerHTML = '<option value="">All Units</option>' + 
+                data.units.map(u => `<option value="${u.id}">${u.name} - ${u.occupantName || 'No occupant'}</option>`).join('');
+            
+            $('report-task-select').innerHTML = '<option value="">All Tasks</option>' + 
+                data.tasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            
+            renderReport();
+        }
+
+        function setReportType(type) {
+            currentReportType = type;
+            document.querySelectorAll('.report-tab').forEach(tab => {
+                const isActive = tab.dataset.report === type;
+                tab.classList.toggle('bg-primary', isActive);
+                tab.classList.toggle('text-white', isActive);
+                tab.classList.toggle('bg-gray-100', !isActive);
+                tab.classList.toggle('text-gray-600', !isActive);
+            });
+            
+            const filterUnit = $('report-filter-unit');
+            const filterTask = $('report-filter-task');
+            filterUnit.classList.toggle('hidden', type !== 'unit');
+            filterTask.classList.toggle('hidden', type !== 'task');
+            
+            renderReport();
+        }
+
+        function renderReport() {
+            const fromDate = $('report-from-date').value;
+            const toDate = $('report-to-date').value;
+            const unitFilter = $('report-unit-select').value;
+            const taskFilter = $('report-task-select').value;
+            
+            let filtered = (data.schedules || []).filter(s => {
+                if (fromDate && s.date < fromDate) return false;
+                if (toDate && s.date > toDate) return false;
+                if (unitFilter && s.unitId !== unitFilter) return false;
+                if (taskFilter && s.taskId !== taskFilter) return false;
+                return true;
+            });
+            
+            $('report-total').textContent = filtered.length;
+            $('report-completed').textContent = filtered.filter(s => s.status === 'completed').length;
+            $('report-missed').textContent = filtered.filter(s => s.status === 'missed').length;
+            $('report-pending').textContent = filtered.filter(s => s.status === 'pending').length;
+            
+            const container = $('report-content');
+            
+            if (currentReportType === 'comments') {
+                renderCommentsReport(container, fromDate, toDate, unitFilter, taskFilter);
+                lucide.createIcons();
+                return;
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-grayTxt">
+                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                        <p>No duties found for selected filters</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+            
+            if (currentReportType === 'all') {
+                renderAllHistoryReport(container, filtered);
+            } else if (currentReportType === 'unit') {
+                renderUnitReport(container, filtered);
+            } else if (currentReportType === 'task') {
+                renderTaskReport(container, filtered);
+            } else if (currentReportType === 'summary') {
+                renderSummaryReport(container, filtered);
+            }
+            
+            lucide.createIcons();
+        }
+
+        function renderCommentsReport(container, fromDate, toDate, unitFilter, taskFilter) {
+            let comments = (data.comments || []);
+            
+            if (fromDate) {
+                comments = comments.filter(c => c.date >= fromDate);
+            }
+            if (toDate) {
+                comments = comments.filter(c => c.date <= toDate);
+            }
+            if (unitFilter) {
+                comments = comments.filter(c => c.unitId === unitFilter);
+            }
+            if (taskFilter) {
+                comments = comments.filter(c => c.taskId === taskFilter);
+            }
+            
+            $('report-total').textContent = comments.length;
+            $('report-completed').textContent = '-';
+            $('report-missed').textContent = '-';
+            $('report-pending').textContent = '-';
+            
+            if (comments.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-grayTxt">
+                        <i data-lucide="message-square" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                        <p>No comments found for selected filters</p>
+                    </div>`;
+                return;
+            }
+            
+            const sortedComments = comments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            container.innerHTML = `
+                <div class="space-y-4">
+                    ${sortedComments.map(c => {
+                        const unit = data.units.find(u => u.id === c.unitId);
+                        const task = data.tasks.find(t => t.id === c.taskId);
+                        return `
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="bg-primary/10 text-primary px-2 py-1 rounded-lg text-xs font-bold">${unit?.name || '?'}</span>
+                                            <span class="text-gray-300">→</span>
+                                            <span class="bg-info/10 text-info px-2 py-1 rounded-lg text-xs font-medium">${task?.name || '?'}</span>
+                                        </div>
+                                        <p class="text-gray-700">${c.text}</p>
+                                    </div>
+                                    <div class="text-right shrink-0 ml-4">
+                                        <p class="text-xs text-gray-500">${formatDate(c.date)}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }).join('')}
+                </div>`;
+        }
+
+        function renderAllHistoryReport(container, schedules) {
+            const sorted = schedules.sort((a, b) => new Date(b.date) - new Date(a.date));
+            container.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="text-left p-3 font-medium text-gray-600">Date</th>
+                                <th class="text-left p-3 font-medium text-gray-600">Task</th>
+                                <th class="text-left p-3 font-medium text-gray-600">Unit</th>
+                                <th class="text-left p-3 font-medium text-gray-600">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sorted.slice(0, 100).map(s => {
+                                const task = data.tasks.find(t => t.id === s.taskId);
+                                const unit = data.units.find(u => u.id === s.unitId);
+                                const statusClass = s.status === 'completed' ? 'text-success bg-success/10' : s.status === 'missed' ? 'text-danger bg-danger/10' : 'text-warning bg-warning/10';
+                                return `<tr class="border-b border-gray-50 hover:bg-gray-50">
+                                    <td class="p-3">${formatDate(s.date)}</td>
+                                    <td class="p-3 font-medium">${task?.name || 'Unknown'}</td>
+                                    <td class="p-3">${unit?.name || 'Unknown'}</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded-full text-xs ${statusClass}">${s.status}</span></td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    ${sorted.length > 100 ? `<p class="text-center text-gray-400 text-sm mt-2">Showing first 100 of ${sorted.length} records</p>` : ''}
+                </div>`;
+        }
+
+        function renderUnitReport(container, schedules) {
+            const unitStats = {};
+            data.units.forEach(u => {
+                unitStats[u.id] = { unit: u, completed: 0, missed: 0, pending: 0, duties: [] };
+            });
+            
+            schedules.forEach(s => {
+                if (unitStats[s.unitId]) {
+                    unitStats[s.unitId][s.status]++;
+                    unitStats[s.unitId].duties.push(s);
+                }
+            });
+            
+            container.innerHTML = Object.values(unitStats)
+                .filter(v => v.duties.length > 0)
+                .sort((a, b) => b.duties.length - a.duties.length)
+                .map(v => `
+                    <div class="border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">${v.unit.name.slice(-2)}</div>
+                                <div>
+                                    <h4 class="font-bold">${v.unit.name}</h4>
+                                    <p class="text-xs text-gray-400">${v.unit.occupantName || 'No occupant'}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold">${v.duties.length} Total</p>
+                                <p class="text-xs text-gray-400">Duties</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="bg-success/10 rounded-lg p-3 text-center">
+                                <p class="text-2xl font-bold text-success">${v.completed}</p>
+                                <p class="text-xs text-success">Completed</p>
+                            </div>
+                            <div class="bg-danger/10 rounded-lg p-3 text-center">
+                                <p class="text-2xl font-bold text-danger">${v.missed}</p>
+                                <p class="text-xs text-danger">Missed</p>
+                            </div>
+                            <div class="bg-warning/10 rounded-lg p-3 text-center">
+                                <p class="text-2xl font-bold text-warning">${v.pending}</p>
+                                <p class="text-xs text-warning">Pending</p>
+                            </div>
+                        </div>
+                    </div>`).join('');
+        }
+
+        function renderTaskReport(container, schedules) {
+            const taskStats = {};
+            data.tasks.forEach(t => {
+                taskStats[t.id] = { task: t, completed: 0, missed: 0, pending: 0, duties: [] };
+            });
+            
+            schedules.forEach(s => {
+                if (taskStats[s.taskId]) {
+                    taskStats[s.taskId][s.status]++;
+                    taskStats[s.taskId].duties.push(s);
+                }
+            });
+            
+            container.innerHTML = Object.values(taskStats)
+                .filter(v => v.duties.length > 0)
+                .sort((a, b) => b.duties.length - a.duties.length)
+                .map(v => {
+                    const completionRate = v.duties.length > 0 ? Math.round((v.completed / v.duties.length) * 100) : 0;
+                    return `
+                    <div class="border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h4 class="font-bold">${v.task.name}</h4>
+                                <p class="text-xs text-gray-400">${v.task.frequency.type} • ${v.duties.length} duties</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-success">${completionRate}%</p>
+                                <p class="text-xs text-gray-400">Completion</p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-success h-2 rounded-full" style="width: ${completionRate}%"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 mt-3">
+                            <div class="text-center"><p class="font-bold text-success">${v.completed}</p><p class="text-xs text-gray-400">Done</p></div>
+                            <div class="text-center"><p class="font-bold text-danger">${v.missed}</p><p class="text-xs text-gray-400">Missed</p></div>
+                            <div class="text-center"><p class="font-bold text-warning">${v.pending}</p><p class="text-xs text-gray-400">Pending</p></div>
+                        </div>
+                    </div>`;
+                }).join('');
+        }
+
+        function renderSummaryReport(container, schedules) {
+            const total = schedules.length;
+            const completed = schedules.filter(s => s.status === 'completed').length;
+            const missed = schedules.filter(s => s.status === 'missed').length;
+            const pending = schedules.filter(s => s.status === 'pending').length;
+            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            const unitCount = new Set(schedules.map(s => s.unitId)).size;
+            const taskCount = new Set(schedules.map(s => s.taskId)).size;
+            
+            container.innerHTML = `
+                <div class="text-center mb-6">
+                    <p class="text-6xl font-bold text-primary">${completionRate}%</p>
+                    <p class="text-gray-500">Overall Completion Rate</p>
+                </div>
+                
+                <div class="w-full bg-gray-100 rounded-full h-4 mb-6">
+                    <div class="bg-gradient-to-r from-success to-emerald-400 h-4 rounded-full" style="width: ${completionRate}%"></div>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-blue-50 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-blue-600">${total}</p>
+                        <p class="text-xs text-blue-500">Total Duties</p>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-green-600">${completed}</p>
+                        <p class="text-xs text-green-500">Completed</p>
+                    </div>
+                    <div class="bg-red-50 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-red-600">${missed}</p>
+                        <p class="text-xs text-red-500">Missed</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-amber-600">${pending}</p>
+                        <p class="text-xs text-amber-500">Pending</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <p class="text-sm text-gray-500 mb-1">Active Units</p>
+                        <p class="text-2xl font-bold">${unitCount}</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <p class="text-sm text-gray-500 mb-1">Active Tasks</p>
+                        <p class="text-2xl font-bold">${taskCount}</p>
+                    </div>
+                </div>`;
         }
 
         // ==================== INIT ====================
