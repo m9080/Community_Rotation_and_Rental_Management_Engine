@@ -575,8 +575,10 @@
                             <label class="form-label">Frequency</label>
                             <select id="task-freq" class="input-field cursor-pointer">
                                 <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
+                                <option value="weekly-7days">Weekly (7 Days)</option>
+                                <option value="monthly">Monthly (1-End)</option>
+                                <option value="weekly">Weekly (Day Wise)</option>
+                                <option value="custom">Custom</option>
                                 <option value="custom">Custom</option>
                             </select>
                         </div>
@@ -626,6 +628,36 @@
                     <button type="submit" class="flex-1 px-4 py-3 bg-info text-white rounded-xl font-medium hover:bg-blue-600 transition">Save Rule</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Change Duty Modal -->
+    <div id="change-duty-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-modal overflow-hidden">
+            <div class="bg-gradient-to-r from-primary to-indigo-600 px-6 py-4 text-white flex justify-between items-center">
+                <h3 class="font-bold text-lg">Change Duty</h3>
+                <button onclick="closeChangeDutyModal()" class="text-white/80 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="form-label">Select Unit</label>
+                    <select id="change-duty-unit" class="input-field cursor-pointer">
+                        <option value="">Select unit...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Period Start Date</label>
+                    <input type="date" id="change-duty-start" class="input-field cursor-pointer">
+                </div>
+                <div>
+                    <label class="form-label">Period End Date</label>
+                    <input type="date" id="change-duty-end" class="input-field cursor-pointer">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeChangeDutyModal()" class="flex-1 px-4 py-3 bg-gray-100 text-grayTxt rounded-xl font-medium hover:bg-gray-200 transition">Cancel</button>
+                    <button onclick="saveChangedDuty()" class="flex-1 px-4 py-3 bg-primary text-white rounded-xl font-medium hover:bg-indigo-600 transition">Save Changes</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1209,6 +1241,12 @@
                         <p class="text-gray-500 text-sm">${isAutoScheduled ? 'No duty scheduled for today' : 'Manual mode - no auto scheduling'}</p>
                     </div>
                     `}
+                    
+                    ${todayDuty ? `
+                    <button onclick="openChangeDutyModal('${todayDuty.id}')" class="w-full text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="edit-2" class="w-3 h-3"></i> Change Unit / Date
+                    </button>
+                    ` : ''}
                     
                     ${isAutoScheduled && priorityUnitsHtml ? `
                     <div class="bg-white rounded-lg p-3 mb-3 border border-gray-200">
@@ -2215,6 +2253,53 @@
             lucide.createIcons();
         }
 
+        let currentChangeDutyId = null;
+
+        function openChangeDutyModal(dutyId) {
+            currentChangeDutyId = dutyId;
+            const duty = data.schedules.find(s => s.id === dutyId);
+            if (!duty) return;
+            
+            const unitSelect = $('change-duty-unit');
+            unitSelect.innerHTML = '<option value="">Select unit...</option>' + 
+                data.units.map(u => `<option value="${u.id}" ${u.id === duty.unitId ? 'selected' : ''}>${u.name} - ${u.occupantName || 'No occupant'}</option>`).join('');
+            
+            $('change-duty-start').value = duty.periodStart || duty.date;
+            $('change-duty-end').value = duty.periodEnd || duty.date;
+            
+            $('change-duty-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeChangeDutyModal() {
+            $('change-duty-modal').classList.add('hidden');
+            currentChangeDutyId = null;
+        }
+
+        function saveChangedDuty() {
+            const dutyId = currentChangeDutyId;
+            if (!dutyId) return;
+            
+            const duty = data.schedules.find(s => s.id === dutyId);
+            if (!duty) return;
+            
+            const newUnitId = $('change-duty-unit').value;
+            const newStartDate = $('change-duty-start').value;
+            const newEndDate = $('change-duty-end').value;
+            
+            if (newUnitId) duty.unitId = newUnitId;
+            if (newStartDate) duty.periodStart = newStartDate;
+            if (newEndDate) duty.periodEnd = newEndDate;
+            
+            closeChangeDutyModal();
+            save().then(() => {
+                renderDashboard();
+                renderCalendar();
+                renderDutyView();
+                showToast('Duty updated!');
+            });
+        }
+
         function openSwapForTask(taskId) {
             const task = data.tasks.find(t => t.id === taskId);
             if (!task) return;
@@ -2554,20 +2639,21 @@
                 for (let day = 0; day < maxDays; day++) {
                     const date = new Date(todayDate);
                     date.setDate(todayDate.getDate() + day);
+                    const dateStr = date.toISOString().split('T')[0];
                     data.schedules.push({
                         id: generateId(),
                         taskId: task.id,
                         unitId: units[rotationIndex % units.length].id,
-                        date: date.toISOString().split('T')[0],
-                        status: day === 0 ? 'pending' : 'pending',
+                        date: dateStr,
+                        status: 'pending',
                         priority: rotationIndex % units.length + 1,
-                        periodStart: date.toISOString().split('T')[0],
-                        periodEnd: date.toISOString().split('T')[0],
+                        periodStart: dateStr,
+                        periodEnd: dateStr,
                         createdAt: Date.now()
                     });
                     rotationIndex++;
                 }
-            } else if (freq === 'weekly') {
+            } else if (freq === 'weekly-7days') {
                 const currentDay = todayDate.getDay();
                 const daysToMonday = currentDay === 0 ? 6 : currentDay - 1;
                 const currentMonday = new Date(todayDate);
@@ -2601,20 +2687,45 @@
                     const monthStart = new Date(todayDate.getFullYear(), todayDate.getMonth() + month, 1);
                     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
                     
-                    if (monthStart >= todayDate || month === 0) {
-                        data.schedules.push({
-                            id: generateId(),
-                            taskId: task.id,
-                            unitId: units[rotationIndex % units.length].id,
-                            date: monthStart.toISOString().split('T')[0],
-                            status: month === 0 ? 'pending' : 'pending',
-                            priority: rotationIndex % units.length + 1,
-                            periodStart: monthStart.toISOString().split('T')[0],
-                            periodEnd: monthEnd.toISOString().split('T')[0],
-                            createdAt: Date.now()
-                        });
-                        rotationIndex++;
-                    }
+                    const monthStartStr = monthStart.toISOString().split('T')[0];
+                    const monthEndStr = monthEnd.toISOString().split('T')[0];
+                    
+                    data.schedules.push({
+                        id: generateId(),
+                        taskId: task.id,
+                        unitId: units[rotationIndex % units.length].id,
+                        date: monthStartStr,
+                        status: 'pending',
+                        priority: rotationIndex % units.length + 1,
+                        periodStart: monthStartStr,
+                        periodEnd: monthEndStr,
+                        createdAt: Date.now()
+                    });
+                    rotationIndex++;
+                }
+            } else if (freq === 'weekly') {
+                for (let day = 0; day < maxDays; day++) {
+                    const date = new Date(todayDate);
+                    date.setDate(todayDate.getDate() + day);
+                    const dateStr = date.toISOString().split('T')[0];
+                    const dayOfWeek = date.getDay();
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - dayOfWeek);
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekStart.getDate() + 6);
+                    
+                    data.schedules.push({
+                        id: generateId(),
+                        taskId: task.id,
+                        unitId: units[rotationIndex % units.length].id,
+                        date: dateStr,
+                        status: 'pending',
+                        priority: rotationIndex % units.length + 1,
+                        periodStart: weekStart.toISOString().split('T')[0],
+                        periodEnd: weekEnd.toISOString().split('T')[0],
+                        createdAt: Date.now()
+                    });
+                    rotationIndex++;
                 }
             } else if (freq === 'custom' && task.frequency.customDays) {
                 const customDays = task.frequency.customDays;
@@ -2625,15 +2736,16 @@
                     if (day % customDays === 0) {
                         const periodEnd = new Date(date);
                         periodEnd.setDate(date.getDate() + customDays - 1);
+                        const dateStr = date.toISOString().split('T')[0];
                         
                         data.schedules.push({
                             id: generateId(),
                             taskId: task.id,
                             unitId: units[rotationIndex % units.length].id,
-                            date: date.toISOString().split('T')[0],
+                            date: dateStr,
                             status: 'pending',
                             priority: rotationIndex % units.length + 1,
-                            periodStart: date.toISOString().split('T')[0],
+                            periodStart: dateStr,
                             periodEnd: periodEnd.toISOString().split('T')[0],
                             createdAt: Date.now()
                         });
@@ -2653,6 +2765,8 @@
             }
             await save();
             renderDashboard();
+            renderCalendar();
+            renderDutyView();
             showToast('Schedules regenerated!');
         }
 
