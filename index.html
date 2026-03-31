@@ -44,7 +44,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .view-section { display: none; }
-        .view-section:first-child { display: block; }
+        .view-section.active { display: block; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -245,7 +245,7 @@
         <main class="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 relative">
             
             <!-- Dashboard View -->
-            <div id="view-home" class="view-section space-y-6">
+            <div id="view-home" class="view-section active space-y-6">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                         <p class="text-xs text-grayTxt font-medium uppercase mb-1">Total Units</p>
@@ -730,9 +730,9 @@
 
         function switchView(targetView) {
             currentView = targetView;
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            $('view-' + targetView).classList.remove('hidden');
-            $('header-title').innerText = pageTitles[targetView];
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + targetView).classList.add('active');
+            document.getElementById('header-title').innerText = pageTitles[targetView];
             
             document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(el => {
                 el.classList.remove('active');
