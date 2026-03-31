@@ -1158,7 +1158,11 @@
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 mb-3 border border-blue-100">
                         <div class="flex items-center gap-2 flex-wrap">
                             <i data-lucide="calendar-range" class="w-4 h-4 text-primary"></i>
-                            <span class="text-xs text-gray-600">${freqLabel}:</span>
+                            <span class="text-xs font-bold text-primary">${freqLabel}:</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-2 flex-wrap">
+                            <span class="text-xs bg-white px-2 py-1 rounded border border-blue-200">${todayFormatted()}</span>
+                            <span class="text-xs text-gray-400">→</span>
                             ${todayDuty?.periodStart && todayDuty?.periodEnd ? `
                                 <span class="text-xs font-bold text-primary">${formatDate(todayDuty.periodStart)}</span>
                                 <span class="text-xs text-gray-400">to</span>
@@ -1175,7 +1179,7 @@
                     <div class="bg-success rounded-lg p-4 mb-3 text-white">
                         <div class="flex justify-between items-center">
                             <div>
-                                <p class="text-xs opacity-80">Currently Active - ${todayFormatted()}</p>
+                                <p class="text-xs opacity-80">Currently Active</p>
                                 <p class="font-bold text-xl">${currentUnit?.name || '?'} - ${currentUnit?.occupantName || 'No occupant'}</p>
                             </div>
                             <div class="text-right">
@@ -2533,13 +2537,13 @@
             if (freq === 'daily') {
                 for (let day = 0; day < maxDays; day++) {
                     const date = new Date(todayDate);
-                    date.setDate(date.getDate() + day);
+                    date.setDate(todayDate.getDate() + day);
                     data.schedules.push({
                         id: generateId(),
                         taskId: task.id,
                         unitId: units[rotationIndex % units.length].id,
                         date: date.toISOString().split('T')[0],
-                        status: 'pending',
+                        status: day === 0 ? 'pending' : 'pending',
                         priority: rotationIndex % units.length + 1,
                         periodStart: date.toISOString().split('T')[0],
                         periodEnd: date.toISOString().split('T')[0],
@@ -2547,6 +2551,80 @@
                     });
                     rotationIndex++;
                 }
+            } else if (freq === 'weekly') {
+                const currentDay = todayDate.getDay();
+                const daysToMonday = currentDay === 0 ? 6 : currentDay - 1;
+                const currentMonday = new Date(todayDate);
+                currentMonday.setDate(todayDate.getDate() - daysToMonday);
+                
+                for (let week = 0; week < 12; week++) {
+                    const weekStart = new Date(currentMonday);
+                    weekStart.setDate(currentMonday.getDate() + (week * 7));
+                    
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekStart.getDate() + 6);
+                    
+                    if (weekStart >= todayDate || week === 0) {
+                        data.schedules.push({
+                            id: generateId(),
+                            taskId: task.id,
+                            unitId: units[rotationIndex % units.length].id,
+                            date: weekStart.toISOString().split('T')[0],
+                            status: week === 0 ? 'pending' : 'pending',
+                            priority: rotationIndex % units.length + 1,
+                            periodStart: weekStart.toISOString().split('T')[0],
+                            periodEnd: weekEnd.toISOString().split('T')[0],
+                            createdAt: Date.now()
+                        });
+                        rotationIndex++;
+                    }
+                }
+            } else if (freq === 'monthly') {
+                for (let month = 0; month < 12; month++) {
+                    const monthStart = new Date(todayDate.getFullYear(), todayDate.getMonth() + month, 1);
+                    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+                    
+                    if (monthStart >= todayDate || month === 0) {
+                        data.schedules.push({
+                            id: generateId(),
+                            taskId: task.id,
+                            unitId: units[rotationIndex % units.length].id,
+                            date: monthStart.toISOString().split('T')[0],
+                            status: month === 0 ? 'pending' : 'pending',
+                            priority: rotationIndex % units.length + 1,
+                            periodStart: monthStart.toISOString().split('T')[0],
+                            periodEnd: monthEnd.toISOString().split('T')[0],
+                            createdAt: Date.now()
+                        });
+                        rotationIndex++;
+                    }
+                }
+            } else if (freq === 'custom' && task.frequency.customDays) {
+                const customDays = task.frequency.customDays;
+                for (let day = 0; day < maxDays; day++) {
+                    const date = new Date(todayDate);
+                    date.setDate(todayDate.getDate() + day);
+                    
+                    if (day % customDays === 0) {
+                        const periodEnd = new Date(date);
+                        periodEnd.setDate(date.getDate() + customDays - 1);
+                        
+                        data.schedules.push({
+                            id: generateId(),
+                            taskId: task.id,
+                            unitId: units[rotationIndex % units.length].id,
+                            date: date.toISOString().split('T')[0],
+                            status: 'pending',
+                            priority: rotationIndex % units.length + 1,
+                            periodStart: date.toISOString().split('T')[0],
+                            periodEnd: periodEnd.toISOString().split('T')[0],
+                            createdAt: Date.now()
+                        });
+                        rotationIndex++;
+                    }
+                }
+            }
+        }
             } else if (freq === 'weekly') {
                 const currentDay = todayDate.getDay();
                 const daysToMonday = currentDay === 0 ? 6 : currentDay - 1;
