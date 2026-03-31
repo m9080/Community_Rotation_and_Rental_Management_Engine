@@ -252,10 +252,9 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6 pb-24 md:pb-8 relative">
-            <div class="max-w-screen-xl mx-auto">
             
             <!-- Dashboard View -->
-            <div id="view-home" class="view-section active space-y-4 md:space-y-6">
+            <div id="view-home" class="view-section active max-w-screen-xl mx-auto space-y-4 md:space-y-6">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     <div class="bg-white rounded-xl p-3 md:p-4 shadow-card border border-gray-100 text-center">
                         <p class="text-[10px] md:text-xs text-grayTxt font-medium uppercase mb-1">Total Units</p>
@@ -342,7 +341,7 @@
             </div>
 
             <!-- Units View -->
-            <div id="view-units" class="view-section space-y-4">
+            <div id="view-units" class="view-section space-y-4 max-w-screen-xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-dark text-lg">Property Units</h3>
                     <button onclick="openUnitModal()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-indigo-600 transition shadow-sm">
@@ -358,7 +357,7 @@
             </div>
 
             <!-- Groups View -->
-            <div id="view-groups" class="view-section space-y-4">
+            <div id="view-groups" class="view-section space-y-4 max-w-screen-xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-dark text-lg">Task Groups</h3>
                     <button onclick="openGroupModal()" class="bg-groupPurple text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-purple-600 transition shadow-sm">
@@ -374,7 +373,7 @@
             </div>
 
             <!-- Tasks View -->
-            <div id="view-tasks" class="view-section space-y-4">
+            <div id="view-tasks" class="view-section space-y-4 max-w-screen-xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-dark text-lg">Task Rules</h3>
                     <button onclick="openTaskModal()" class="bg-info text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-blue-600 transition shadow-sm">
@@ -390,7 +389,7 @@
             </div>
 
             <!-- Duty Schedule View -->
-            <div id="view-duty" class="view-section space-y-6">
+            <div id="view-duty" class="view-section space-y-6 max-w-screen-xl mx-auto">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100 lg:col-span-2">
                         <div class="flex justify-between items-center mb-4">
@@ -438,7 +437,7 @@
             </div>
 
             <!-- Ledger View -->
-            <div id="view-ledger" class="view-section space-y-4">
+            <div id="view-ledger" class="view-section space-y-4 max-w-screen-xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-dark text-lg">Financial Ledger</h3>
                     <button onclick="openLedgerModal()" class="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-emerald-600 transition shadow-sm">
@@ -468,7 +467,7 @@
             </div>
 
             <!-- Reports View -->
-            <div id="view-reports" class="view-section space-y-6">
+            <div id="view-reports" class="view-section space-y-6 max-w-screen-xl mx-auto">
                 <div class="flex justify-between items-center flex-wrap gap-3">
                     <h3 class="font-bold text-dark text-lg">Duty Reports & History</h3>
                     <div class="flex gap-2">
@@ -542,7 +541,7 @@
             </div>
 
             <!-- Settings View -->
-            <div id="view-settings" class="view-section space-y-6">
+            <div id="view-settings" class="view-section space-y-6 max-w-screen-xl mx-auto">
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 text-center shadow-sm">
                     <i data-lucide="cloud" class="w-12 h-12 text-primary mx-auto mb-3"></i>
                     <h3 class="font-bold text-dark text-lg">Cloud Sync (GitHub)</h3>
