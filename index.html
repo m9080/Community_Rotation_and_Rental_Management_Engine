@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="OmniTask - Community Rotation & Rental Management Engine">
+    <title>OmniTask - Community Management</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #6366f1; --primary-light: #818cf8; --success: #10b981; --danger: #ef4444;
+            --warning: #f59e0b; --info: #3b82f6; --dark: #1f2937; --gray: #6b7280;
+            --light: #f3f4f6; --white: #ffffff; --bg: #f8fafc; --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --purple: #8b5cf6; --pink: #ec4899; --orange: #f97316; --cyan: #06b6d4;
+        }
+        html, body { height: 100%; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); 
+            min-height: 100vh; 
+            min-height: 100dvh;
+            padding-bottom: 90px;
+            padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; padding: 20px; padding-top: max(20px, env(safe-area-inset-top, 20px)); border-radius: 0 0 30px 30px; }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .icon-emoji, .settings-icon, .quick-btn .icon, .nav-item .icon, .summary-icon, .source-avatar, .category-item .icon, .right-menu-item .icon {
+            font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Apple Color Emoji', 'Noto Color Emoji', 'Android Emoji', sans-serif !important;
+        }
+        #page-settings .main-content, #page-admin .main-content { padding-bottom: 120px !important; }
+        
+        @media screen and (max-width: 768px) {
+            html { font-size: 14px; }
+            body { padding-bottom: 75px; padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px)); }
+            .header { padding: 12px 15px; padding-top: max(12px, env(safe-area-inset-top, 12px)); border-radius: 0 0 20px 20px; }
+            .header-top { margin-bottom: 15px; }
+            .header-title { font-size: 15px; }
+            .balance-card { padding: 15px; border-radius: 15px; }
+            .balance-amount { font-size: 22px; }
+            .summary-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .summary-card { padding: 10px; border-radius: 12px; }
+            .summary-icon { width: 32px; height: 32px; font-size: 14px; }
+            .summary-info p { font-size: 14px; }
+            .quick-actions { grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; margin-top: -20px; }
+            .quick-btn { padding: 8px 3px; border-radius: 10px; }
+            .quick-btn .icon { width: 28px; height: 28px; font-size: 13px; border-radius: 8px; }
+            .quick-btn span { font-size: 8px; }
+            .main-content { padding: 0 10px; }
+            .section-title { font-size: 13px; }
+            .card { padding: 12px; border-radius: 12px; margin-bottom: 12px; }
+            .list-item { padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+            .modal { padding: 15px; border-radius: 20px 20px 0 0; }
+            .modal-handle { width: 35px; height: 4px; margin-bottom: 15px; }
+            .modal-title { font-size: 16px; margin-bottom: 15px; }
+            .form-group { margin-bottom: 12px; }
+            .form-label { font-size: 12px; margin-bottom: 6px; }
+            .form-control { padding: 10px 12px; font-size: 14px; border-radius: 10px; }
+            .btn { padding: 12px; border-radius: 12px; font-size: 14px; }
+            .fab { width: 50px; height: 50px; font-size: 24px; bottom: 80px; right: 12px; }
+            .bottom-nav { padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom, 8px)); }
+            .nav-item { padding: 4px 5px; font-size: 9px; flex: 1; text-align: center; }
+            .nav-item .icon { font-size: 18px; }
+            input, select, textarea { font-size: 16px !important; }
+            .settings-item { padding: 10px 12px; min-height: 50px; }
+            .settings-icon { width: 32px; height: 32px; font-size: 14px; border-radius: 8px; }
+            .settings-text h4 { font-size: 12px; }
+            .settings-text span { font-size: 10px; }
+            .unit-card { padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+            .task-card { padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+            .schedule-item { padding: 10px; border-radius: 10px; margin-bottom: 8px; }
+            .ledger-item { padding: 12px; border-radius: 10px; margin-bottom: 8px; }
+            .group-card { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+            .member-card { padding: 12px; border-radius: 10px; margin-bottom: 8px; }
+            .cycle-preview { grid-template-columns: 1fr; gap: 8px; }
+        }
+        
+        @media screen and (max-width: 400px) {
+            html { font-size: 13px; }
+            .header { padding: 10px 12px; }
+            .header-title { font-size: 14px; }
+            .balance-amount { font-size: 20px; }
+            .quick-actions { gap: 4px; padding: 8px; }
+            .quick-btn { padding: 6px 2px; }
+            .quick-btn .icon { width: 26px; height: 26px; font-size: 12px; }
+            .quick-btn span { font-size: 7px; }
+            .nav-item { padding: 3px 3px; font-size: 8px; }
+            .nav-item .icon { font-size: 16px; }
+            .fab { width: 45px; height: 45px; font-size: 22px; bottom: 75px; right: 10px; }
+        }
+        
+        @media screen and (max-width: 768px) {
+            input, select, textarea { font-size: 16px !important; }
+            .page { width: 100%; overflow-x: hidden; }
+            .header, .main-content { max-width: 100vw; }
+        }
+        
+        .balance-amount { font-size: 28px; font-weight: 700; }
+        .summary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .summary-card { background: rgba(255,255,255,0.15); border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .summary-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .income-icon { background: rgba(16, 185, 129, 0.3); }
+        .expense-icon { background: rgba(239, 68, 68, 0.3); }
+        .summary-info h4 { font-size: 10px; opacity: 0.8; margin-bottom: 2px; }
+        .summary-info p { font-size: 16px; font-weight: 600; }
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 15px; margin-top: -25px; position: relative; z-index: 10; }
+        .quick-btn { background: var(--white); border: none; border-radius: 12px; padding: 12px 5px; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s; }
+        .quick-btn:active { transform: scale(0.95); }
+        .quick-btn .icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .quick-btn span { font-size: 10px; color: var(--gray); text-align: center; }
+        .main-content { padding: 0 15px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .section-title { font-size: 15px; font-weight: 600; color: var(--dark); }
+        .section-link { font-size: 12px; color: var(--primary); text-decoration: none; cursor: pointer; }
+        .card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: var(--shadow); flex-shrink: 0; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card-title { font-size: 16px; font-weight: 600; }
+        
+        .unit-card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
+        .unit-avatar { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .unit-info { flex: 1; }
+        .unit-name { font-size: 15px; font-weight: 600; color: var(--dark); }
+        .unit-occupant { font-size: 12px; color: var(--gray); }
+        .unit-status { font-size: 10px; padding: 3px 8px; border-radius: 10px; }
+        .unit-status.active { background: #dcfce7; color: #16a34a; }
+        .unit-status.vacant { background: #fee2e2; color: #dc2626; }
+        
+        .group-card { background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); color: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .group-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .group-name { font-size: 16px; font-weight: 600; }
+        .group-count { font-size: 12px; opacity: 0.9; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 10px; }
+        .group-units { display: flex; flex-wrap: wrap; gap: 6px; }
+        .group-unit-chip { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; font-size: 11px; }
+        
+        .task-card { background: var(--white); border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow); }
+        .task-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .task-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .task-title { font-size: 15px; font-weight: 600; color: var(--dark); }
+        .task-meta { font-size: 11px; color: var(--gray); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .task-badge { padding: 2px 8px; border-radius: 8px; font-size: 10px; }
+        .task-badge.all { background: #dbeafe; color: #2563eb; }
+        .task-badge.group { background: #f3e8ff; color: #9333ea; }
+        .task-badge.daily { background: #dcfce7; color: #16a34a; }
+        .task-badge.weekly { background: #fef3c7; color: #d97706; }
+        .task-badge.custom { background: #fce7f3; color: #db2777; }
+        .task-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .task-action-btn { flex: 1; padding: 8px; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        
+        .schedule-item { background: var(--white); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
+        .schedule-date { text-align: center; min-width: 50px; }
+        .schedule-day { font-size: 20px; font-weight: 700; color: var(--primary); }
+        .schedule-month { font-size: 10px; color: var(--gray); text-transform: uppercase; }
+        .schedule-info { flex: 1; }
+        .schedule-task { font-size: 13px; font-weight: 600; color: var(--dark); }
+        .schedule-assignee { font-size: 11px; color: var(--gray); }
+        .schedule-status { font-size: 10px; padding: 4px 8px; border-radius: 8px; }
+        .schedule-status.pending { background: #fef3c7; color: #d97706; }
+        .schedule-status.completed { background: #dcfce7; color: #16a34a; }
+        .schedule-status.substitute { background: #dbeafe; color: #2563eb; }
+        .schedule-status.overdue { background: #fee2e2; color: #dc2626; }
+        
+        .member-card { background: var(--white); border-radius: 12px; padding: 12px; margin-bottom: 8px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
+        .member-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .member-info { flex: 1; }
+        .member-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+        .member-debt { font-size: 11px; color: var(--gray); }
+        .member-debt.has-debt { color: var(--danger); font-weight: 600; }
+        
+        .ledger-item { background: var(--white); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
+        .ledger-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .ledger-info { flex: 1; }
+        .ledger-title { font-size: 13px; font-weight: 600; color: var(--dark); }
+        .ledger-date { font-size: 10px; color: var(--gray); }
+        .ledger-amount { font-size: 14px; font-weight: 600; }
+        .ledger-amount.income { color: var(--success); }
+        .ledger-amount.expense { color: var(--danger); }
+        .ledger-amount.deduction { color: var(--warning); }
+        
+        .cycle-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .cycle-item { background: var(--white); border-radius: 12px; padding: 12px; box-shadow: var(--shadow); }
+        .cycle-position { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
+        .cycle-unit { font-size: 13px; font-weight: 600; color: var(--dark); }
+        .cycle-date { font-size: 11px; color: var(--gray); }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); border-radius: 20px 20px 0 0; z-index: 100; }
+        .nav-item { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: var(--gray); font-size: 11px; padding: 5px 15px; border-radius: 12px; cursor: pointer; user-select: none; transition: all 0.2s; }
+        .nav-item.active { color: var(--primary); background: rgba(99, 102, 241, 0.1); transform: scale(1.1); }
+        .nav-item:active { transform: scale(0.95); }
+        .nav-item .icon { font-size: 22px; }
+        
+        .fab { position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border: none; border-radius: 50%; color: white; font-size: 30px; box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); cursor: pointer; z-index: 99; }
+        .fab:active { transform: scale(0.95); }
+        
+        .page { display: none; }
+        .page.active { display: block; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; justify-content: flex-end; align-items: flex-end; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: var(--white); width: 100%; max-height: 90vh; border-radius: 25px 25px 0 0; padding: 25px; overflow-y: auto; animation: slideUp 0.3s; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 20px; }
+        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { font-size: 13px; color: var(--gray); margin-bottom: 8px; display: block; }
+        .form-control { width: 100%; padding: 14px 15px; border: 2px solid var(--light); border-radius: 12px; font-size: 15px; }
+        .form-control:focus { outline: none; border-color: var(--primary); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; }
+        .btn-purple { background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-small { padding: 8px 15px; width: auto; font-size: 12px; }
+        
+        .type-toggle { display: flex; background: var(--light); border-radius: 15px; padding: 5px; margin-bottom: 20px; }
+        .type-btn { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .type-btn.active { background: var(--white); box-shadow: var(--shadow); }
+        .type-btn.income.active { color: var(--success); }
+        .type-btn.expense.active { color: var(--danger); }
+        
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--light); border-radius: 10px; cursor: pointer; font-size: 13px; }
+        .checkbox-item.selected { background: var(--primary); color: white; }
+        .checkbox-item input { display: none; }
+        
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); }
+        .empty-state .icon { font-size: 50px; margin-bottom: 15px; }
+        .empty-state h3 { font-size: 16px; margin-bottom: 8px; }
+        .empty-state p { font-size: 13px; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 25px; font-size: 14px; z-index: 300; }
+        
+        .settings-group { background: var(--white); border-radius: 16px; overflow: hidden; margin-bottom: 15px; box-shadow: var(--shadow); }
+        .settings-item { padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--light); cursor: pointer; }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .settings-text { flex: 1; }
+        .settings-text h4 { font-size: 14px; font-weight: 500; }
+        .settings-text span { font-size: 12px; color: var(--gray); }
+        
+        .right-menu-btn { position: fixed; right: 0; bottom: 90px; width: 45px; height: 45px; background: var(--primary); border: none; border-radius: 50% 0 0 50%; color: white; font-size: 20px; cursor: pointer; z-index: 150; display: flex; align-items: center; justify-content: center; box-shadow: -3px 0 15px rgba(0,0,0,0.2); }
+        .right-menu-panel { position: fixed; right: -200px; top: 0; bottom: 0; width: 200px; background: var(--white); z-index: 160; transition: right 0.3s; box-shadow: -5px 0 20px rgba(0,0,0,0.15); overflow-y: auto; padding-top: 50px; }
+        .right-menu-panel.open { right: 0; }
+        .right-menu-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 155; display: none; }
+        .right-menu-overlay.show { display: block; }
+        .right-menu-item { padding: 15px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--light); cursor: pointer; }
+        .right-menu-item .icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .right-menu-close { position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; border: none; background: var(--light); border-radius: 50%; cursor: pointer; font-size: 18px; }
+        
+        .file-upload { border: 2px dashed var(--light); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .file-upload:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+        .file-upload input { display: none; }
+        .file-preview { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .file-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 2px solid var(--light); cursor: pointer; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+        .stat-card { background: var(--white); border-radius: 12px; padding: 15px; text-align: center; box-shadow: var(--shadow); }
+        .stat-card .value { font-size: 24px; font-weight: 700; }
+        .stat-card .label { font-size: 11px; color: var(--gray); margin-top: 5px; }
+        .stat-card.primary .value { color: var(--primary); }
+        .stat-card.success .value { color: var(--success); }
+        .stat-card.danger .value { color: var(--danger); }
+        .stat-card.warning .value { color: var(--warning); }
+        
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .admin-tab { padding: 8px 16px; border: none; background: var(--light); border-radius: 10px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .admin-tab.active { background: var(--primary); color: white; }
+        
+        .json-editor { width: 100%; min-height: 150px; padding: 12px; border: 2px solid var(--light); border-radius: 12px; font-family: monospace; font-size: 12px; resize: vertical; }
+        
+        .debt-badge { background: var(--danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+        
+        .swipe-hint { font-size: 11px; color: var(--gray); text-align: center; padding: 8px; }
+        
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 8px; font-size: 10px; font-weight: 500; }
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-info { background: #dbeafe; color: #2563eb; }
+        
+        .unit-select-list { max-height: 200px; overflow-y: auto; border: 2px solid var(--light); border-radius: 12px; padding: 8px; }
+        .unit-select-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .unit-select-item:hover { background: var(--light); }
+        .unit-select-item.selected { background: rgba(99, 102, 241, 0.1); border: 2px solid var(--primary); }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Page -->
+    <div id="page-dashboard" class="page active">
+        <div class="header">
+            <div class="header-top">
+                <div>
+                    <div class="header-title">🏠 OmniTask</div>
+                    <div class="header-date" id="currentDate"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="syncStatus" style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 10px; color: white;">
+                        <span id="syncStatusText">📱 Local Storage</span>
+                    </div>
+                    <div onclick="showTab('settings')" style="cursor: pointer; font-size: 20px;">⚙️</div>
+                </div>
+            </div>
+            <div class="balance-card">
+                <div class="balance-label">Community Overview</div>
+                <div style="display: flex; justify-content: space-around; margin-top: 10px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700;" id="totalUnitsCount">0</div>
+                        <div style="font-size: 10px; opacity: 0.8;">Units</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700;" id="totalGroupsCount">0</div>
+                        <div style="font-size: 10px; opacity: 0.8;">Groups</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700;" id="totalTasksCount">0</div>
+                        <div style="font-size: 10px; opacity: 0.8;">Tasks</div>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-card">
+                    <div class="summary-icon income-icon">📋</div>
+                    <div class="summary-info"><h4>Today Tasks</h4><p id="todayTasksCount">0</p></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon expense-icon">⚠️</div>
+                    <div class="summary-info"><h4>Pending</h4><p id="pendingTasksCount">0</p></div>
+                </div>
+            </div>
+        </div>
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="openModal('unit')"><div class="icon" style="background: #dcfce7; color: #16a34a;">🏠</div><span>Unit</span></button>
+            <button class="quick-btn" onclick="openModal('group')"><div class="icon" style="background: #dbeafe; color: #2563eb;">👥</div><span>Group</span></button>
+            <button class="quick-btn" onclick="openModal('task')"><div class="icon" style="background: #fef3c7; color: #d97706;">📝</div><span>Task</span></button>
+            <button class="quick-btn" onclick="openModal('issue')"><div class="icon" style="background: #fce7f3; color: #db2777;">🔧</div><span>Issue</span></button>
+        </div>
+        <div class="main-content">
+            <div class="section-header">
+                <h2 class="section-title">📅 Today's Schedule</h2>
+                <a class="section-link" onclick="showTab('schedule')">See All →</a>
+            </div>
+            <div id="dashboardSchedule"></div>
+            
+            <div class="section-header">
+                <h2 class="section-title">🏠 Recent Units</h2>
+                <a class="section-link" onclick="showTab('units')">Manage →</a>
+            </div>
+            <div id="dashboardUnits"></div>
+        </div>
+    </div>
+
+    <!-- Units Page -->
+    <div id="page-units" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">🏠 Unit Manager</div>
+                <div style="font-size: 22px; cursor: pointer;" onclick="openModal('unit')">+</div>
+            </div>
+            <div style="margin-top: 15px;">
+                <div class="balance-label">Total Units</div>
+                <div class="balance-amount" id="unitsPageCount">0</div>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div id="allUnitsList"></div>
+        </div>
+    </div>
+
+    <!-- Groups Page -->
+    <div id="page-groups" class="page">
+        <div class="header" style="background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">👥 Group Builder</div>
+                <div style="font-size: 22px; cursor: pointer;" onclick="openModal('group')">+</div>
+            </div>
+            <div style="margin-top: 15px;">
+                <div class="balance-label">Total Groups</div>
+                <div class="balance-amount" id="groupsPageCount">0</div>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div id="allGroupsList"></div>
+        </div>
+    </div>
+
+    <!-- Tasks Page -->
+    <div id="page-tasks" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">📝 Task Configuration</div>
+                <div style="font-size: 22px; cursor: pointer;" onclick="openModal('task')">+</div>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div id="allTasksList"></div>
+        </div>
+    </div>
+
+    <!-- Schedule Page -->
+    <div id="page-schedule" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">📅 Rotation Schedule</div>
+            </div>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <select id="scheduleTaskFilter" style="flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderSchedule()">
+                    <option value="">All Tasks</option>
+                </select>
+                <select id="scheduleMonthFilter" style="padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderSchedule()">
+                </select>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div id="fullSchedule"></div>
+        </div>
+    </div>
+
+    <!-- Cycle Preview Page -->
+    <div id="page-cycle" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">🔄 Cycle Preview</div>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div id="cyclePreviewContainer"></div>
+        </div>
+    </div>
+
+    <!-- Ledger Page -->
+    <div id="page-ledger" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">💰 Financial Ledger</div>
+                <div style="font-size: 22px; cursor: pointer;" onclick="openModal('ledger')">+</div>
+            </div>
+            <div style="margin-top: 15px;">
+                <select id="ledgerUnitFilter" style="width: 100%; padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderLedger()">
+                    <option value="">All Units</option>
+                </select>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div class="stats-grid" id="ledgerStats"></div>
+            <div id="allLedgerEntries"></div>
+        </div>
+    </div>
+
+    <!-- Issues Page -->
+    <div id="page-issues" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">🔧 Maintenance Issues</div>
+                <div style="font-size: 22px; cursor: pointer;" onclick="openModal('issue')">+</div>
+            </div>
+            <div style="margin-top: 15px;">
+                <select id="issueStatusFilter" style="width: 100%; padding: 10px; border: none; border-radius: 10px; font-size: 13px;" onchange="renderIssues()">
+                    <option value="">All Issues</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div id="allIssues"></div>
+        </div>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="page-admin" class="page">
+        <div class="header" style="background: linear-gradient(135deg, var(--orange) 0%, var(--warning) 100%); padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">⚙️ Admin Panel</div>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('units')">Units</button>
+                <button class="admin-tab" onclick="switchAdminTab('groups')">Groups</button>
+                <button class="admin-tab" onclick="switchAdminTab('tasks')">Tasks</button>
+                <button class="admin-tab" onclick="switchAdminTab('debts')">Debts</button>
+                <button class="admin-tab" onclick="switchAdminTab('data')">Data</button>
+            </div>
+            <div id="adminContent"></div>
+        </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="page-settings" class="page">
+        <div class="header" style="padding-top: 30px;">
+            <div class="header-top"><div style="font-size: 18px; font-weight: 600;">⚙️ Settings</div></div>
+        </div>
+        <div class="main-content" style="margin-top: 20px; padding-bottom: 20px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📤 Export / Import</h3>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-outline btn-small" onclick="exportData()">📤 Export JSON</button>
+                    <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <div class="card-header">
+                    <h3 class="card-title">🔄 Regenerate Schedules</h3>
+                </div>
+                <button class="btn btn-primary" onclick="regenerateAllSchedules()">🔄 Regenerate All Schedules</button>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <div class="card-header">
+                    <h3 class="card-title">⚠️ Danger Zone</h3>
+                </div>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <div class="card-header">
+                    <h3 class="card-title">ℹ️ About</h3>
+                </div>
+                <p style="font-size: 13px; color: var(--gray);">OmniTask v1.0<br>Community Rotation & Rental Management Engine<br>PWA - Works Offline</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side Quick Menu -->
+    <div class="right-menu-overlay" onclick="toggleRightMenu()"></div>
+    <div class="right-menu-panel" id="rightMenuPanel">
+        <button class="right-menu-close" onclick="toggleRightMenu()">×</button>
+        <div class="right-menu-item" onclick="showTab('dashboard'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white;">🏠</div>
+            <div class="text"><strong>Dashboard</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('units'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--success) 0%, #34d399 100%); color: white;">🏠</div>
+            <div class="text"><strong>Units</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('groups'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); color: white;">👥</div>
+            <div class="text"><strong>Groups</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('schedule'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--cyan) 0%, #22d3ee 100%); color: white;">📅</div>
+            <div class="text"><strong>Schedule</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('ledger'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%); color: white;">💰</div>
+            <div class="text"><strong>Ledger</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('admin'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--orange) 0%, var(--warning) 100%); color: white;">⚙️</div>
+            <div class="text"><strong>Admin</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('settings'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--dark) 0%, #4b5563 100%); color: white;">⚙️</div>
+            <div class="text"><strong>Settings</strong></div>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modalContent" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="modal-title" id="modalTitle">Add Item</div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" style="display: none;"></div>
+
+    <script>
+        // ==================== DATABASE ====================
+        const DB_NAME = 'OmniTaskDB';
+        const DB_VERSION = 1;
+        let db = null;
+
+        const STORES = {
+            units: 'units',
+            groups: 'groups',
+            tasks: 'tasks',
+            schedules: 'schedules',
+            ledger: 'ledger',
+            issues: 'issues',
+            debts: 'debts',
+            config: 'config'
+        };
+
+        async function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const database = event.target.result;
+                    
+                    Object.values(STORES).forEach(storeName => {
+                        if (!database.objectStoreNames.contains(storeName)) {
+                            database.createObjectStore(storeName, { keyPath: 'id' });
+                        }
+                    });
+                };
+            });
+        }
+
+        async function dbGet(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function dbGetAll(storeName) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function dbPut(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const request = store.put(data);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function dbDelete(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function dbClear(storeName) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const request = store.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ==================== UTILITIES ====================
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function formatCurrency(amount) {
+            return '₹' + Number(amount).toLocaleString('en-IN');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // ==================== NAVIGATION ====================
+        function showTab(tabName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + tabName).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navItem = document.querySelector(`.nav-item[onclick="showTab('${tabName}')"]`);
+            if (navItem) navItem.classList.add('active');
+            
+            if (tabName === 'dashboard') renderDashboard();
+            if (tabName === 'units') renderUnits();
+            if (tabName === 'groups') renderGroups();
+            if (tabName === 'tasks') renderTasks();
+            if (tabName === 'schedule') renderSchedule();
+            if (tabName === 'cycle') renderCyclePreview();
+            if (tabName === 'ledger') renderLedger();
+            if (tabName === 'issues') renderIssues();
+            if (tabName === 'admin') renderAdmin();
+        }
+
+        function toggleRightMenu() {
+            document.getElementById('rightMenuPanel').classList.toggle('open');
+            document.querySelector('.right-menu-overlay').classList.toggle('show');
+        }
+
+        // ==================== MODAL ====================
+        function openModal(type) {
+            const overlay = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            
+            switch(type) {
+                case 'unit':
+                    title.textContent = '➕ Add Unit';
+                    body.innerHTML = getUnitForm();
+                    break;
+                case 'group':
+                    title.textContent = '👥 Create Group';
+                    body.innerHTML = getGroupForm();
+                    break;
+                case 'task':
+                    title.textContent = '📝 Create Task';
+                    body.innerHTML = getTaskForm();
+                    break;
+                case 'issue':
+                    title.textContent = '🔧 Report Issue';
+                    body.innerHTML = getIssueForm();
+                    break;
+                case 'ledger':
+                    title.textContent = '💰 Add Ledger Entry';
+                    body.innerHTML = getLedgerForm();
+                    break;
+                case 'swap':
+                    title.textContent = '🔄 Smart Swap';
+                    body.innerHTML = getSwapForm();
+                    break;
+            }
+            
+            overlay.classList.add('show');
+        }
+
+        function closeModal(event) {
+            if (event && event.target.id !== 'modalOverlay') return;
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        // ==================== FORMS ====================
+        function getUnitForm(existing = null) {
+            return `
+                <form onsubmit="saveUnit(event, '${existing?.id || ''}')">
+                    <div class="form-group">
+                        <label class="form-label">Unit Name *</label>
+                        <input type="text" class="form-control" id="unitName" value="${existing?.name || ''}" placeholder="e.g., Unit 101, Flat A" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Occupant Name</label>
+                        <input type="text" class="form-control" id="unitOccupant" value="${existing?.occupantName || ''}" placeholder="Current tenant name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${existing?.status === 'active' || !existing ? 'active' : ''}" onclick="setToggleActive(this, 'unitStatus', 'active')">Active</button>
+                            <button type="button" class="type-btn ${existing?.status === 'vacant' ? 'active' : ''}" onclick="setToggleActive(this, 'unitStatus', 'vacant')">Vacant</button>
+                        </div>
+                        <input type="hidden" id="unitStatus" value="${existing?.status || 'active'}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">${existing ? 'Update' : 'Add'} Unit</button>
+                </form>
+            `;
+        }
+
+        function getGroupForm(existing = null) {
+            return `
+                <form onsubmit="saveGroup(event, '${existing?.id || ''}')">
+                    <div class="form-group">
+                        <label class="form-label">Group Name *</label>
+                        <input type="text" class="form-control" id="groupName" value="${existing?.name || ''}" placeholder="e.g., Set A, Block 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assign Units</label>
+                        <div class="unit-select-list" id="groupUnitSelect">
+                            ${getUnitSelectOptions(existing?.unitIds)}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">${existing ? 'Update' : 'Create'} Group</button>
+                </form>
+            `;
+        }
+
+        function getUnitSelectOptions(selectedIds = []) {
+            const units = dbGetAllSync('units') || [];
+            if (units.length === 0) {
+                return '<p style="padding: 10px; color: var(--gray); font-size: 12px;">No units available. Add units first.</p>';
+            }
+            return units.map(unit => `
+                <div class="unit-select-item ${selectedIds.includes(unit.id) ? 'selected' : ''}" onclick="toggleUnitSelect(this, '${unit.id}')">
+                    <input type="checkbox" value="${unit.id}" ${selectedIds.includes(unit.id) ? 'checked' : ''}>
+                    <span>🏠 ${unit.name}</span>
+                    ${unit.occupantName ? `<span style="color: var(--gray); font-size: 11px;">- ${unit.occupantName}</span>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function toggleUnitSelect(element, unitId) {
+            element.classList.toggle('selected');
+            const checkbox = element.querySelector('input');
+            checkbox.checked = element.classList.contains('selected');
+        }
+
+        function getTaskForm(existing = null) {
+            return `
+                <form onsubmit="saveTask(event, '${existing?.id || ''}')">
+                    <div class="form-group">
+                        <label class="form-label">Task Name *</label>
+                        <input type="text" class="form-control" id="taskName" value="${existing?.name || ''}" placeholder="e.g., Water Pump, Street Cleaning" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-control" id="taskDescription" value="${existing?.description || ''}" placeholder="Optional description">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Frequency</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${existing?.frequency?.type === 'daily' || !existing ? 'active' : ''}" onclick="setToggleActive(this, 'taskFreqType', 'daily')">Daily</button>
+                            <button type="button" class="type-btn ${existing?.frequency?.type === 'weekly' ? 'active' : ''}" onclick="setToggleActive(this, 'taskFreqType', 'weekly')">Weekly</button>
+                            <button type="button" class="type-btn ${existing?.frequency?.type === 'custom' ? 'active' : ''}" onclick="setToggleActive(this, 'taskFreqType', 'custom')">Custom</button>
+                        </div>
+                        <input type="hidden" id="taskFreqType" value="${existing?.frequency?.type || 'daily'}">
+                    </div>
+                    <div class="form-group" id="customIntervalGroup" style="display: ${existing?.frequency?.type === 'custom' ? 'block' : 'none'};">
+                        <label class="form-label">Every X Days</label>
+                        <input type="number" class="form-control" id="taskInterval" value="${existing?.frequency?.interval || 2}" min="1" max="365">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assignment Type</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${existing?.assignment?.type === 'all_units' || !existing ? 'active' : ''}" onclick="setToggleActive(this, 'taskAssignType', 'all_units')">All Units</button>
+                            <button type="button" class="type-btn ${existing?.assignment?.type === 'specific_group' ? 'active' : ''}" onclick="setToggleActive(this, 'taskAssignType', 'specific_group')">Specific Group</button>
+                            <button type="button" class="type-btn ${existing?.assignment?.type === 'independent_only' ? 'active' : ''}" onclick="setToggleActive(this, 'taskAssignType', 'independent_only')">Independent</button>
+                        </div>
+                        <input type="hidden" id="taskAssignType" value="${existing?.assignment?.type || 'all_units'}">
+                    </div>
+                    <div class="form-group" id="taskGroupSelect" style="display: ${existing?.assignment?.type === 'specific_group' ? 'block' : 'none'};">
+                        <label class="form-label">Select Group</label>
+                        <select class="form-control" id="taskTargetGroup">
+                            ${getGroupOptions(existing?.assignment?.targetGroupId)}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Exclude Units (Optional)</label>
+                        <div class="unit-select-list" style="max-height: 120px;">
+                            ${getUnitSelectOptionsForExclude(existing?.assignment?.excludedUnitIds)}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rotation Order</label>
+                        <select class="form-control" id="taskRotationOrder">
+                            <option value="ascending" ${existing?.rotationOrder === 'ascending' || !existing ? 'selected' : ''}>Ascending (1, 2, 3...)</option>
+                            <option value="descending" ${existing?.rotationOrder === 'descending' ? 'selected' : ''}>Descending (3, 2, 1...)</option>
+                            <option value="random" ${existing?.rotationOrder === 'random' ? 'selected' : ''}>Random</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">${existing ? 'Update' : 'Create'} Task</button>
+                </form>
+            `;
+        }
+
+        function getGroupOptions(selectedId = null) {
+            const groups = dbGetAllSync('groups') || [];
+            return groups.map(g => `<option value="${g.id}" ${selectedId === g.id ? 'selected' : ''}>${g.name}</option>`).join('');
+        }
+
+        function getUnitSelectOptionsForExclude(selectedIds = []) {
+            const units = dbGetAllSync('units') || [];
+            return units.map(unit => `
+                <label class="checkbox-item ${selectedIds.includes(unit.id) ? 'selected' : ''}">
+                    <input type="checkbox" value="${unit.id}" ${selectedIds.includes(unit.id) ? 'checked' : ''} onchange="this.parentElement.classList.toggle('selected', this.checked)">
+                    ${unit.name}
+                </label>
+            `).join('');
+        }
+
+        function setToggleActive(btn, inputId, value) {
+            btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(inputId).value = value;
+            
+            if (inputId === 'taskFreqType') {
+                document.getElementById('customIntervalGroup').style.display = value === 'custom' ? 'block' : 'none';
+            }
+            if (inputId === 'taskAssignType') {
+                document.getElementById('taskGroupSelect').style.display = value === 'specific_group' ? 'block' : 'none';
+            }
+        }
+
+        function getIssueForm() {
+            const units = dbGetAllSync('units') || [];
+            return `
+                <form onsubmit="saveIssue(event)">
+                    <div class="form-group">
+                        <label class="form-label">Issue Type *</label>
+                        <select class="form-control" id="issueType" required>
+                            <option value="">Select Type</option>
+                            <option value="motor_repair">Motor Repair</option>
+                            <option value="drainage_fix">Drainage Fix</option>
+                            <option value="plumbing">Plumbing</option>
+                            <option value="electrical">Electrical</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Affected Unit *</label>
+                        <select class="form-control" id="issueUnit" required>
+                            <option value="">Select Unit</option>
+                            ${units.map(u => `<option value="${u.id}">${u.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" class="form-control" id="issueAmount" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="issueDescription" rows="2" placeholder="Describe the issue..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload Receipt (Optional)</label>
+                        <div class="file-upload" onclick="document.getElementById('issueFile').click()">
+                            <input type="file" id="issueFile" accept="image/*,.pdf" onchange="handleFileUpload(this, 'issuePreview')">
+                            <p style="font-size: 12px; color: var(--gray);">Tap to upload receipt</p>
+                        </div>
+                        <div class="file-preview" id="issuePreview"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Issue</button>
+                </form>
+            `;
+        }
+
+        function getLedgerForm() {
+            const units = dbGetAllSync('units') || [];
+            return `
+                <form onsubmit="saveLedgerEntry(event)">
+                    <div class="form-group">
+                        <label class="form-label">Entry Type *</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn income active" onclick="setLedgerType('rent', this)">Rent</button>
+                            <button type="button" class="type-btn expense" onclick="setLedgerType('eb_bill', this)">EB Bill</button>
+                            <button type="button" class="type-btn" onclick="setLedgerType('maintenance', this)">Maint.</button>
+                        </div>
+                        <input type="hidden" id="ledgerType" value="rent">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit *</label>
+                        <select class="form-control" id="ledgerUnit" required>
+                            <option value="">Select Unit</option>
+                            ${units.map(u => `<option value="${u.id}">${u.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" class="form-control" id="ledgerAmount" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-control" id="ledgerDescription" placeholder="Optional note">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload Bill/Receipt (Optional)</label>
+                        <div class="file-upload" onclick="document.getElementById('ledgerFile').click()">
+                            <input type="file" id="ledgerFile" accept="image/*,.pdf" onchange="handleFileUpload(this, 'ledgerPreview')">
+                            <p style="font-size: 12px; color: var(--gray);">Tap to upload</p>
+                        </div>
+                        <div class="file-preview" id="ledgerPreview"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Entry</button>
+                </form>
+            `;
+        }
+
+        function setLedgerType(type, btn) {
+            btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active', 'income', 'expense'));
+            btn.classList.add('active');
+            if (type === 'rent') btn.classList.add('income');
+            if (type === 'eb_bill' || type === 'maintenance') btn.classList.add('expense');
+            document.getElementById('ledgerType').value = type;
+        }
+
+        function getSwapForm(scheduleId = null, originalUnitId = null) {
+            const units = dbGetAllSync('units') || [];
+            const filteredUnits = units.filter(u => u.id !== originalUnitId);
+            
+            return `
+                <form onsubmit="processSwap(event, '${scheduleId}', '${originalUnitId}')">
+                    <p style="font-size: 13px; color: var(--gray); margin-bottom: 15px;">Select a substitute to take over this task. The system will schedule a debt repayment.</p>
+                    <div class="form-group">
+                        <label class="form-label">Select Substitute *</label>
+                        <select class="form-control" id="swapSubstitute" required>
+                            <option value="">Choose someone...</option>
+                            ${filteredUnits.map(u => `<option value="${u.id}">${u.name}${u.occupantName ? ' - ' + u.occupantName : ''}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reason (Optional)</label>
+                        <input type="text" class="form-control" id="swapReason" placeholder="e.g., Out of town">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Confirm Swap</button>
+                </form>
+            `;
+        }
+
+        function handleFileUpload(input, previewId) {
+            const preview = document.getElementById(previewId);
+            preview.innerHTML = '';
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    if (file.type.startsWith('image/')) {
+                        preview.innerHTML = `<img src="${e.target.result}" class="file-thumb" onclick="previewImage(this.src)">`;
+                    } else {
+                        preview.innerHTML = `<div style="padding: 10px; background: var(--light); border-radius: 8px; font-size: 12px;">📄 ${file.name}</div>`;
+                    }
+                    preview.dataset.fileData = e.target.result;
+                    preview.dataset.fileName = file.name;
+                    preview.dataset.fileType = file.type;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewImage(src) {
+            const modal = document.createElement('div');
+            modal.style = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:500;display:flex;align-items:center;justify-content:center;';
+            modal.onclick = () => modal.remove();
+            modal.innerHTML = `<img src="${src}" style="max-width:90%;max-height:90%;border-radius:10px;">`;
+            document.body.appendChild(modal);
+        }
+
+        // ==================== DATA OPERATIONS ====================
+        function dbGetAllSync(storeName) {
+            return new XMLHttpRequest ? [] : [];
+        }
+
+        async function saveUnit(event, existingId) {
+            event.preventDefault();
+            
+            const unit = {
+                id: existingId || generateId(),
+                name: document.getElementById('unitName').value,
+                occupantName: document.getElementById('unitOccupant').value,
+                status: document.getElementById('unitStatus').value,
+                createdAt: existingId ? (await dbGet('units', existingId))?.createdAt : Date.now()
+            };
+            
+            await dbPut('units', unit);
+            await updateCache();
+            closeModal();
+            showToast(existingId ? 'Unit updated!' : 'Unit added!');
+            renderDashboard();
+            renderUnits();
+        }
+
+        async function saveGroup(event, existingId) {
+            event.preventDefault();
+            
+            const selectedUnits = Array.from(document.querySelectorAll('#groupUnitSelect input:checked')).map(i => i.value);
+            
+            const group = {
+                id: existingId || generateId(),
+                name: document.getElementById('groupName').value,
+                unitIds: selectedUnits,
+                createdAt: existingId ? (await dbGet('groups', existingId))?.createdAt : Date.now()
+            };
+            
+            await dbPut('groups', group);
+            
+            // Update units with group assignment
+            const allUnits = await dbGetAll('units');
+            for (const unit of allUnits) {
+                if (selectedUnits.includes(unit.id)) {
+                    unit.groupId = group.id;
+                } else if (unit.groupId === group.id) {
+                    delete unit.groupId;
+                }
+                await dbPut('units', unit);
+            }
+            
+            await updateCache();
+            closeModal();
+            showToast(existingId ? 'Group updated!' : 'Group created!');
+            renderGroups();
+            renderDashboard();
+        }
+
+        async function saveTask(event, existingId) {
+            event.preventDefault();
+            
+            const excludedUnits = Array.from(document.querySelectorAll('#groupUnitSelect input[type="checkbox"]:not(#groupUnitSelect .unit-select-item input)'))
+                .filter(i => i.checked)
+                .map(i => i.value);
+            
+            const realExcludedUnits = Array.from(document.querySelectorAll('.checkbox-item input:checked'))
+                .map(i => i.value);
+            
+            const task = {
+                id: existingId || generateId(),
+                name: document.getElementById('taskName').value,
+                description: document.getElementById('taskDescription').value,
+                frequency: {
+                    type: document.getElementById('taskFreqType').value,
+                    interval: parseInt(document.getElementById('taskInterval').value) || 2
+                },
+                assignment: {
+                    type: document.getElementById('taskAssignType').value,
+                    targetGroupId: document.getElementById('taskTargetGroup')?.value || null,
+                    excludedUnitIds: realExcludedUnits
+                },
+                rotationOrder: document.getElementById('taskRotationOrder').value,
+                createdAt: existingId ? (await dbGet('tasks', existingId))?.createdAt : Date.now()
+            };
+            
+            await dbPut('tasks', task);
+            
+            // Regenerate schedule for this task
+            await generateSchedule(task.id);
+            await updateCache();
+            
+            closeModal();
+            showToast(existingId ? 'Task updated!' : 'Task created!');
+            renderTasks();
+            renderDashboard();
+            renderSchedule();
+        }
+
+        async function saveIssue(event) {
+            event.preventDefault();
+            
+            const preview = document.getElementById('issuePreview');
+            
+            const issue = {
+                id: generateId(),
+                type: document.getElementById('issueType').value,
+                unitId: document.getElementById('issueUnit').value,
+                amount: parseFloat(document.getElementById('issueAmount').value),
+                description: document.getElementById('issueDescription').value,
+                attachment: preview.dataset?.fileData || null,
+                attachmentName: preview.dataset?.fileName || null,
+                status: 'pending',
+                createdAt: Date.now()
+            };
+            
+            await dbPut('issues', issue);
+            await updateCache();
+            closeModal();
+            showToast('Issue reported!');
+            renderIssues();
+        }
+
+        async function approveIssue(issueId) {
+            const issue = await dbGet('issues', issueId);
+            if (!issue) return;
+            
+            issue.status = 'approved';
+            await dbPut('issues', issue);
+            
+            // Create deduction entry in ledger
+            const ledgerEntry = {
+                id: generateId(),
+                type: 'deduction',
+                unitId: issue.unitId,
+                amount: issue.amount,
+                description: `${issue.type.replace('_', ' ')} - Approved`,
+                relatedIssueId: issueId,
+                status: 'pending',
+                createdAt: Date.now()
+            };
+            await dbPut('ledger', ledgerEntry);
+            await updateCache();
+            
+            showToast('Issue approved! Deduction created.');
+            renderIssues();
+            renderLedger();
+        }
+
+        async function rejectIssue(issueId) {
+            const issue = await dbGet('issues', issueId);
+            if (!issue) return;
+            
+            issue.status = 'rejected';
+            await dbPut('issues', issue);
+            await updateCache();
+            
+            showToast('Issue rejected.');
+            renderIssues();
+        }
+
+        async function saveLedgerEntry(event) {
+            event.preventDefault();
+            
+            const preview = document.getElementById('ledgerPreview');
+            
+            const entry = {
+                id: generateId(),
+                type: document.getElementById('ledgerType').value,
+                unitId: document.getElementById('ledgerUnit').value,
+                amount: parseFloat(document.getElementById('ledgerAmount').value),
+                description: document.getElementById('ledgerDescription').value,
+                attachment: preview.dataset?.fileData || null,
+                attachmentName: preview.dataset?.fileName || null,
+                status: 'paid',
+                createdAt: Date.now()
+            };
+            
+            await dbPut('ledger', entry);
+            await updateCache();
+            closeModal();
+            showToast('Ledger entry added!');
+            renderLedger();
+        }
+
+        // ==================== SMART SHIFT ALGORITHM ====================
+        async function processSwap(event, scheduleId, originalUnitId) {
+            event.preventDefault();
+            
+            const substituteId = document.getElementById('swapSubstitute').value;
+            const reason = document.getElementById('swapReason').value;
+            
+            if (!substituteId) {
+                showToast('Please select a substitute');
+                return;
+            }
+            
+            // 1. Get schedule entry
+            const schedule = await dbGet('schedules', scheduleId);
+            if (!schedule) return;
+            
+            // 2. Mark as completed by substitute
+            schedule.status = 'completed';
+            schedule.completedBy = substituteId;
+            schedule.completedAs = 'substitute';
+            schedule.swapReason = reason;
+            schedule.completedAt = Date.now();
+            await dbPut('schedules', schedule);
+            
+            // 3. Create debt record
+            const debt = {
+                id: generateId(),
+                fromUnitId: originalUnitId,
+                toUnitId: substituteId,
+                taskId: schedule.taskId,
+                scheduleId: scheduleId,
+                reason: reason,
+                status: 'pending',
+                createdAt: Date.now()
+            };
+            await dbPut('debts', debt);
+            
+            // 4. Swap next slots
+            const task = await dbGet('tasks', schedule.taskId);
+            const eligibleUnits = await getEligibleUnits(task);
+            
+            // Find current index and swap with next
+            const currentIndex = eligibleUnits.findIndex(u => u.id === originalUnitId);
+            const substituteIndex = eligibleUnits.findIndex(u => u.id === substituteId);
+            
+            if (currentIndex !== -1 && substituteIndex !== -1) {
+                // Find next occurrence of originalUnitId
+                const nextOriginalSchedules = (await dbGetAll('schedules'))
+                    .filter(s => s.taskId === task.id && s.unitId === originalUnitId && s.date > schedule.date)
+                    .sort((a, b) => a.date - b.date);
+                
+                // Find next occurrence of substituteId
+                const nextSubstituteSchedules = (await dbGetAll('schedules'))
+                    .filter(s => s.taskId === task.id && s.unitId === substituteId && s.date > schedule.date)
+                    .sort((a, b) => a.date - b.date);
+                
+                if (nextSubstituteSchedules.length > 0) {
+                    const nextSub = nextSubstituteSchedules[0];
+                    nextSub.unitId = originalUnitId;
+                    nextSub.assignedAt = Date.now();
+                    await dbPut('schedules', nextSub);
+                }
+            }
+            
+            await updateCache();
+            closeModal();
+            showToast('Swap completed! Debt recorded.');
+            renderSchedule();
+            renderDebts();
+        }
+
+        async function markTaskComplete(scheduleId) {
+            const schedule = await dbGet('schedules', scheduleId);
+            if (!schedule) return;
+            
+            schedule.status = 'completed';
+            schedule.completedAt = Date.now();
+            await dbPut('schedules', schedule);
+            await updateCache();
+            
+            showToast('Task marked as complete!');
+            renderSchedule();
+            renderDashboard();
+        }
+
+        async function markTaskUnavailable(scheduleId, unitId) {
+            openModal('swap');
+            document.getElementById('modalBody').innerHTML = getSwapForm(scheduleId, unitId);
+        }
+
+        // ==================== SCHEDULE GENERATION ====================
+        async function getEligibleUnits(task) {
+            let units = await dbGetAll('units');
+            
+            // Filter by status
+            units = units.filter(u => u.status === 'active');
+            
+            // Filter by assignment type
+            if (task.assignment.type === 'specific_group') {
+                const group = await dbGet('groups', task.assignment.targetGroupId);
+                if (group) {
+                    units = units.filter(u => group.unitIds.includes(u.id));
+                }
+            } else if (task.assignment.type === 'independent_only') {
+                units = units.filter(u => !u.groupId);
+            }
+            
+            // Apply exclusions
+            if (task.assignment.excludedUnitIds?.length > 0) {
+                units = units.filter(u => !task.assignment.excludedUnitIds.includes(u.id));
+            }
+            
+            // Apply rotation order
+            if (task.rotationOrder === 'random') {
+                units = units.sort(() => Math.random() - 0.5);
+            }
+            
+            return units;
+        }
+
+        async function generateSchedule(taskId) {
+            const task = await dbGet('tasks', taskId);
+            if (!task) return;
+            
+            // Remove existing schedules for this task
+            const existingSchedules = await dbGetAll('schedules');
+            for (const s of existingSchedules) {
+                if (s.taskId === taskId) {
+                    await dbDelete('schedules', s.id);
+                }
+            }
+            
+            const units = await getEligibleUnits(task);
+            if (units.length === 0) return;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Generate schedules for next 90 days
+            for (let day = 0; day < 90; day++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() + day);
+                
+                // Check if task should run on this day
+                let shouldRun = false;
+                
+                if (task.frequency.type === 'daily') {
+                    shouldRun = true;
+                } else if (task.frequency.type === 'weekly') {
+                    shouldRun = date.getDay() === 1; // Monday
+                } else if (task.frequency.type === 'custom') {
+                    shouldRun = day % task.frequency.interval === 0;
+                }
+                
+                if (shouldRun) {
+                    const unitIndex = day % units.length;
+                    const schedule = {
+                        id: generateId(),
+                        taskId: task.id,
+                        unitId: units[unitIndex].id,
+                        date: date.toISOString().split('T')[0],
+                        status: 'pending',
+                        createdAt: Date.now()
+                    };
+                    await dbPut('schedules', schedule);
+                }
+            }
+        }
+
+        async function regenerateAllSchedules() {
+            const tasks = await dbGetAll('tasks');
+            for (const task of tasks) {
+                await generateSchedule(task.id);
+            }
+            await updateCache();
+            showToast('All schedules regenerated!');
+            renderSchedule();
+            renderDashboard();
+        }
+
+        // ==================== RENDER FUNCTIONS ====================
+        async function renderDashboard() {
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+            
+            const units = await dbGetAll('units');
+            const groups = await dbGetAll('groups');
+            const tasks = await dbGetAll('tasks');
+            const schedules = await dbGetAll('schedules');
+            
+            document.getElementById('totalUnitsCount').textContent = units.length;
+            document.getElementById('totalGroupsCount').textContent = groups.length;
+            document.getElementById('totalTasksCount').textContent = tasks.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todaySchedules = schedules.filter(s => s.date === today);
+            const pendingSchedules = schedules.filter(s => s.status === 'pending');
+            
+            document.getElementById('todayTasksCount').textContent = todaySchedules.length;
+            document.getElementById('pendingTasksCount').textContent = pendingSchedules.length;
+            
+            // Today's schedule
+            const dashboardSchedule = document.getElementById('dashboardSchedule');
+            if (todaySchedules.length === 0) {
+                dashboardSchedule.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📅</div>
+                        <h3>No tasks today</h3>
+                        <p>Enjoy your day!</p>
+                    </div>
+                `;
+            } else {
+                dashboardSchedule.innerHTML = todaySchedules.map(s => {
+                    const task = tasks.find(t => t.id === s.taskId);
+                    const unit = units.find(u => u.id === s.unitId);
+                    const assignee = s.completedBy ? units.find(u => u.id === s.completedBy) : null;
+                    
+                    return `
+                        <div class="task-card">
+                            <div class="task-header">
+                                <div class="task-icon" style="background: ${getTaskColor(task?.name)};">${getTaskIcon(task?.name)}</div>
+                                <div>
+                                    <div class="task-title">${task?.name || 'Unknown Task'}</div>
+                                    <div class="task-meta">
+                                        <span>🏠 ${unit?.name || 'Unknown'}</span>
+                                        ${assignee ? `<span class="badge badge-info">Sub: ${assignee.name}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            ${s.status === 'pending' ? `
+                                <div class="task-actions">
+                                    <button class="task-action-btn" style="background: #dcfce7; color: #16a34a;" onclick="markTaskComplete('${s.id}')">✅ Done</button>
+                                    <button class="task-action-btn" style="background: #fef3c7; color: #d97706;" onclick="markTaskUnavailable('${s.id}', '${s.unitId}')">🔄 Swap</button>
+                                </div>
+                            ` : `<span class="badge badge-success">✅ Completed</span>`}
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Recent units
+            const dashboardUnits = document.getElementById('dashboardUnits');
+            const recentUnits = units.slice(-3).reverse();
+            if (recentUnits.length === 0) {
+                dashboardUnits.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🏠</div>
+                        <h3>No units yet</h3>
+                        <p>Add your first unit</p>
+                    </div>
+                `;
+            } else {
+                dashboardUnits.innerHTML = recentUnits.map(unit => `
+                    <div class="unit-card" onclick="showTab('units')">
+                        <div class="unit-avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white;">🏠</div>
+                        <div class="unit-info">
+                            <div class="unit-name">${unit.name}</div>
+                            <div class="unit-occupant">${unit.occupantName || 'No occupant'}</div>
+                        </div>
+                        <span class="unit-status ${unit.status}">${unit.status}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function renderUnits() {
+            const units = await dbGetAll('units');
+            document.getElementById('unitsPageCount').textContent = units.length;
+            
+            const container = document.getElementById('allUnitsList');
+            if (units.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🏠</div>
+                        <h3>No units yet</h3>
+                        <p>Tap + to add your first unit</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = units.map(unit => `
+                    <div class="unit-card">
+                        <div class="unit-avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white;">🏠</div>
+                        <div class="unit-info">
+                            <div class="unit-name">${unit.name}</div>
+                            <div class="unit-occupant">${unit.occupantName || 'No occupant'}</div>
+                            ${unit.groupId ? `<span class="task-badge group">In Group</span>` : ''}
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                            <span class="unit-status ${unit.status}">${unit.status}</span>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="editUnit('${unit.id}')" style="background: var(--light); border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px;">Edit</button>
+                                <button onclick="deleteUnit('${unit.id}')" style="background: #fee2e2; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; color: #dc2626;">Del</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function editUnit(unitId) {
+            const unit = await dbGet('units', unitId);
+            if (!unit) return;
+            
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '✏️ Edit Unit';
+            document.getElementById('modalBody').innerHTML = getUnitForm(unit);
+            overlay.classList.add('show');
+        }
+
+        async function deleteUnit(unitId) {
+            if (!confirm('Delete this unit? This will also remove from schedules.')) return;
+            
+            await dbDelete('units', unitId);
+            
+            // Remove from groups
+            const groups = await dbGetAll('groups');
+            for (const group of groups) {
+                if (group.unitIds.includes(unitId)) {
+                    group.unitIds = group.unitIds.filter(id => id !== unitId);
+                    await dbPut('groups', group);
+                }
+            }
+            
+            await updateCache();
+            showToast('Unit deleted!');
+            renderUnits();
+            renderDashboard();
+        }
+
+        async function renderGroups() {
+            const groups = await dbGetAll('groups');
+            const units = await dbGetAll('units');
+            
+            document.getElementById('groupsPageCount').textContent = groups.length;
+            
+            const container = document.getElementById('allGroupsList');
+            if (groups.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">👥</div>
+                        <h3>No groups yet</h3>
+                        <p>Create groups to organize units</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = groups.map(group => {
+                    const groupUnits = units.filter(u => group.unitIds.includes(u.id));
+                    return `
+                        <div class="group-card">
+                            <div class="group-header">
+                                <div class="group-name">${group.name}</div>
+                                <div class="group-count">${group.unitIds.length} units</div>
+                            </div>
+                            <div class="group-units">
+                                ${groupUnits.map(u => `<span class="group-unit-chip">🏠 ${u.name}</span>`).join('')}
+                            </div>
+                            <div style="margin-top: 10px; display: flex; gap: 8px;">
+                                <button onclick="editGroup('${group.id}')" class="btn btn-small" style="background: rgba(255,255,255,0.2); color: white;">Edit</button>
+                                <button onclick="deleteGroup('${group.id}')" class="btn btn-small" style="background: rgba(239,68,68,0.3); color: white;">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function editGroup(groupId) {
+            const group = await dbGet('groups', groupId);
+            if (!group) return;
+            
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '✏️ Edit Group';
+            document.getElementById('modalBody').innerHTML = getGroupForm(group);
+            overlay.classList.add('show');
+        }
+
+        async function deleteGroup(groupId) {
+            if (!confirm('Delete this group? Units will become independent.')) return;
+            
+            const group = await dbGet('groups', groupId);
+            if (group) {
+                // Remove group reference from units
+                const units = await dbGetAll('units');
+                for (const unit of units) {
+                    if (unit.groupId === groupId) {
+                        delete unit.groupId;
+                        await dbPut('units', unit);
+                    }
+                }
+            }
+            
+            await dbDelete('groups', groupId);
+            await updateCache();
+            showToast('Group deleted!');
+            renderGroups();
+            renderDashboard();
+        }
+
+        async function renderTasks() {
+            const tasks = await dbGetAll('tasks');
+            const groups = await dbGetAll('groups');
+            
+            const container = document.getElementById('allTasksList');
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📝</div>
+                        <h3>No tasks yet</h3>
+                        <p>Create your first task configuration</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = tasks.map(task => {
+                    const group = task.assignment.type === 'specific_group' ? groups.find(g => g.id === task.assignment.targetGroupId) : null;
+                    return `
+                        <div class="task-card">
+                            <div class="task-header">
+                                <div class="task-icon" style="background: ${getTaskColor(task.name)};">${getTaskIcon(task.name)}</div>
+                                <div style="flex: 1;">
+                                    <div class="task-title">${task.name}</div>
+                                    <div class="task-meta">
+                                        <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
+                                        <span class="task-badge ${task.assignment.type}">${task.assignment.type.replace('_', ' ')}</span>
+                                        ${group ? `<span>→ ${group.name}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            ${task.description ? `<p style="font-size: 12px; color: var(--gray); margin-bottom: 10px;">${task.description}</p>` : ''}
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="editTask('${task.id}')" class="btn btn-small btn-outline">Edit</button>
+                                <button onclick="regenerateTaskSchedule('${task.id}')" class="btn btn-small btn-purple" style="color: white;">🔄 Regenerate</button>
+                                <button onclick="deleteTask('${task.id}')" class="btn btn-small btn-danger">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function editTask(taskId) {
+            const task = await dbGet('tasks', taskId);
+            if (!task) return;
+            
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '✏️ Edit Task';
+            document.getElementById('modalBody').innerHTML = getTaskForm(task);
+            overlay.classList.add('show');
+        }
+
+        async function regenerateTaskSchedule(taskId) {
+            await generateSchedule(taskId);
+            await updateCache();
+            showToast('Schedule regenerated!');
+            renderSchedule();
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm('Delete this task and its schedules?')) return;
+            
+            // Delete schedules
+            const schedules = await dbGetAll('schedules');
+            for (const s of schedules) {
+                if (s.taskId === taskId) {
+                    await dbDelete('schedules', s.id);
+                }
+            }
+            
+            await dbDelete('tasks', taskId);
+            await updateCache();
+            showToast('Task deleted!');
+            renderTasks();
+            renderDashboard();
+        }
+
+        async function renderSchedule() {
+            const schedules = await dbGetAll('schedules');
+            const tasks = await dbGetAll('tasks');
+            const units = await dbGetAll('units');
+            
+            const taskFilter = document.getElementById('scheduleTaskFilter');
+            const monthFilter = document.getElementById('scheduleMonthFilter');
+            
+            // Populate filters
+            taskFilter.innerHTML = '<option value="">All Tasks</option>' + tasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            
+            const months = [...new Set(schedules.map(s => s.date.substring(0, 7)))].sort();
+            monthFilter.innerHTML = months.map(m => `<option value="${m}">${m}</option>`).join('');
+            
+            // Filter schedules
+            let filtered = schedules;
+            if (taskFilter.value) {
+                filtered = filtered.filter(s => s.taskId === taskFilter.value);
+            }
+            if (monthFilter.value) {
+                filtered = filtered.filter(s => s.date.startsWith(monthFilter.value));
+            }
+            
+            // Sort by date
+            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            const container = document.getElementById('fullSchedule');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📅</div>
+                        <h3>No schedules</h3>
+                        <p>Create tasks to generate schedules</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filtered.slice(0, 50).map(s => {
+                    const task = tasks.find(t => t.id === s.taskId);
+                    const unit = units.find(u => u.id === s.unitId);
+                    const date = new Date(s.date);
+                    const isToday = s.date === new Date().toISOString().split('T')[0];
+                    const isPast = new Date(s.date) < new Date() && !isToday;
+                    
+                    let statusClass = s.status;
+                    let statusText = s.status;
+                    
+                    if (s.completedAs === 'substitute') {
+                        statusClass = 'substitute';
+                        statusText = 'Substitute';
+                    } else if (isPast && s.status === 'pending') {
+                        statusClass = 'overdue';
+                        statusText = 'Overdue';
+                    }
+                    
+                    const assignee = s.completedBy ? units.find(u => u.id === s.completedBy) : null;
+                    
+                    return `
+                        <div class="schedule-item" style="${isToday ? 'border-left: 3px solid var(--primary);' : ''}">
+                            <div class="schedule-date">
+                                <div class="schedule-day">${date.getDate()}</div>
+                                <div class="schedule-month">${date.toLocaleString('en', { month: 'short' })}</div>
+                            </div>
+                            <div class="schedule-info">
+                                <div class="schedule-task">${task?.name || 'Unknown'}</div>
+                                <div class="schedule-assignee">
+                                    🏠 ${unit?.name || 'Unknown'}
+                                    ${assignee ? `<span style="color: var(--info);"> → ${assignee.name}</span>` : ''}
+                                </div>
+                            </div>
+                            <span class="schedule-status ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function renderCyclePreview() {
+            const tasks = await dbGetAll('tasks');
+            const units = await dbGetAll('units');
+            const container = document.getElementById('cyclePreviewContainer');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔄</div>
+                        <h3>No tasks configured</h3>
+                        <p>Create tasks to see cycle preview</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            for (const task of tasks) {
+                const eligibleUnits = await getEligibleUnits(task);
+                
+                html += `
+                    <div class="card" style="margin-bottom: 15px;">
+                        <div class="card-header">
+                            <h3 class="card-title">${getTaskIcon(task.name)} ${task.name}</h3>
+                            <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
+                        </div>
+                        <div class="cycle-preview">
+                            ${eligibleUnits.slice(0, 10).map((u, i) => `
+                                <div class="cycle-item">
+                                    <div class="cycle-position">#${i + 1}</div>
+                                    <div class="cycle-unit">🏠 ${u.name}</div>
+                                    <div class="cycle-date">${u.occupantName || 'No occupant'}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        async function renderLedger() {
+            const ledger = await dbGetAll('ledger');
+            const units = await dbGetAll('units');
+            
+            const unitFilter = document.getElementById('ledgerUnitFilter');
+            unitFilter.innerHTML = '<option value="">All Units</option>' + units.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+            
+            let filtered = ledger;
+            if (unitFilter.value) {
+                filtered = ledger.filter(e => e.unitId === unitFilter.value);
+            }
+            
+            filtered.sort((a, b) => b.createdAt - a.createdAt);
+            
+            // Stats
+            const totalRent = filtered.filter(e => e.type === 'rent').reduce((sum, e) => sum + e.amount, 0);
+            const totalBills = filtered.filter(e => e.type === 'eb_bill').reduce((sum, e) => sum + e.amount, 0);
+            const totalDeductions = filtered.filter(e => e.type === 'deduction').reduce((sum, e) => sum + e.amount, 0);
+            
+            document.getElementById('ledgerStats').innerHTML = `
+                <div class="stat-card primary">
+                    <div class="value">${formatCurrency(totalRent)}</div>
+                    <div class="label">Total Rent</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="value">${formatCurrency(totalBills)}</div>
+                    <div class="label">EB Bills</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="value">${formatCurrency(totalDeductions)}</div>
+                    <div class="label">Deductions</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="value">${formatCurrency(totalRent - totalBills - totalDeductions)}</div>
+                    <div class="label">Net</div>
+                </div>
+            `;
+            
+            const container = document.getElementById('allLedgerEntries');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">💰</div>
+                        <h3>No ledger entries</h3>
+                        <p>Add rent or bills to track finances</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filtered.map(entry => {
+                    const unit = units.find(u => u.id === entry.unitId);
+                    const isExpense = entry.type === 'eb_bill' || entry.type === 'maintenance' || entry.type === 'deduction';
+                    
+                    return `
+                        <div class="ledger-item">
+                            <div class="ledger-icon" style="background: ${isExpense ? '#fee2e2' : '#dcfce7'}; color: ${isExpense ? '#dc2626' : '#16a34a'};">
+                                ${entry.type === 'rent' ? '🏠' : entry.type === 'eb_bill' ? '💡' : entry.type === 'deduction' ? '➖' : '🔧'}
+                            </div>
+                            <div class="ledger-info">
+                                <div class="ledger-title">${entry.type.replace('_', ' ').toUpperCase()}</div>
+                                <div class="ledger-date">
+                                    🏠 ${unit?.name || 'Unknown'} • ${formatDate(entry.createdAt)}
+                                    ${entry.description ? ` • ${entry.description}` : ''}
+                                </div>
+                            </div>
+                            <div class="ledger-amount ${isExpense ? 'expense' : 'income'}">
+                                ${isExpense ? '-' : '+'}${formatCurrency(entry.amount)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function renderIssues() {
+            const issues = await dbGetAll('issues');
+            const units = await dbGetAll('units');
+            
+            let filtered = issues;
+            const statusFilter = document.getElementById('issueStatusFilter').value;
+            if (statusFilter) {
+                filtered = issues.filter(i => i.status === statusFilter);
+            }
+            
+            filtered.sort((a, b) => b.createdAt - a.createdAt);
+            
+            const container = document.getElementById('allIssues');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔧</div>
+                        <h3>No issues</h3>
+                        <p>Maintenance issues will appear here</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filtered.map(issue => {
+                    const unit = units.find(u => u.id === issue.unitId);
+                    const typeLabels = {
+                        motor_repair: 'Motor Repair',
+                        drainage_fix: 'Drainage Fix',
+                        plumbing: 'Plumbing',
+                        electrical: 'Electrical',
+                        other: 'Other'
+                    };
+                    
+                    return `
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <div>
+                                    <strong>${typeLabels[issue.type] || issue.type}</strong>
+                                    <div style="font-size: 12px; color: var(--gray);">🏠 ${unit?.name || 'Unknown'}</div>
+                                </div>
+                                <span class="badge badge-${issue.status === 'approved' ? 'success' : issue.status === 'rejected' ? 'danger' : 'warning'}">
+                                    ${issue.status}
+                                </span>
+                            </div>
+                            <div style="font-size: 18px; font-weight: 600; color: var(--danger); margin-bottom: 10px;">
+                                ${formatCurrency(issue.amount)}
+                            </div>
+                            ${issue.description ? `<p style="font-size: 12px; color: var(--gray); margin-bottom: 10px;">${issue.description}</p>` : ''}
+                            ${issue.attachment ? `<img src="${issue.attachment}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="previewImage('${issue.attachment}')">` : ''}
+                            <div style="font-size: 11px; color: var(--gray); margin-top: 10px;">${formatDate(issue.createdAt)}</div>
+                            ${issue.status === 'pending' ? `
+                                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                    <button onclick="approveIssue('${issue.id}')" class="btn btn-small btn-success">✅ Approve</button>
+                                    <button onclick="rejectIssue('${issue.id}')" class="btn btn-small btn-danger">❌ Reject</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function renderDebts() {
+            const debts = await dbGetAll('debts');
+            const units = await dbGetAll('units');
+            
+            const container = document.getElementById('adminDebts');
+            if (debts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔄</div>
+                        <h3>No debts</h3>
+                        <p>Swap records will appear here</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = debts.map(debt => {
+                    const fromUnit = units.find(u => u.id === debt.fromUnitId);
+                    const toUnit = units.find(u => u.id === debt.toUnitId);
+                    
+                    return `
+                        <div class="card" style="margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>${fromUnit?.name || '?'}</span>
+                                <span style="color: var(--gray);">→</span>
+                                <span>${toUnit?.name || '?'}</span>
+                                <span class="debt-badge">${debt.status}</span>
+                            </div>
+                            ${debt.reason ? `<div style="font-size: 11px; color: var(--gray); margin-top: 5px;">${debt.reason}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        async function renderAdmin(tab = 'units') {
+            switchAdminTab(tab);
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            event?.target?.classList?.add('active') || document.querySelector(`.admin-tab[onclick="switchAdminTab('${tab}')"]`)?.classList.add('active');
+            
+            const content = document.getElementById('adminContent');
+            
+            switch(tab) {
+                case 'units':
+                    renderAdminUnits(content);
+                    break;
+                case 'groups':
+                    renderAdminGroups(content);
+                    break;
+                case 'tasks':
+                    renderAdminTasks(content);
+                    break;
+                case 'debts':
+                    content.innerHTML = '<div id="adminDebts"></div>';
+                    renderDebts();
+                    break;
+                case 'data':
+                    renderAdminData(content);
+                    break;
+            }
+        }
+
+        async function renderAdminUnits(container) {
+            const units = await dbGetAll('units');
+            const groups = await dbGetAll('groups');
+            
+            container.innerHTML = `
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">📊 Units Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value">${units.length}</div>
+                            <div class="label">Total Units</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value">${units.filter(u => u.status === 'active').length}</div>
+                            <div class="label">Active</div>
+                        </div>
+                        <div class="stat-card danger">
+                            <div class="value">${units.filter(u => u.status === 'vacant').length}</div>
+                            <div class="label">Vacant</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value">${groups.length}</div>
+                            <div class="label">Groups</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 15px;">
+                    <h3 style="margin-bottom: 15px;">🏠 Unit Details</h3>
+                    ${units.map(u => {
+                        const group = groups.find(g => g.id === u.groupId);
+                        return `
+                            <div style="padding: 10px; border-bottom: 1px solid var(--light); display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${u.name}</strong>
+                                    <div style="font-size: 11px; color: var(--gray);">
+                                        ${u.occupantName || 'No occupant'} • ${u.status}
+                                        ${group ? ` • ${group.name}` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        async function renderAdminGroups(container) {
+            const groups = await dbGetAll('groups');
+            const units = await dbGetAll('units');
+            
+            container.innerHTML = `
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">👥 Groups Configuration</h3>
+                    ${groups.map(g => {
+                        const members = units.filter(u => g.unitIds.includes(u.id));
+                        return `
+                            <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%); border-radius: 12px; color: white;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <strong>${g.name}</strong>
+                                    <span style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 8px; font-size: 11px;">${g.unitIds.length} units</span>
+                                </div>
+                                <div style="font-size: 12px; opacity: 0.9;">
+                                    ${members.map(m => `• ${m.name}`).join('<br>') || 'No units assigned'}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${groups.length === 0 ? '<p style="color: var(--gray); text-align: center;">No groups created yet</p>' : ''}
+                </div>
+            `;
+        }
+
+        async function renderAdminTasks(container) {
+            const tasks = await dbGetAll('tasks');
+            const groups = await dbGetAll('groups');
+            const units = await dbGetAll('units');
+            
+            container.innerHTML = `
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">📝 Task JSON Configuration</h3>
+                    <p style="font-size: 12px; color: var(--gray); margin-bottom: 15px;">
+                        Each task's JSON configuration. You can edit the JSON directly.
+                    </p>
+                    ${tasks.map(task => {
+                        const eligibleUnits = units.filter(u => {
+                            if (task.assignment.type === 'specific_group') {
+                                const group = groups.find(g => g.id === task.assignment.targetGroupId);
+                                return group?.unitIds.includes(u.id);
+                            }
+                            if (task.assignment.type === 'independent_only') {
+                                return !u.groupId;
+                            }
+                            return true;
+                        }).filter(u => !task.assignment.excludedUnitIds?.includes(u.id));
+                        
+                        return `
+                            <div style="margin-bottom: 15px; padding: 12px; background: var(--light); border-radius: 10px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <strong>${task.name}</strong>
+                                    <span style="font-size: 11px; color: var(--gray);">${eligibleUnits.length} eligible</span>
+                                </div>
+                                <details>
+                                    <summary style="cursor: pointer; font-size: 12px; color: var(--primary);">View JSON Config</summary>
+                                    <pre style="margin-top: 10px; padding: 10px; background: var(--dark); color: #a5f3fc; border-radius: 8px; font-size: 10px; overflow-x: auto;">${JSON.stringify(task, null, 2)}</pre>
+                                </details>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderAdminData(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">💾 Data Management</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="font-size: 13px; margin-bottom: 8px;">Export All Data</h4>
+                        <button class="btn btn-outline" onclick="exportData()">📤 Export to JSON</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="font-size: 13px; margin-bottom: 8px;">Import Data</h4>
+                        <input type="file" accept=".json" style="display:none" id="adminImportFile" onchange="importData(event)">
+                        <button class="btn btn-outline" onclick="document.getElementById('adminImportFile').click()">📥 Import JSON</button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #fee2e2; border-radius: 10px;">
+                        <h4 style="font-size: 13px; color: #dc2626; margin-bottom: 8px;">⚠️ Danger Zone</h4>
+                        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function getTaskColor(taskName) {
+            const colors = {
+                'water': '#dbeafe',
+                'pump': '#dbeafe',
+                'street': '#fef3c7',
+                'cleaning': '#fef3c7',
+                'drainage': '#fce7f3',
+                'drain': '#fce7f3',
+                'garbage': '#dcfce7',
+                'waste': '#dcfce7',
+                'electrical': '#fef3c7',
+                'default': '#f3f4f6'
+            };
+            
+            const name = (taskName || '').toLowerCase();
+            for (const [key, color] of Object.entries(colors)) {
+                if (name.includes(key)) return color;
+            }
+            return colors.default;
+        }
+
+        function getTaskIcon(taskName) {
+            const icons = {
+                'water': '💧',
+                'pump': '💧',
+                'street': '🧹',
+                'cleaning': '🧹',
+                'drainage': '🚰',
+                'drain': '🚰',
+                'garbage': '🗑️',
+                'waste': '🗑️',
+                'electrical': '💡',
+                'motor': '⚙️',
+                'plumbing': '🔧',
+                'default': '📋'
+            };
+            
+            const name = (taskName || '').toLowerCase();
+            for (const [key, icon] of Object.entries(icons)) {
+                if (name.includes(key)) return icon;
+            }
+            return icons.default;
+        }
+
+        // ==================== DATA EXPORT/IMPORT ====================
+        async function exportData() {
+            const data = {
+                units: await dbGetAll('units'),
+                groups: await dbGetAll('groups'),
+                tasks: await dbGetAll('tasks'),
+                schedules: await dbGetAll('schedules'),
+                ledger: await dbGetAll('ledger'),
+                issues: await dbGetAll('issues'),
+                debts: await dbGetAll('debts'),
+                exportedAt: Date.now()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `omnitask-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Data exported!');
+        }
+
+        async function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Clear existing data
+                    for (const store of Object.values(STORES)) {
+                        await dbClear(store);
+                    }
+                    
+                    // Import data
+                    if (data.units) for (const u of data.units) await dbPut('units', u);
+                    if (data.groups) for (const g of data.groups) await dbPut('groups', g);
+                    if (data.tasks) for (const t of data.tasks) await dbPut('tasks', t);
+                    if (data.schedules) for (const s of data.schedules) await dbPut('schedules', s);
+                    if (data.ledger) for (const l of data.ledger) await dbPut('ledger', l);
+                    if (data.issues) for (const i of data.issues) await dbPut('issues', i);
+                    if (data.debts) for (const d of data.debts) await dbPut('debts', d);
+                    
+                    await updateCache();
+                    showToast('Data imported successfully!');
+                    renderDashboard();
+                    renderUnits();
+                    renderGroups();
+                    renderTasks();
+                    renderSchedule();
+                    renderLedger();
+                    renderIssues();
+                } catch (err) {
+                    showToast('Error importing data!');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function clearAllData() {
+            if (!confirm('Are you sure? This will delete ALL data permanently!')) return;
+            if (!confirm('Last warning! Type "DELETE" in the next prompt to confirm.')) return;
+            
+            for (const store of Object.values(STORES)) {
+                await dbClear(store);
+            }
+            
+            await updateCache();
+            showToast('All data cleared!');
+            renderDashboard();
+            renderUnits();
+            renderGroups();
+            renderTasks();
+            renderSchedule();
+            renderLedger();
+            renderIssues();
+        }
+
+        // ==================== INITIALIZATION ====================
+        async function init() {
+            try {
+                await initDB();
+                await renderDashboard();
+                showToast('OmniTask loaded!');
+                
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js').catch(() => {});
+                }
+            } catch (err) {
+                console.error('Init error:', err);
+                showToast('Error loading app');
+            }
+        }
+
+        // Override dbGetAllSync for synchronous access
+        // Cache for sync-like access
+        let dataCache = {
+            units: [],
+            groups: [],
+            tasks: [],
+            schedules: [],
+            ledger: [],
+            issues: [],
+            debts: []
+        };
+
+        async function updateCache() {
+            dataCache.units = await dbGetAll('units');
+            dataCache.groups = await dbGetAll('groups');
+            dataCache.tasks = await dbGetAll('tasks');
+            dataCache.schedules = await dbGetAll('schedules');
+            dataCache.ledger = await dbGetAll('ledger');
+            dataCache.issues = await dbGetAll('issues');
+            dataCache.debts = await dbGetAll('debts');
+        }
+
+        function dbGetAllSync(storeName) {
+            return dataCache[storeName] || [];
+        }
+
+        async function init() {
+            try {
+                await initDB();
+                await updateCache();
+                await renderDashboard();
+                showToast('OmniTask loaded!');
+                
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js').catch(() => {});
+                }
+            } catch (err) {
+                console.error('Init error:', err);
+                showToast('Error loading app');
+            }
+        }
+
+        init();
+    </script>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a class="nav-item active" onclick="showTab('dashboard')">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a class="nav-item" onclick="showTab('units')">
+            <span class="icon">🏠</span>
+            <span>Units</span>
+        </a>
+        <a class="nav-item" onclick="showTab('groups')">
+            <span class="icon">👥</span>
+            <span>Groups</span>
+        </a>
+        <a class="nav-item" onclick="showTab('schedule')">
+            <span class="icon">📅</span>
+            <span>Schedule</span>
+        </a>
+        <a class="nav-item" onclick="showTab('cycle')">
+            <span class="icon">🔄</span>
+            <span>Cycles</span>
+        </a>
+        <a class="nav-item" onclick="showTab('ledger')">
+            <span class="icon">💰</span>
+            <span>Ledger</span>
+        </a>
+        <a class="nav-item" onclick="showTab('admin')">
+            <span class="icon">⚙️</span>
+            <span>Admin</span>
+        </a>
+    </div>
+
+    <!-- FAB Button -->
+    <button class="fab" onclick="toggleRightMenu()">☰</button>
+</body>
+</html>
