@@ -98,7 +98,7 @@
         <header class="md:bg-white md:border-b md:border-gray-200 bg-gradient-to-r from-primary to-groupPurple text-white md:text-dark px-6 py-4 z-10 shrink-0 md:rounded-none rounded-b-3xl shadow-md md:shadow-none">
             <div class="flex justify-between items-center">
                 <h2 id="header-title" class="text-lg md:text-xl font-bold tracking-tight">Dashboard Overview</h2>
-                <button onclick="openSettings()" class="md:hidden p-2 bg-white/20 rounded-lg">
+                <button onclick="switchView('settings')" class="md:hidden p-2 bg-white/20 rounded-lg">
                     <i data-lucide="settings" class="w-5 h-5 text-white"></i>
                 </button>
             </div>
@@ -149,7 +149,7 @@
                             <i data-lucide="cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i>
                             <h3 class="font-bold text-dark text-base">Cloud Sync</h3>
                             <p id="sync-card-text" class="text-xs text-grayTxt mt-1">Connect to GitHub to sync data across devices.</p>
-                            <button onclick="openSettings()" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
+                            <button onclick="switchView('settings')" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
                                 Connect Now
                             </button>
                         </div>
