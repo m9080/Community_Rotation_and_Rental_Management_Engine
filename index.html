@@ -1451,11 +1451,21 @@
 
         // ==================== INIT ====================
         async function init() {
-            await loadFromCloud();
+            try {
+                await loadFromCloud();
+            } catch(e) {
+                console.error('Load error:', e);
+            }
             updateSyncStatus();
             switchView('home');
+            lucide.createIcons();
             showToast('OmniTask loaded!');
         }
+
+        window.onerror = function(msg, url, line) {
+            console.error('JS Error:', msg, 'Line:', line);
+            return true;
+        };
 
         init();
     </script>
