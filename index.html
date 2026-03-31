@@ -1424,6 +1424,7 @@
 
             if (tasks.length === 0) {
                 container.innerHTML = `<div class="text-center p-4 border-2 border-dashed border-gray-100 rounded-xl"><p class="text-grayTxt text-sm">No duties scheduled.</p></div>`;
+                lucide.createIcons();
                 return;
             }
 
@@ -1443,26 +1444,6 @@
                         </div>
                     </div>`;
             }).join('');
-            } else {
-                container.innerHTML = tasks.map(s => {
-                    const task = data.tasks.find(t => t.id === s.taskId);
-                    const unit = data.units.find(u => u.id === s.unitId);
-                    let badgeCls = '', badgeTxt = '';
-                    if (s.status === 'completed') { badgeCls = 'bg-success/20 text-success'; badgeTxt = '✓ DONE'; }
-                    if (s.status === 'missed') { badgeCls = 'bg-danger/20 text-danger'; badgeTxt = '❌ MISSED'; }
-                    if (s.status === 'pending') { badgeCls = 'bg-warning/20 text-warning'; badgeTxt = '⏳ PENDING'; }
-
-                    return `
-                        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover-scale">
-                            <div class="bg-white p-2.5 rounded-lg shadow-sm text-info"><i data-lucide="clipboard" class="w-5 h-5"></i></div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-dark text-sm">${task?.name || 'Unknown Task'}</h4>
-                                <p class="text-xs text-grayTxt mt-0.5">Assigned: <span class="font-bold">${unit?.name || 'Unknown'}</span></p>
-                            </div>
-                            <div class="${badgeCls} px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide">${badgeTxt}</div>
-                        </div>`;
-                }).join('');
-            }
             lucide.createIcons();
         }
 
