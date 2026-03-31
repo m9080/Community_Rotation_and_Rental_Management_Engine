@@ -328,8 +328,16 @@
 
             <!-- Reports View -->
             <div id="view-reports" class="view-section space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-3">
                     <h3 class="font-bold text-dark text-lg">Duty Reports & History</h3>
+                    <div class="flex gap-2">
+                        <button onclick="exportReportData()" class="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-emerald-600 transition">
+                            <i data-lucide="download" class="w-4 h-4"></i> Export Report
+                        </button>
+                        <button onclick="exportAllData()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-indigo-600 transition">
+                            <i data-lucide="database" class="w-4 h-4"></i> Export All Data
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex gap-2 overflow-x-auto pb-2">
@@ -1015,137 +1023,185 @@
 
             const todayStr = today();
             
-            container.innerHTML = data.tasks.map(task => {
-                const taskSchedules = data.schedules.filter(s => s.taskId === task.id).sort((a, b) => new Date(a.date) - new Date(b.date));
-                const todayDuty = taskSchedules.find(s => s.date === todayStr);
-                const currentUnit = todayDuty ? data.units.find(u => u.id === todayDuty.unitId) : null;
+            const tasksWithTodayDuty = data.tasks.filter(t => 
+                data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
+            );
+            const tasksWithoutTodayDuty = data.tasks.filter(t => 
+                !data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
+            );
+            
+            let html = '';
+            
+            if (tasksWithTodayDuty.length > 0) {
+                html += `
+                    <div class="mb-6">
+                        <h4 class="text-xs font-bold text-success uppercase mb-3 flex items-center gap-2">
+                            <span class="w-2 h-2 bg-success rounded-full animate-pulse"></span>
+                            Active Now - ${tasksWithTodayDuty.length} Task${tasksWithTodayDuty.length > 1 ? 's' : ''}
+                        </h4>
+                        <div class="space-y-4">`;
                 
-                const isActive = task.recurring !== false;
-                const activeUnits = task.assignment.includedUnitIds || [];
+                tasksWithTodayDuty.forEach(task => {
+                    html += renderPipelineTaskCard(task, todayStr, true);
+                });
                 
-                const firstSchedule = taskSchedules[0];
-                const lastSchedule = taskSchedules[taskSchedules.length - 1];
-                const periodStart = firstSchedule ? formatDate(firstSchedule.date) : '-';
-                const periodEnd = lastSchedule ? formatDate(lastSchedule.date) : '-';
+                html += `</div></div>`;
+            }
+            
+            if (tasksWithoutTodayDuty.length > 0) {
+                html += `
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Other Tasks - ${tasksWithoutTodayDuty.length}</h4>
+                        <div class="space-y-4">`;
                 
-                const next7Days = [];
-                for (let i = 1; i <= 7; i++) {
-                    const d = new Date();
-                    d.setDate(d.getDate() + i);
-                    const dateStr = d.toISOString().split('T')[0];
-                    const duty = taskSchedules.find(s => s.date === dateStr);
-                    if (duty) {
-                        const unit = data.units.find(u => u.id === duty.unitId);
-                        next7Days.push({ date: dateStr, unit: unit, status: duty.status, dutyId: duty.id });
-                    }
+                tasksWithoutTodayDuty.forEach(task => {
+                    html += renderPipelineTaskCard(task, todayStr, false);
+                });
+                
+                html += `</div></div>`;
+            }
+            
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+        
+        function renderPipelineTaskCard(task, todayStr, isCurrentlyActive) {
+            const taskSchedules = data.schedules.filter(s => s.taskId === task.id).sort((a, b) => new Date(a.date) - new Date(b.date));
+            const todayDuty = taskSchedules.find(s => s.date === todayStr);
+            const currentUnit = todayDuty ? data.units.find(u => u.id === todayDuty.unitId) : null;
+            
+            const isAutoScheduled = task.recurring !== false;
+            const activeUnits = task.assignment.includedUnitIds || [];
+            
+            const firstSchedule = taskSchedules[0];
+            const lastSchedule = taskSchedules[taskSchedules.length - 1];
+            const periodStart = firstSchedule ? formatDate(firstSchedule.date) : '-';
+            const periodEnd = lastSchedule ? formatDate(lastSchedule.date) : '-';
+            
+            const next7Days = [];
+            for (let i = 1; i <= 7; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() + i);
+                const dateStr = d.toISOString().split('T')[0];
+                const duty = taskSchedules.find(s => s.date === dateStr);
+                if (duty) {
+                    const unit = data.units.find(u => u.id === duty.unitId);
+                    next7Days.push({ date: dateStr, unit: unit, status: duty.status, dutyId: duty.id, priority: duty.priority });
                 }
-                
-                const recentCompleted = taskSchedules.filter(s => s.status === 'completed').slice(-3);
-                const taskComments = (data.comments || []).filter(c => c.taskId === task.id);
-                
-                const freqLabel = task.frequency.type === 'daily' ? 'Every day' : 
-                                 task.frequency.type === 'weekly' ? 'Weekly' : 
-                                 task.frequency.type === 'monthly' ? 'Monthly' : 'Custom';
-                
-                const priorityUnits = activeUnits.map((uid, idx) => {
-                    const unit = data.units.find(u => u.id === uid);
-                    return unit ? `<span class="text-[10px] ${idx === 0 ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500'} px-2 py-0.5 rounded">${idx + 1}. ${unit.name}</span>` : '';
-                }).join('');
-                
-                return `
-                    <div class="bg-white rounded-xl p-4 border border-indigo-100 ${isActive ? 'border-l-4 border-l-success' : ''}">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full ${isActive ? 'bg-success animate-pulse' : 'bg-warning'}"></div>
-                                <div>
-                                    <h4 class="font-bold text-dark">${task.name}</h4>
-                                    <p class="text-xs text-gray-400">${freqLabel}</p>
+            }
+            
+            const recentCompleted = taskSchedules.filter(s => s.status === 'completed').slice(-3);
+            const taskComments = (data.comments || []).filter(c => c.taskId === task.id);
+            
+            const freqLabel = task.frequency.type === 'daily' ? 'Every day' : 
+                             task.frequency.type === 'weekly' ? 'Weekly' : 
+                             task.frequency.type === 'monthly' ? 'Monthly' : 'Custom';
+            
+            const priorityUnitsHtml = activeUnits.map((uid, idx) => {
+                const unit = data.units.find(u => u.id === uid);
+                const isCurrent = currentUnit && currentUnit.id === uid;
+                return unit ? `<span class="${isCurrent ? 'bg-success text-white' : 'bg-gray-100 text-gray-600'} text-xs px-2 py-1 rounded-lg font-medium">${idx + 1}. ${unit.name}</span>` : '';
+            }).join('');
+            
+            const cardBg = isCurrentlyActive ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-success border-l-4' : 'bg-white border-gray-200';
+            
+            return `
+                <div class="rounded-xl p-4 border ${cardBg}">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl ${isCurrentlyActive ? 'bg-success text-white' : 'bg-gray-100 text-gray-600'} flex items-center justify-center shadow-sm">
+                                <i data-lucide="${isCurrentlyActive ? 'zap' : 'clipboard'}" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-dark text-lg">${task.name}</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">${freqLabel}</span>
+                                    ${isAutoScheduled ? '<span class="text-xs bg-success/10 text-success px-2 py-0.5 rounded flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Auto</span>' : '<span class="text-xs bg-warning/10 text-warning px-2 py-0.5 rounded">Manual</span>'}
                                 </div>
                             </div>
-                            <span class="text-xs px-2 py-1 rounded-full ${currentUnit ? 'bg-success/10 text-success' : 'bg-gray-100 text-gray-400'}">
-                                ${currentUnit ? currentUnit.name : 'No duty today'}
-                            </span>
                         </div>
-                        
-                        ${isActive && priorityUnits ? `
-                        <div class="bg-gradient-to-r from-success/5 to-primary/5 rounded-lg p-2 mb-3 text-xs border border-success/20">
-                            <p class="text-gray-500 mb-1 font-medium">Rotation Order:</p>
-                            <div class="flex flex-wrap gap-1">${priorityUnits}</div>
+                        ${currentUnit ? `
+                        <div class="text-right bg-white/80 rounded-lg p-2 min-w-[120px]">
+                            <p class="text-xs text-gray-400">Today</p>
+                            <p class="font-bold text-success text-lg">${currentUnit.name}</p>
+                            <p class="text-xs text-gray-500">${currentUnit.occupantName || ''}</p>
                         </div>
                         ` : `
-                        <div class="bg-warning/10 rounded-lg p-2 mb-3 text-xs border border-warning/20">
-                            <p class="text-warning font-medium">Manual Mode - No auto-scheduling</p>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-400">No duty today</p>
                         </div>
                         `}
-                        
-                        <div class="bg-gray-50 rounded-lg p-2 mb-3 text-xs">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Schedule:</span>
-                                <span class="font-medium">${periodStart} - ${periodEnd}</span>
+                    </div>
+                    
+                    ${todayDuty ? `
+                    <div class="bg-success rounded-lg p-4 mb-3 text-white">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-xs opacity-80">Assigned for Today</p>
+                                <p class="font-bold text-xl">${currentUnit?.name || '?'} - ${currentUnit?.occupantName || 'No occupant'}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs opacity-80">Priority</p>
+                                <p class="font-bold text-2xl">P${todayDuty.priority || 1}</p>
                             </div>
                         </div>
-                        
-                        <div class="flex gap-2 mb-3">
-                            <button onclick="openCommentModal('${task.id}', '${todayDuty?.id || ''}')" class="flex-1 text-xs bg-info/10 text-info px-3 py-2 rounded-lg hover:bg-info/20 transition flex items-center justify-center gap-1">
-                                <i data-lucide="message-square" class="w-3 h-3"></i> Comment
-                            </button>
-                            ${currentUnit ? `
-                            <button onclick="openPipelineSwapModal('${task.id}', '${todayDuty.id}')" class="flex-1 text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1">
-                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Swap
-                            </button>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="border-t border-gray-100 pt-3">
-                            <p class="text-xs text-gray-500 mb-2 flex items-center gap-1">
-                                <i data-lucide="calendar" class="w-3 h-3"></i> Next 7 Days:
-                            </p>
-                            <div class="flex gap-2 overflow-x-auto pb-1">
-                                ${next7Days.length > 0 ? next7Days.map(d => `
-                                    <div class="shrink-0 text-center px-2 py-1.5 rounded-lg ${d.status === 'completed' ? 'bg-success/10' : 'bg-amber-50'}">
-                                        <p class="text-[10px] text-gray-400">${new Date(d.date).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</p>
-                                        <p class="text-xs font-bold">${d.unit?.name || '?'}</p>
-                                        <p class="text-[10px] ${d.status === 'completed' ? 'text-success' : 'text-amber-600'}">${d.status === 'completed' ? '✓ Done' : 'Pending'}</p>
-                                        <div class="flex flex-col gap-1 mt-1">
-                                            <button onclick="openCommentModal('${task.id}', '${d.dutyId}')" class="text-[10px] text-info hover:underline">Comment</button>
-                                            ${d.status !== 'completed' ? `
-                                            <button onclick="openPipelineSwapModal('${task.id}', '${d.dutyId}')" class="text-[10px] text-warning hover:underline">Swap</button>
-                                            ` : ''}
-                                        </div>
-                                    </div>
-                                `).join('') : '<p class="text-xs text-gray-400">No upcoming duties</p>'}
-                            </div>
-                        </div>
-                        
-                        ${recentCompleted.length > 0 ? `
-                        <div class="border-t border-gray-100 pt-2 mt-2">
-                            <p class="text-xs text-gray-500 mb-1">Recently Completed:</p>
-                            <div class="flex flex-wrap gap-1">
-                                ${recentCompleted.map(d => {
-                                    const unit = data.units.find(u => u.id === d.unitId);
-                                    return `<span class="text-[10px] bg-success/10 text-success px-2 py-0.5 rounded-full">${unit?.name || '?'} (${formatDate(d.date)})</span>`;
-                                }).join('')}
-                            </div>
-                        </div>
+                    </div>
+                    ` : `
+                    <div class="bg-gray-50 rounded-lg p-3 mb-3 border border-gray-200">
+                        <p class="text-gray-500 text-sm">${isAutoScheduled ? 'No duty scheduled for today' : 'Manual mode - no auto scheduling'}</p>
+                    </div>
+                    `}
+                    
+                    ${isAutoScheduled && priorityUnitsHtml ? `
+                    <div class="bg-white rounded-lg p-3 mb-3 border border-gray-200">
+                        <p class="text-gray-500 text-xs mb-2 font-medium flex items-center gap-1"><i data-lucide="list-ordered" class="w-4 h-4"></i> Rotation Order:</p>
+                        <div class="flex flex-wrap gap-2">${priorityUnitsHtml}</div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <button onclick="openCommentModal('${task.id}', '${todayDuty?.id || ''}')" class="text-xs bg-info/10 text-info px-3 py-2 rounded-lg hover:bg-info/20 transition flex items-center justify-center gap-1">
+                            <i data-lucide="message-square" class="w-3 h-3"></i> Comment
+                        </button>
+                        ${currentUnit ? `
+                        <button onclick="openPipelineSwapModal('${task.id}', '${todayDuty.id}')" class="text-xs bg-warning/10 text-warning px-3 py-2 rounded-lg hover:bg-warning/20 transition flex items-center justify-center gap-1">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Swap
+                        </button>
                         ` : ''}
-                        
-                        ${taskComments.length > 0 ? `
-                        <div class="border-t border-gray-100 pt-2 mt-2">
-                            <p class="text-xs text-gray-500 mb-1 flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> Comments (${taskComments.length}):</p>
-                            <div class="space-y-1">
-                                ${taskComments.slice(-2).map(c => {
-                                    const commentUnit = data.units.find(u => u.id === c.unitId);
-                                    return `<div class="bg-blue-50 rounded p-2 text-xs">
-                                        <span class="font-medium text-info">${commentUnit?.name || '?'}</span> • ${formatDate(c.date)}
-                                        <p class="text-gray-600 mt-1">${c.text}</p>
-                                    </div>`;
-                                }).join('')}
-                            </div>
+                    </div>
+                    
+                    ${next7Days.length > 0 ? `
+                    <div class="border-t border-gray-200 pt-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium flex items-center gap-1">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Upcoming (Next 7 Days):
+                        </p>
+                        <div class="grid grid-cols-4 gap-2">
+                            ${next7Days.map(d => `
+                                <div class="text-center p-2 rounded-lg ${d.status === 'completed' ? 'bg-success/10 border border-success/20' : 'bg-amber-50 border border-amber-100'}">
+                                    <p class="text-[10px] text-gray-400">${formatDate(d.date)}</p>
+                                    <p class="text-sm font-bold">${d.unit?.name || '?'}</p>
+                                    ${d.priority ? `<p class="text-[10px] text-primary font-medium">P${d.priority}</p>` : ''}
+                                </div>
+                            `).join('')}
                         </div>
-                        ` : ''}
-                    </div>`;
-            }).join('');
-            lucide.createIcons();
+                    </div>
+                    ` : ''}
+                    
+                    ${taskComments.length > 0 ? `
+                    <div class="border-t border-gray-200 pt-2 mt-3">
+                        <p class="text-xs text-gray-500 mb-2 flex items-center gap-1"><i data-lucide="message-square" class="w-4 h-4"></i> Recent Comments:</p>
+                        <div class="space-y-1">
+                            ${taskComments.slice(-2).map(c => {
+                                const commentUnit = data.units.find(u => u.id === c.unitId);
+                                return `<div class="bg-blue-50 rounded p-2 text-xs">
+                                    <span class="font-medium text-info">${commentUnit?.name || '?'}</span> • ${formatDate(c.date)}
+                                    <p class="text-gray-600 mt-1">${c.text}</p>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>`;
         }
 
         function renderPendingSwaps() {
@@ -1794,6 +1850,10 @@
                 });
             }
             
+            const todayStr = today();
+            const startDate = $('schedule-start-date').value || todayStr;
+            const endDate = $('schedule-end-date').value;
+            
             const taskData = {
                 id: id || generateId(),
                 name: $('task-name').value,
@@ -1802,8 +1862,8 @@
                     customDays: freq === 'custom' ? parseInt($('custom-days').value) : null
                 },
                 recurring: isRecurring,
-                scheduleStart: $('schedule-start-date').value,
-                scheduleEnd: $('schedule-end-date').value,
+                scheduleStart: startDate,
+                scheduleEnd: endDate,
                 assignment: {
                     type: $('task-target').value === 'all' ? 'all_units' : 'specific_group',
                     targetGroupId: $('task-target').value === 'all' ? null : $('task-target').value,
@@ -1825,7 +1885,7 @@
             }
 
             if (isRecurring) {
-                await generateSchedule(taskData.id);
+                await generateScheduleFromToday(taskData.id, priorityOrder);
             }
             
             closeTaskModal();
@@ -2366,13 +2426,92 @@
             }
         }
 
+        async function generateScheduleFromToday(taskId, priorityOrderOverride = null) {
+            const task = data.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            if (task.recurring === false) return;
+
+            let units = data.units.filter(u => u.status === 'active');
+            if (task.assignment.type === 'specific_group') {
+                const group = data.groups.find(g => g.id === task.assignment.targetGroupId);
+                if (group) units = units.filter(u => group.unitIds.includes(u.id));
+            }
+            if (task.assignment.includedUnitIds?.length > 0) {
+                units = units.filter(u => task.assignment.includedUnitIds.includes(u.id));
+            }
+            if (units.length === 0) return;
+
+            if (priorityOrderOverride && priorityOrderOverride.length > 0) {
+                const priorityMap = {};
+                priorityOrderOverride.forEach((unitId, idx) => {
+                    priorityMap[unitId] = idx;
+                });
+                units = units.slice().sort((a, b) => {
+                    return (priorityMap[a.id] ?? 999) - (priorityMap[b.id] ?? 999);
+                });
+            } else if (task.priorityOrder && task.priorityOrder.length > 0) {
+                const priorityMap = {};
+                task.priorityOrder.forEach((unitId, idx) => {
+                    priorityMap[unitId] = idx;
+                });
+                units = units.slice().sort((a, b) => {
+                    return (priorityMap[a.id] ?? 999) - (priorityMap[b.id] ?? 999);
+                });
+            }
+
+            const todayStr = today();
+            const todayDate = new Date(todayStr);
+            todayDate.setHours(0, 0, 0, 0);
+            
+            let maxDays = 90;
+            if (task.scheduleEnd) {
+                const endDate = new Date(task.scheduleEnd);
+                const diffTime = endDate - todayDate;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                maxDays = Math.min(diffDays + 30, 90);
+            }
+
+            let rotationIndex = 0;
+            for (let day = 0; day < maxDays; day++) {
+                const date = new Date(todayDate);
+                date.setDate(date.getDate() + day);
+                let shouldRun = false;
+                
+                if (task.frequency.type === 'daily') {
+                    shouldRun = true;
+                } else if (task.frequency.type === 'weekly' && date.getDay() === 1) {
+                    shouldRun = true;
+                } else if (task.frequency.type === 'monthly') {
+                    shouldRun = date.getDate() === 1;
+                } else if (task.frequency.type === 'custom' && task.frequency.customDays) {
+                    shouldRun = day % task.frequency.customDays === 0;
+                }
+                
+                if (shouldRun) {
+                    data.schedules.push({
+                        id: generateId(),
+                        taskId: task.id,
+                        unitId: units[rotationIndex % units.length].id,
+                        date: date.toISOString().split('T')[0],
+                        status: 'pending',
+                        priority: rotationIndex % units.length + 1,
+                        createdAt: Date.now()
+                    });
+                    rotationIndex++;
+                }
+            }
+        }
+
         async function regenerateSchedules() {
             if (!confirm('Regenerate all schedules?')) return;
             data.schedules = [];
             for (const task of data.tasks) {
-                await generateSchedule(task.id);
+                if (task.recurring !== false) {
+                    await generateScheduleFromToday(task.id);
+                }
             }
             await save();
+            renderDashboard();
             showToast('Schedules regenerated!');
         }
 
@@ -2539,6 +2678,86 @@
             a.download = `omnitask-backup-${today()}.json`;
             a.click();
             showToast('Data exported!');
+        }
+
+        function exportAllData() {
+            const exportObj = {
+                ...data,
+                exportDate: today(),
+                exportTime: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `omnitask-full-export-${today()}.json`;
+            a.click();
+            showToast('All data exported!');
+        }
+
+        function exportReportData() {
+            const fromDate = $('report-from-date').value;
+            const toDate = $('report-to-date').value;
+            const unitFilter = $('report-unit-select').value;
+            const taskFilter = $('report-task-select').value;
+            
+            let schedules = (data.schedules || []).filter(s => {
+                if (fromDate && s.date < fromDate) return false;
+                if (toDate && s.date > toDate) return false;
+                if (unitFilter && s.unitId !== unitFilter) return false;
+                if (taskFilter && s.taskId !== taskFilter) return false;
+                return true;
+            });
+            
+            const reportData = {
+                type: currentReportType,
+                period: { from: fromDate, to: toDate },
+                generated: new Date().toISOString(),
+                schedules: schedules.map(s => {
+                    const task = data.tasks.find(t => t.id === s.taskId);
+                    const unit = data.units.find(u => u.id === s.unitId);
+                    return {
+                        date: s.date,
+                        task: task?.name || 'Unknown',
+                        unit: unit?.name || 'Unknown',
+                        occupant: unit?.occupantName || '',
+                        status: s.status,
+                        priority: s.priority
+                    };
+                }),
+                stats: {
+                    total: schedules.length,
+                    completed: schedules.filter(s => s.status === 'completed').length,
+                    missed: schedules.filter(s => s.status === 'missed').length,
+                    pending: schedules.filter(s => s.status === 'pending').length
+                }
+            };
+            
+            if (currentReportType === 'comments') {
+                let comments = (data.comments || []);
+                if (fromDate) comments = comments.filter(c => c.date >= fromDate);
+                if (toDate) comments = comments.filter(c => c.date <= toDate);
+                if (unitFilter) comments = comments.filter(c => c.unitId === unitFilter);
+                if (taskFilter) comments = comments.filter(c => c.taskId === taskFilter);
+                
+                reportData.comments = comments.map(c => {
+                    const task = data.tasks.find(t => t.id === c.taskId);
+                    const unit = data.units.find(u => u.id === c.unitId);
+                    return {
+                        date: c.date,
+                        task: task?.name || 'Unknown',
+                        unit: unit?.name || 'Unknown',
+                        occupant: unit?.occupantName || '',
+                        comment: c.text
+                    };
+                });
+            }
+            
+            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `omnitask-report-${currentReportType}-${today()}.json`;
+            a.click();
+            showToast('Report exported!');
         }
 
         async function importData(e) {
