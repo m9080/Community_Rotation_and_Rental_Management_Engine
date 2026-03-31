@@ -1937,6 +1937,8 @@
             save().then(() => {
                 renderTasks();
                 renderDashboard();
+                renderCalendar();
+                renderDutyView();
                 showToast(id ? 'Task updated!' : 'Task created!');
             });
         });
@@ -2101,11 +2103,15 @@
                 return `
                     <div class="p-3 rounded-lg border ${statusColor}">
                         <div class="flex justify-between items-start">
-                            <div>
+                            <div class="flex-1">
                                 <p class="font-medium text-sm">${task?.name || 'Unknown Task'}</p>
-                                <p class="text-xs mt-1">👤 ${unit?.name || 'Unknown'}</p>
+                                <p class="text-xs mt-1">👤 ${unit?.name || 'Unknown'} - ${unit?.occupantName || ''}</p>
+                                ${s.periodStart && s.periodEnd ? `<p class="text-[10px] text-gray-400 mt-1">Period: ${formatDate(s.periodStart)} to ${formatDate(s.periodEnd)}</p>` : ''}
                             </div>
-                            <span class="text-xs px-2 py-1 rounded-full bg-white/50">${s.status}</span>
+                            <div class="text-right">
+                                <span class="text-xs px-2 py-1 rounded-full bg-white/50">${s.status}</span>
+                                ${s.priority ? `<p class="text-xs font-bold text-primary mt-1">P${s.priority}</p>` : ''}
+                            </div>
                         </div>
                     </div>`;
             }).join('');
