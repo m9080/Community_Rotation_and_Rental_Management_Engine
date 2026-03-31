@@ -1129,8 +1129,8 @@
             const freq = $('task-freq').value;
             const startDateInput = $('schedule-start-date');
             const endDateInput = $('schedule-end-date');
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
+            const todayDate = new Date();
+            const todayStr = todayDate.toISOString().split('T')[0];
             
             if (!startDateInput.value) {
                 startDateInput.value = todayStr;
@@ -1323,8 +1323,8 @@
             $('custom-freq-container').classList.toggle('hidden', e.target.value !== 'custom');
             $('monthly-day-container').classList.toggle('hidden', e.target.value !== 'monthly');
             if (e.target.value === 'monthly' && !$('monthly-day').value) {
-                const today = new Date();
-                $('monthly-day').value = today.toISOString().split('T')[0];
+                const todayDate = new Date();
+                $('monthly-day').value = todayDate.toISOString().split('T')[0];
             }
         });
 
