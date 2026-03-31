@@ -455,6 +455,7 @@
                         <select id="task-freq" class="input-field cursor-pointer">
                             <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
                             <option value="custom">Custom</option>
                         </select>
                     </div>
@@ -1276,10 +1277,19 @@
             const startDate = new Date();
             startDate.setHours(0, 0, 0, 0);
 
-            for (let day = 0; day < 90; day++) {
+            for (let day = 0; day < 365; day++) {
                 const date = new Date(startDate);
                 date.setDate(date.getDate() + day);
-                let shouldRun = task.frequency.type === 'daily' || (task.frequency.type === 'weekly' && date.getDay() === 1);
+                let shouldRun = false;
+                
+                if (task.frequency.type === 'daily') {
+                    shouldRun = true;
+                } else if (task.frequency.type === 'weekly' && date.getDay() === 1) {
+                    shouldRun = true;
+                } else if (task.frequency.type === 'monthly' && date.getDate() === 1) {
+                    shouldRun = true;
+                }
+                
                 if (shouldRun) {
                     data.schedules.push({
                         id: generateId(),
