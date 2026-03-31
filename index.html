@@ -2095,8 +2095,6 @@
         }
 
         // ==================== COMMENT FUNCTIONS ====================
-        let currentCommentTaskId = null;
-
         function openTaskCommentModal(taskId = null) {
             currentCommentTaskId = taskId || $('task-edit-id').value;
             const task = data.tasks.find(t => t.id === currentCommentTaskId);
