@@ -123,6 +123,29 @@
         .fab { position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border: none; border-radius: 50%; color: white; font-size: 30px; box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); cursor: pointer; z-index: 99; }
         .fab:active { transform: scale(0.95); }
         
+        /* Admin Panel Styles */
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .admin-tab { padding: 8px 16px; border: none; background: var(--light); border-radius: 10px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .admin-tab.active { background: var(--primary); color: white; }
+        
+        .stats-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .stat-box { flex: 1; background: var(--white); border-radius: 12px; padding: 12px; text-align: center; box-shadow: var(--shadow); }
+        .stat-box .num { font-size: 20px; font-weight: 700; }
+        .stat-box .label { font-size: 10px; color: var(--gray); }
+        .stat-box.primary .num { color: var(--primary); }
+        .stat-box.success .num { color: var(--success); }
+        .stat-box.warning .num { color: var(--warning); }
+        .stat-box.danger .num { color: var(--danger); }
+        
+        .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--light); }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: var(--gray); font-size: 13px; }
+        .detail-value { font-weight: 600; font-size: 13px; }
+        
+        .badge-count { background: var(--danger); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-left: 5px; }
+        
+        .scrollable { max-height: 60vh; overflow-y: auto; }
+        
         .page { display: none; }
         .page.active { display: block; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; justify-content: flex-end; align-items: flex-end; }
@@ -319,11 +342,75 @@
         </div>
     </div>
 
+    <!-- Admin Page -->
+    <div id="page-admin" class="page">
+        <div class="header" style="background: linear-gradient(135deg, var(--orange) 0%, var(--warning) 100%); padding-top: 30px;">
+            <div class="header-top">
+                <div style="font-size: 18px; font-weight: 600;">⚙️ Admin Panel</div>
+            </div>
+        </div>
+        <div class="main-content" style="margin-top: 20px;">
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('overview')">📊 Overview</button>
+                <button class="admin-tab" onclick="switchAdminTab('units')">🏠 Units</button>
+                <button class="admin-tab" onclick="switchAdminTab('groups')">👥 Groups</button>
+                <button class="admin-tab" onclick="switchAdminTab('tasks')">📝 Tasks</button>
+                <button class="admin-tab" onclick="switchAdminTab('debts')">🔄 Debts</button>
+            </div>
+            <div id="adminContent"></div>
+        </div>
+    </div>
+
     <!-- Settings Page -->
     <div id="page-settings" class="page">
         <div class="header" style="padding-top: 30px;">
             <div class="header-top"><div style="font-size: 18px; font-weight: 600;">⚙️ Settings</div></div>
         </div>
+        <div class="main-content" style="margin-top: 20px; padding-bottom: 20px;">
+            <!-- Cloud Sync Section -->
+            <div class="card" style="background: linear-gradient(135deg, var(--cyan) 0%, var(--info) 100%); color: white;">
+                <h3 style="margin-bottom: 10px;">☁️ Cloud Sync (GitHub)</h3>
+                <p style="font-size: 12px; opacity: 0.9; margin-bottom: 15px;">
+                    Auto sync enabled - changes sync automatically!
+                </p>
+                <div id="tokenStatus" style="font-size: 12px; margin-bottom: 10px;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-small" style="background: white; color: var(--info);" onclick="showTokenSetup()">🔑 Set Token</button>
+                    <button class="btn btn-small" style="background: rgba(255,255,255,0.2); color: white;" onclick="toggleAutoSync()">
+                        <span id="autoSyncStatus">Auto: ON</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 15px;">📤 Export / import</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-outline btn-small" onclick="exportData()">📤 Export JSON</button>
+                    <button class="btn btn-outline btn-small" onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                </div>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 15px;">🔄 Regenerate Schedules</h3>
+                <button class="btn btn-primary" onclick="regenerateAllSchedules()">🔄 Regenerate All Schedules</button>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 15px;">⚠️ Danger Zone</h3>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+            </div>
+            
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="margin-bottom: 10px;">ℹ️ About</h3>
+                <p style="font-size: 13px; color: var(--gray);">
+                    OmniTask v2.0<br>
+                    Community Rotation & Rental Management Engine<br>
+                    PWA - Works Offline + GitHub Sync
+                </p>
+            </div>
+        </div>
+    </div>
         <div class="main-content" style="margin-top: 20px; padding-bottom: 20px;">
             <!-- Cloud Sync Section -->
             <div class="card" style="background: linear-gradient(135deg, var(--cyan) 0%, var(--info) 100%); color: white;">
@@ -393,6 +480,10 @@
         <div class="right-menu-item" onclick="showTab('ledger'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%); color: white;">💰</div>
             <div><strong>Ledger</strong></div>
+        </div>
+        <div class="right-menu-item" onclick="showTab('admin'); toggleRightMenu();">
+            <div class="icon" style="background: linear-gradient(135deg, var(--orange) 0%, var(--warning) 100%); color: white;">⚙️</div>
+            <div><strong>Admin Panel</strong></div>
         </div>
         <div class="right-menu-item" onclick="showTab('settings'); toggleRightMenu();">
             <div class="icon" style="background: linear-gradient(135deg, var(--dark) 0%, #4b5563 100%); color: white;">⚙️</div>
@@ -790,6 +881,7 @@
             if (tabName === 'tasks') renderTasks();
             if (tabName === 'schedule') renderSchedule();
             if (tabName === 'ledger') renderLedger();
+            if (tabName === 'admin') renderAdminContent();
             if (tabName === 'settings') updateSyncStatus();
         }
 
@@ -1171,6 +1263,157 @@
             }
         }
 
+        // ==================== ADMIN PANEL ====================
+        let currentAdminTab = 'overview';
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.admin-tab[onclick="switchAdminTab('${tab}')"]`).classList.add('active');
+            renderAdminContent();
+        }
+
+        async function renderAdminContent() {
+            await updateCache();
+            const container = document.getElementById('adminContent');
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todaySchedules = dataCache.schedules.filter(s => s.date === today);
+            const pendingSchedules = dataCache.schedules.filter(s => s.status === 'pending');
+            const completedToday = todaySchedules.filter(s => s.status === 'completed').length;
+            
+            switch(currentAdminTab) {
+                case 'overview':
+                    container.innerHTML = `
+                        <div class="stats-row">
+                            <div class="stat-box primary"><div class="num">${dataCache.units.length}</div><div class="label">Total Units</div></div>
+                            <div class="stat-box success"><div class="num">${dataCache.groups.length}</div><div class="label">Groups</div></div>
+                            <div class="stat-box warning"><div class="num">${dataCache.tasks.length}</div><div class="label">Tasks</div></div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-box primary"><div class="num">${todaySchedules.length}</div><div class="label">Today's Tasks</div></div>
+                            <div class="stat-box success"><div class="num">${completedToday}</div><div class="label">Completed</div></div>
+                            <div class="stat-box danger"><div class="num">${pendingSchedules.length}</div><div class="label">Pending</div></div>
+                        </div>
+                        <div class="card" style="margin-top:15px;">
+                            <h3 style="margin-bottom:10px;">📅 Quick Stats</h3>
+                            <div class="detail-row"><span class="detail-label">Active Units</span><span class="detail-value">${dataCache.units.filter(u=>u.status==='active').length}</span></div>
+                            <div class="detail-row"><span class="detail-label">Vacant Units</span><span class="detail-value">${dataCache.units.filter(u=>u.status==='vacant').length}</span></div>
+                            <div class="detail-row"><span class="detail-label">Total Schedules</span><span class="detail-value">${dataCache.schedules.length}</span></div>
+                            <div class="detail-row"><span class="detail-label">Pending Issues</span><span class="detail-value" style="color:var(--danger)">${dataCache.issues.filter(i=>i.status==='pending').length}</span></div>
+                            <div class="detail-row"><span class="detail-label">Outstanding Debts</span><span class="detail-value" style="color:var(--warning)">${dataCache.debts.filter(d=>d.status==='pending').length}</span></div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'units':
+                    container.innerHTML = `
+                        <div class="card">
+                            <h3 style="margin-bottom:10px;">🏠 All Units</h3>
+                            ${dataCache.units.map(u => {
+                                const group = dataCache.groups.find(g => g.unitIds.includes(u.id));
+                                const unitSchedules = dataCache.schedules.filter(s => s.unitId === u.id && s.status === 'pending').length;
+                                return `
+                                <div class="unit-card" style="margin-bottom:10px;">
+                                    <div class="unit-avatar" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;">🏠</div>
+                                    <div class="unit-info">
+                                        <div class="unit-name">${u.name}</div>
+                                        <div class="unit-occupant">${u.occupantName || 'No occupant'}</div>
+                                        ${group ? `<span style="font-size:10px;color:var(--purple)">👥 ${group.name}</span>` : ''}
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <span class="unit-status ${u.status}">${u.status}</span>
+                                        <div style="font-size:10px;color:var(--gray);margin-top:5px;">${unitSchedules} tasks pending</div>
+                                    </div>
+                                </div>
+                            `}).join('')}
+                        </div>
+                    `;
+                    break;
+                    
+                case 'groups':
+                    container.innerHTML = `
+                        <div class="card">
+                            <h3 style="margin-bottom:10px;">👥 Groups</h3>
+                            ${dataCache.groups.map(g => {
+                                const members = dataCache.units.filter(u => g.unitIds.includes(u.id));
+                                return `
+                                <div class="group-card" style="margin-bottom:15px;">
+                                    <div class="group-header">
+                                        <div class="group-name">${g.name}</div>
+                                        <div class="group-count">${g.unitIds.length} units</div>
+                                    </div>
+                                    <div class="group-units">
+                                        ${members.map(u => `<span class="group-unit-chip">🏠 ${u.name}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `}).join('')}
+                            ${dataCache.groups.length === 0 ? '<p style="text-align:center;color:var(--gray)">No groups created yet</p>' : ''}
+                        </div>
+                    `;
+                    break;
+                    
+                case 'tasks':
+                    container.innerHTML = `
+                        <div class="card">
+                            <h3 style="margin-bottom:10px;">📝 Task Configuration</h3>
+                            ${dataCache.tasks.map(task => {
+                                const eligibleUnits = dataCache.units.filter(u => {
+                                    if (task.assignment.type === 'all_units') return true;
+                                    if (task.assignment.type === 'specific_group') {
+                                        const group = dataCache.groups.find(g => g.id === task.assignment.targetGroupId);
+                                        return group?.unitIds.includes(u.id);
+                                    }
+                                    if (task.assignment.type === 'independent_only') return !u.groupId;
+                                    return true;
+                                }).filter(u => !task.assignment.excludedUnitIds?.includes(u.id));
+                                
+                                return `
+                                <div class="task-card" style="margin-bottom:10px;">
+                                    <div class="task-header">
+                                        <div class="task-icon" style="background:#fef3c7;">📋</div>
+                                        <div style="flex:1;">
+                                            <div class="task-title">${task.name}</div>
+                                            <div class="task-meta">
+                                                <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
+                                                <span class="task-badge ${task.assignment.type}">${task.assignment.type.replace('_',' ')}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size:11px;color:var(--gray);">${eligibleUnits.length} eligible units</div>
+                                </div>
+                            `}).join('')}
+                        </div>
+                    `;
+                    break;
+                    
+                case 'debts':
+                    container.innerHTML = `
+                        <div class="card">
+                            <h3 style="margin-bottom:10px;">🔄 Swap Records / Debts</h3>
+                            ${dataCache.debts.length === 0 ? '<p style="text-align:center;color:var(--gray)">No swap records</p>' : ''}
+                            ${dataCache.debts.map(d => {
+                                const from = dataCache.units.find(u => u.id === d.fromUnitId);
+                                const to = dataCache.units.find(u => u.id === d.toUnitId);
+                                return `
+                                <div style="padding:12px;background:var(--light);border-radius:10px;margin-bottom:10px;">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                                        <div>
+                                            <strong>${from?.name || '?'}</strong> 
+                                            <span style="color:var(--gray)">→</span> 
+                                            <strong>${to?.name || '?'}</strong>
+                                        </div>
+                                        <span class="badge-count">${d.status}</span>
+                                    </div>
+                                    ${d.reason ? `<div style="font-size:11px;color:var(--gray);margin-top:5px;">Reason: ${d.reason}</div>` : ''}
+                                </div>
+                            `}).join('')}
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
         // ==================== RENDER FUNCTIONS ====================
         async function renderDashboard() {
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -1234,17 +1477,93 @@
             if (dataCache.units.length === 0) {
                 container.innerHTML = '<div class="empty-state"><div class="icon">🏠</div><h3>No units yet</h3></div>';
             } else {
-                container.innerHTML = dataCache.units.map(u => `
+                container.innerHTML = dataCache.units.map(u => {
+                    const group = dataCache.groups.find(g => g.unitIds.includes(u.id));
+                    return `
                     <div class="unit-card">
                         <div class="unit-avatar" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:white;">🏠</div>
                         <div class="unit-info">
                             <div class="unit-name">${u.name}</div>
                             <div class="unit-occupant">${u.occupantName || 'No occupant'}</div>
+                            ${group ? `<span style="font-size:10px;color:var(--purple);">👥 ${group.name}</span>` : ''}
                         </div>
-                        <span class="unit-status ${u.status}">${u.status}</span>
+                        <div style="display:flex;gap:5px;align-items:center;">
+                            <span class="unit-status ${u.status}">${u.status}</span>
+                            <button onclick="editUnit('${u.id}')" style="padding:6px 10px;background:var(--light);border:none;border-radius:6px;cursor:pointer;font-size:12px;">✏️</button>
+                            <button onclick="deleteUnit('${u.id}')" style="padding:6px 10px;background:#fee2e2;border:none;border-radius:6px;cursor:pointer;font-size:12px;color:var(--danger);">🗑️</button>
+                        </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
+        }
+
+        function editUnit(unitId) {
+            const unit = dataCache.units.find(u => u.id === unitId);
+            if (!unit) return;
+            
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '✏️ Edit Unit';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="updateUnit(event, '${unitId}')">
+                    <div class="form-group">
+                        <label class="form-label">Unit Name *</label>
+                        <input type="text" class="form-control" id="editUnitName" value="${unit.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Occupant Name</label>
+                        <input type="text" class="form-control" id="editUnitOccupant" value="${unit.occupantName || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${unit.status === 'active' ? 'active' : ''}" onclick="this.parentElement.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('editUnitStatus').value='active'">Active</button>
+                            <button type="button" class="type-btn ${unit.status === 'vacant' ? 'active' : ''}" onclick="this.parentElement.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('editUnitStatus').value='vacant'">Vacant</button>
+                        </div>
+                        <input type="hidden" id="editUnitStatus" value="${unit.status}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Unit</button>
+                </form>
+            `;
+            overlay.classList.add('show');
+        }
+
+        async function updateUnit(event, unitId) {
+            event.preventDefault();
+            const unit = dataCache.units.find(u => u.id === unitId);
+            if (!unit) return;
+            
+            unit.name = document.getElementById('editUnitName').value;
+            unit.occupantName = document.getElementById('editUnitOccupant').value;
+            unit.status = document.getElementById('editUnitStatus').value;
+            
+            await dbPut('units', unit);
+            await updateCache();
+            closeModal();
+            showToast('Unit updated!');
+            renderUnits();
+            renderDashboard();
+            autoSyncOnChange();
+        }
+
+        async function deleteUnit(unitId) {
+            if (!confirm('Delete this unit?')) return;
+            
+            await dbDelete('units', unitId);
+            
+            // Remove from groups
+            for (const group of dataCache.groups) {
+                if (group.unitIds.includes(unitId)) {
+                    group.unitIds = group.unitIds.filter(id => id !== unitId);
+                    await dbPut('groups', group);
+                }
+            }
+            
+            await updateCache();
+            showToast('Unit deleted!');
+            renderUnits();
+            renderGroups();
+            renderDashboard();
+            autoSyncOnChange();
         }
 
         async function renderGroups() {
@@ -1264,10 +1583,92 @@
                             <div class="group-units">
                                 ${groupUnits.map(u => `<span class="group-unit-chip">🏠 ${u.name}</span>`).join('')}
                             </div>
+                            <div style="margin-top:10px;display:flex;gap:8px;">
+                                <button onclick="editGroup('${g.id}')" style="flex:1;padding:8px;background:rgba(255,255,255,0.2);border:none;border-radius:8px;color:white;cursor:pointer;font-size:12px;">✏️ Edit</button>
+                                <button onclick="deleteGroup('${g.id}')" style="flex:1;padding:8px;background:rgba(239,68,68,0.3);border:none;border-radius:8px;color:white;cursor:pointer;font-size:12px;">🗑️ Delete</button>
+                            </div>
                         </div>
                     `;
                 }).join('');
             }
+        }
+
+        function editGroup(groupId) {
+            const group = dataCache.groups.find(g => g.id === groupId);
+            if (!group) return;
+            
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '✏️ Edit Group';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="updateGroup(event, '${groupId}')">
+                    <div class="form-group">
+                        <label class="form-label">Group Name *</label>
+                        <input type="text" class="form-control" id="editGroupName" value="${group.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assign Units</label>
+                        <div class="unit-select-list">
+                            ${dataCache.units.map(u => `
+                                <div class="unit-select-item ${group.unitIds.includes(u.id) ? 'selected' : ''}" onclick="this.classList.toggle('selected');this.querySelector('input').checked=this.classList.contains('selected')">
+                                    <input type="checkbox" value="${u.id}" ${group.unitIds.includes(u.id) ? 'checked' : ''} style="display:none">
+                                    <span>🏠 ${u.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Group</button>
+                </form>
+            `;
+            overlay.classList.add('show');
+        }
+
+        async function updateGroup(event, groupId) {
+            event.preventDefault();
+            const group = dataCache.groups.find(g => g.id === groupId);
+            if (!group) return;
+            
+            group.name = document.getElementById('editGroupName').value;
+            group.unitIds = Array.from(document.querySelectorAll('#modalBody input:checked')).map(i => i.value);
+            
+            await dbPut('groups', group);
+            
+            // Update units with group assignment
+            for (const unit of dataCache.units) {
+                if (group.unitIds.includes(unit.id)) {
+                    unit.groupId = group.id;
+                } else if (unit.groupId === group.id) {
+                    delete unit.groupId;
+                }
+                await dbPut('units', unit);
+            }
+            
+            await updateCache();
+            closeModal();
+            showToast('Group updated!');
+            renderGroups();
+            renderDashboard();
+            autoSyncOnChange();
+        }
+
+        async function deleteGroup(groupId) {
+            if (!confirm('Delete this group?')) return;
+            
+            const group = dataCache.groups.find(g => g.id === groupId);
+            if (group) {
+                for (const unit of dataCache.units) {
+                    if (group.unitIds.includes(unit.id)) {
+                        delete unit.groupId;
+                        await dbPut('units', unit);
+                    }
+                }
+            }
+            
+            await dbDelete('groups', groupId);
+            await updateCache();
+            showToast('Group deleted!');
+            renderGroups();
+            renderDashboard();
+            autoSyncOnChange();
         }
 
         async function renderTasks() {
@@ -1276,7 +1677,9 @@
             if (dataCache.tasks.length === 0) {
                 container.innerHTML = '<div class="empty-state"><div class="icon">📝</div><h3>No tasks yet</h3></div>';
             } else {
-                container.innerHTML = dataCache.tasks.map(task => `
+                container.innerHTML = dataCache.tasks.map(task => {
+                    const group = task.assignment.type === 'specific_group' ? dataCache.groups.find(g => g.id === task.assignment.targetGroupId) : null;
+                    return `
                     <div class="task-card">
                         <div class="task-header">
                             <div class="task-icon" style="background:#fef3c7;">📋</div>
@@ -1284,13 +1687,119 @@
                                 <div class="task-title">${task.name}</div>
                                 <div class="task-meta">
                                     <span class="task-badge ${task.frequency.type}">${task.frequency.type}</span>
-                                    <span class="task-badge ${task.assignment.type}">${task.assignment.type.replace('_',' ')}</span>
+                                    <span class="task-badge ${task.assignment.type}">${task.assignment.type.replace('_',' ')}${group ? ': ' + group.name : ''}</span>
                                 </div>
                             </div>
                         </div>
+                        <div style="display:flex;gap:8px;margin-top:10px;">
+                            <button onclick="editTask('${task.id}')" style="flex:1;padding:8px;background:var(--light);border:none;border-radius:8px;cursor:pointer;font-size:12px;">✏️ Edit</button>
+                            <button onclick="deleteTask('${task.id}')" style="flex:1;padding:8px;background:#fee2e2;border:none;border-radius:8px;color:var(--danger);cursor:pointer;font-size:12px;">🗑️ Delete</button>
+                        </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
+        }
+
+        function editTask(taskId) {
+            const task = dataCache.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '✏️ Edit Task';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="updateTask(event, '${taskId}')">
+                    <div class="form-group">
+                        <label class="form-label">Task Name *</label>
+                        <input type="text" class="form-control" id="editTaskName" value="${task.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Frequency</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${task.frequency.type === 'daily' ? 'active' : ''}" onclick="setToggle(this,'editTaskFreqType','daily')">Daily</button>
+                            <button type="button" class="type-btn ${task.frequency.type === 'weekly' ? 'active' : ''}" onclick="setToggle(this,'editTaskFreqType','weekly')">Weekly</button>
+                            <button type="button" class="type-btn ${task.frequency.type === 'custom' ? 'active' : ''}" onclick="setToggle(this,'editTaskFreqType','custom')">Custom</button>
+                        </div>
+                        <input type="hidden" id="editTaskFreqType" value="${task.frequency.type}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assignment</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${task.assignment.type === 'all_units' ? 'active' : ''}" onclick="setToggle(this,'editTaskAssignType','all_units')">All</button>
+                            <button type="button" class="type-btn ${task.assignment.type === 'specific_group' ? 'active' : ''}" onclick="setToggle(this,'editTaskAssignType','specific_group')">Group</button>
+                            <button type="button" class="type-btn ${task.assignment.type === 'independent_only' ? 'active' : ''}" onclick="setToggle(this,'editTaskAssignType','independent_only')">Ind.</button>
+                        </div>
+                        <input type="hidden" id="editTaskAssignType" value="${task.assignment.type}">
+                    </div>
+                    <div class="form-group" id="editTaskGroupSelect" style="display:${task.assignment.type === 'specific_group' ? 'block' : 'none'}">
+                        <label class="form-label">Select Group</label>
+                        <select class="form-control" id="editTaskTargetGroup">
+                            ${dataCache.groups.map(g => `<option value="${g.id}" ${task.assignment.targetGroupId === g.id ? 'selected' : ''}>${g.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Exclude Units</label>
+                        <div class="unit-select-list" style="max-height:100px;">
+                            ${dataCache.units.map(u => `
+                                <label class="checkbox-item ${task.assignment.excludedUnitIds?.includes(u.id) ? 'selected' : ''}" onclick="this.classList.toggle('selected');this.querySelector('input').checked=this.classList.contains('selected')">
+                                    <input type="checkbox" value="${u.id}" ${task.assignment.excludedUnitIds?.includes(u.id) ? 'checked' : ''} style="display:none">
+                                    ${u.name}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Task</button>
+                </form>
+            `;
+            overlay.classList.add('show');
+        }
+
+        async function updateTask(event, taskId) {
+            event.preventDefault();
+            const task = dataCache.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            const excludedUnits = Array.from(document.querySelectorAll('#modalBody .checkbox-item input:checked')).map(i => i.value);
+            
+            task.name = document.getElementById('editTaskName').value;
+            task.frequency.type = document.getElementById('editTaskFreqType').value;
+            task.assignment.type = document.getElementById('editTaskAssignType').value;
+            task.assignment.targetGroupId = document.getElementById('editTaskTargetGroup')?.value || null;
+            task.assignment.excludedUnitIds = excludedUnits;
+            
+            await dbPut('tasks', task);
+            
+            // Regenerate schedule for this task
+            const schedules = await dbGetAll('schedules');
+            for (const s of schedules) {
+                if (s.taskId === taskId) {
+                    await dbDelete('schedules', s.id);
+                }
+            }
+            await generateSchedule(taskId);
+            
+            await updateCache();
+            closeModal();
+            showToast('Task updated!');
+            renderTasks();
+            autoSyncOnChange();
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm('Delete this task and its schedules?')) return;
+            
+            const schedules = await dbGetAll('schedules');
+            for (const s of schedules) {
+                if (s.taskId === taskId) {
+                    await dbDelete('schedules', s.id);
+                }
+            }
+            
+            await dbDelete('tasks', taskId);
+            await updateCache();
+            showToast('Task deleted!');
+            renderTasks();
+            renderDashboard();
+            autoSyncOnChange();
         }
 
         async function renderSchedule() {
@@ -1598,9 +2107,9 @@
         <a class="nav-item active" onclick="showTab('dashboard')"><span class="icon">🏠</span><span>Home</span></a>
         <a class="nav-item" onclick="showTab('units')"><span class="icon">🏠</span><span>Units</span></a>
         <a class="nav-item" onclick="showTab('groups')"><span class="icon">👥</span><span>Groups</span></a>
-        <a class="nav-item" onclick="showTab('schedule')"><span class="icon">📅</span><span>Schedule</span></a>
+        <a class="nav-item" onclick="showTab('schedule')"><span class="icon">📅</span><span>Duty</span></a>
+        <a class="nav-item" onclick="showTab('admin')"><span class="icon">⚙️</span><span>Admin</span></a>
         <a class="nav-item" onclick="showTab('ledger')"><span class="icon">💰</span><span>Ledger</span></a>
-        <a class="nav-item" onclick="showTab('settings')"><span class="icon">⚙️</span><span>Settings</span></a>
     </div>
 
     <button class="fab" onclick="toggleRightMenu()">☰</button>
