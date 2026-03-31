@@ -436,66 +436,55 @@
 
     <!-- Task Modal -->
     <div id="task-modal" class="fixed inset-0 bg-dark/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-modal overflow-hidden">
-            <div class="bg-gradient-to-r from-info to-primary px-6 py-4 text-white flex justify-between items-center">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-modal overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-info to-primary px-6 py-4 text-white flex justify-between items-center shrink-0">
                 <h3 id="task-modal-title" class="font-bold text-lg">New Task Rule</h3>
                 <button onclick="closeTaskModal()" class="text-white/80 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <form id="task-form" class="p-6 space-y-4">
-                <input type="hidden" id="task-edit-id">
-                <div>
-                    <label class="form-label">Task Name</label>
-                    <input type="text" id="task-name" placeholder="e.g., Water Pump Operation" class="input-field" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
+            <form id="task-form" class="flex flex-col flex-1 min-h-0">
+                <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <input type="hidden" id="task-edit-id">
                     <div>
-                        <label class="form-label">Target</label>
-                        <select id="task-target" class="input-field cursor-pointer">
-                            <option value="all">All Units</option>
-                        </select>
+                        <label class="form-label">Task Name</label>
+                        <input type="text" id="task-name" placeholder="e.g., Water Pump Operation" class="input-field" required>
                     </div>
-                    <div>
-                        <label class="form-label">Frequency</label>
-                        <select id="task-freq" class="input-field cursor-pointer">
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="custom">Custom</option>
-                        </select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">Target</label>
+                            <select id="task-target" class="input-field cursor-pointer">
+                                <option value="all">All Units</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Frequency</label>
+                            <select id="task-freq" class="input-field cursor-pointer">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div id="custom-freq-container" class="hidden bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <label class="form-label text-primary">Repeat Every</label>
-                    <div class="flex items-center gap-3">
-                        <input type="number" id="custom-days" min="2" value="7" class="input-field w-20">
-                        <span class="text-sm text-grayTxt font-medium">days</span>
+                    <div id="custom-freq-container" class="hidden bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <label class="form-label text-primary">Repeat Every (Days)</label>
+                        <input type="number" id="custom-days" min="2" value="7" class="input-field w-24">
                     </div>
-                </div>
-                <div id="monthly-day-container" class="hidden bg-green-50 p-4 rounded-xl border border-green-100">
-                    <label class="form-label text-success">Select Date</label>
-                    <div class="flex items-center gap-3">
+                    <div id="monthly-day-container" class="hidden bg-green-50 p-3 rounded-lg border border-green-100">
+                        <label class="form-label text-success">Select Date</label>
                         <input type="date" id="monthly-day" class="input-field cursor-pointer">
-                        <span class="text-sm text-grayTxt font-medium">of every month</span>
                     </div>
-                    <p class="text-xs text-grayTxt mt-2">Task will run on this date each month</p>
+                    <div id="units-selection-section">
+                        <label class="form-label">Select Units for Rotation</label>
+                        <p class="text-xs text-grayTxt mb-2">Check units to include in this task's rotation</p>
+                        <div id="task-units-select" class="max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1 bg-gray-50"></div>
+                    </div>
+                    <div id="priority-mapping-container" class="hidden bg-purple-50 p-3 rounded-lg border border-purple-100">
+                        <label class="form-label text-purple-600">Set Priority Order</label>
+                        <p class="text-xs text-grayTxt mb-2">Set rotation order. Priority 1 goes first.</p>
+                        <div id="priority-list" class="space-y-2"></div>
+                    </div>
                 </div>
-                <div>
-                    <label class="form-label">Mode</label>
-                    <select id="task-mode" class="input-field cursor-pointer">
-                        <option value="exclude">Exclude Units</option>
-                        <option value="include">Include Only Units</option>
-                    </select>
-                </div>
-                <div id="task-units-container">
-                    <label class="form-label">Select Units</label>
-                    <div id="task-units-select" class="max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1"></div>
-                </div>
-                <div id="priority-mapping-container" class="hidden bg-purple-50 p-4 rounded-xl border border-purple-100">
-                    <label class="form-label text-purple-600">Set Priority Order</label>
-                    <p class="text-xs text-grayTxt mb-3">Assign priority numbers. Rotation follows this order.</p>
-                    <div id="priority-list" class="space-y-2"></div>
-                </div>
-                <div class="flex gap-3 pt-4 border-t border-gray-100 mt-4">
+                <div class="flex gap-3 p-4 border-t border-gray-200 bg-white">
                     <button type="button" onclick="deleteTask()" id="delete-task-btn" class="hidden flex-1 px-4 py-3 bg-danger text-white rounded-xl font-medium hover:bg-red-600 transition">Delete</button>
                     <button type="submit" class="flex-1 px-4 py-3 bg-info text-white rounded-xl font-medium hover:bg-blue-600 transition">Save Rule</button>
                 </div>
@@ -1020,20 +1009,14 @@
             targetSelect.innerHTML = '<option value="all">All Units</option>' + 
                 data.groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
 
-            // Populate units dropdown
-            const unitsSelect = $('task-units-select');
-            unitsSelect.innerHTML = data.units.map(u => {
-                return `
-                    <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" value="${u.id}" class="rounded text-primary unit-checkbox">
-                        <span class="text-sm">${u.name}</span>
-                    </label>`;
-            }).join('') || '<p class="text-sm text-grayTxt p-2">No units available</p>';
+            // Add event listener to update units when target changes
+            targetSelect.onchange = () => {
+                updateUnitsForTarget();
+                updatePriorityMapping();
+            };
 
-            // Add event listener to update priority mapping when units are selected
-            unitsSelect.querySelectorAll('.unit-checkbox').forEach(cb => {
-                cb.addEventListener('change', updatePriorityMapping);
-            });
+            // Initialize units based on current target
+            updateUnitsForTarget();
 
             if (id) {
                 const task = data.tasks.find(t => t.id === id);
@@ -1041,19 +1024,58 @@
                     $('task-name').value = task.name;
                     $('task-target').value = task.assignment.type === 'specific_group' ? task.assignment.targetGroupId : 'all';
                     $('task-freq').value = task.frequency.type;
-                    $('task-mode').value = task.assignment.includedUnitIds?.length > 0 ? 'include' : 'exclude';
                     
-                    const selectedIds = task.assignment.includedUnitIds?.length > 0 ? task.assignment.includedUnitIds : task.assignment.excludedUnitIds || [];
-                    unitsSelect.querySelectorAll('input').forEach(c => {
-                        if (selectedIds.includes(c.value)) c.checked = true;
+                    // Set monthly date if applicable
+                    if (task.frequency.day && task.frequency.type === 'monthly') {
+                        const date = new Date();
+                        date.setDate(parseInt(task.frequency.day));
+                        $('monthly-day').value = date.toISOString().split('T')[0];
+                    }
+                    
+                    // Set selected units
+                    const selectedIds = task.assignment.includedUnitIds || [];
+                    document.querySelectorAll('.unit-checkbox').forEach(c => {
+                        c.checked = selectedIds.includes(c.value);
                     });
                 }
             } else {
                 $('task-form').reset();
+                const today = new Date();
+                $('monthly-day').value = today.toISOString().split('T')[0];
             }
             
             updatePriorityMapping();
             $('task-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function updateUnitsForTarget() {
+            const targetSelect = $('task-target');
+            const unitsSelect = $('task-units-select');
+            const targetValue = targetSelect.value;
+            
+            let unitsToShow = [];
+            
+            if (targetValue === 'all') {
+                unitsToShow = data.units;
+            } else {
+                const group = data.groups.find(g => g.id === targetValue);
+                if (group) {
+                    unitsToShow = data.units.filter(u => group.unitIds.includes(u.id));
+                }
+            }
+            
+            unitsSelect.innerHTML = unitsToShow.map(u => `
+                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 cursor-pointer">
+                    <input type="checkbox" value="${u.id}" class="rounded text-primary unit-checkbox">
+                    <span class="text-sm">${u.name}</span>
+                </label>
+            `).join('') || '<p class="text-sm text-grayTxt p-2">No units available</p>';
+            
+            // Add event listeners
+            unitsSelect.querySelectorAll('.unit-checkbox').forEach(cb => {
+                cb.addEventListener('change', updatePriorityMapping);
+            });
         }
 
         function updatePriorityMapping() {
@@ -1089,7 +1111,7 @@
                     <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-purple-100">
                         <span class="w-8 h-8 flex items-center justify-center bg-purple-500 text-white rounded-full text-sm font-bold">${priorityNum}</span>
                         <span class="flex-1 text-sm font-medium">${unit.name}</span>
-                        <select class="priority-select text-xs border rounded p-1" data-unit-id="${unit.id}">
+                        <select class="priority-select text-xs border rounded p-1 cursor-pointer" data-unit-id="${unit.id}">
                             ${selectedUnits.map((_, i) => `<option value="${i + 1}" ${priorityNum === i + 1 ? 'selected' : ''}>Priority ${i + 1}</option>`).join('')}
                         </select>
                     </div>`;
@@ -1140,21 +1162,23 @@
         $('task-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = $('task-edit-id').value;
-            const selectedUnits = Array.from($('task-units-select').querySelectorAll('input:checked')).map(c => c.value);
-            const mode = $('task-mode').value;
+            const selectedUnits = Array.from($('task-units-select').querySelectorAll('.unit-checkbox:checked')).map(c => c.value);
             const freq = $('task-freq').value;
+            
+            if (selectedUnits.length === 0) {
+                showToast('Please select at least one unit!');
+                return;
+            }
             
             // Get priority order from the priority selects
             const prioritySelects = Array.from($('priority-list').querySelectorAll('.priority-select'));
             let priorityOrder = selectedUnits;
             
             if (prioritySelects.length > 0) {
-                // Create a mapping of unit ID to priority
                 const priorityMap = {};
                 prioritySelects.forEach(sel => {
                     priorityMap[sel.dataset.unitId] = parseInt(sel.value);
                 });
-                // Sort units by priority
                 priorityOrder = selectedUnits.slice().sort((a, b) => {
                     return (priorityMap[a] || 999) - (priorityMap[b] || 999);
                 });
@@ -1170,8 +1194,7 @@
                 assignment: {
                     type: $('task-target').value === 'all' ? 'all_units' : 'specific_group',
                     targetGroupId: $('task-target').value === 'all' ? null : $('task-target').value,
-                    excludedUnitIds: mode === 'exclude' ? selectedUnits : [],
-                    includedUnitIds: mode === 'include' ? selectedUnits : []
+                    includedUnitIds: selectedUnits
                 },
                 priorityOrder: priorityOrder,
                 createdAt: Date.now()
