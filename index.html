@@ -1094,10 +1094,17 @@
             const isAutoScheduled = task.recurring !== false;
             const activeUnits = task.assignment.includedUnitIds || [];
             
-            const firstSchedule = taskSchedules[0];
-            const lastSchedule = taskSchedules[taskSchedules.length - 1];
-            const periodStart = firstSchedule ? formatDate(firstSchedule.date) : '-';
-            const periodEnd = lastSchedule ? formatDate(lastSchedule.date) : '-';
+            let periodStart = '-';
+            let periodEnd = '-';
+            if (todayDuty && todayDuty.periodStart && todayDuty.periodEnd) {
+                periodStart = formatDate(todayDuty.periodStart);
+                periodEnd = formatDate(todayDuty.periodEnd);
+            } else {
+                const firstSchedule = taskSchedules[0];
+                const lastSchedule = taskSchedules[taskSchedules.length - 1];
+                periodStart = firstSchedule ? formatDate(firstSchedule.periodStart || firstSchedule.date) : '-';
+                periodEnd = lastSchedule ? formatDate(lastSchedule.periodEnd || lastSchedule.date) : '-';
+            }
             
             const next7Days = [];
             for (let i = 1; i <= 7; i++) {
@@ -2565,20 +2572,21 @@
                     const weekEnd = new Date(weekStart);
                     weekEnd.setDate(weekStart.getDate() + 6);
                     
-                    if (weekStart >= todayDate || week === 0) {
-                        data.schedules.push({
-                            id: generateId(),
-                            taskId: task.id,
-                            unitId: units[rotationIndex % units.length].id,
-                            date: weekStart.toISOString().split('T')[0],
-                            status: week === 0 ? 'pending' : 'pending',
-                            priority: rotationIndex % units.length + 1,
-                            periodStart: weekStart.toISOString().split('T')[0],
-                            periodEnd: weekEnd.toISOString().split('T')[0],
-                            createdAt: Date.now()
-                        });
-                        rotationIndex++;
-                    }
+                    const weekStartStr = weekStart.toISOString().split('T')[0];
+                    const weekEndStr = weekEnd.toISOString().split('T')[0];
+                    
+                    data.schedules.push({
+                        id: generateId(),
+                        taskId: task.id,
+                        unitId: units[rotationIndex % units.length].id,
+                        date: weekStartStr,
+                        status: 'pending',
+                        priority: rotationIndex % units.length + 1,
+                        periodStart: weekStartStr,
+                        periodEnd: weekEndStr,
+                        createdAt: Date.now()
+                    });
+                    rotationIndex++;
                 }
             } else if (freq === 'monthly') {
                 for (let month = 0; month < 12; month++) {
