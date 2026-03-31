@@ -705,9 +705,9 @@
             $('stat-tasks').textContent = String(data.tasks.length).padStart(2, '0');
             
             const todayStr = today();
-            const todayDuties = data.schedules.filter(s => s.date === todayStr);
+            const todayDuties = (data.schedules || []).filter(s => s.date === todayStr);
             $('stat-today').textContent = todayDuties.length;
-            $('stat-swaps').textContent = data.swaps.filter(s => !s.settled).length;
+            $('stat-swaps').textContent = (data.swaps || []).filter(s => !s.settled).length;
             $('today-date-badge').textContent = 'Today';
 
             renderUnitDutyGrid();
@@ -825,7 +825,8 @@
 
         function renderPendingSwaps() {
             const container = $('pending-swaps-list');
-            const pendingSwaps = data.swaps.filter(s => !s.settled);
+            if (!container) return;
+            const pendingSwaps = (data.swaps || []).filter(s => !s.settled);
             
             if (pendingSwaps.length === 0) {
                 container.innerHTML = '<p class="text-sm text-grayTxt">No pending swaps</p>';
@@ -1978,6 +1979,11 @@
                     const content = JSON.parse(decodeURIComponent(escape(atob(result.content))));
                     if (content && (content.units?.length > 0 || content.tasks?.length > 0 || content.ledger?.length > 0)) {
                         data = content;
+                        // Ensure all required arrays exist
+                        data.swaps = data.swaps || [];
+                        data.debts = data.debts || [];
+                        data.schedules = data.schedules || [];
+                        data.ledger = data.ledger || [];
                     }
                 }
             } catch (e) {
