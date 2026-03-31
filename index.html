@@ -1156,12 +1156,18 @@
                     </div>
                     
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 mb-3 border border-blue-100">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <i data-lucide="calendar-range" class="w-4 h-4 text-primary"></i>
-                            <span class="text-xs text-gray-600">Schedule Period:</span>
-                            <span class="text-xs font-bold text-primary">${periodStart}</span>
-                            <span class="text-xs text-gray-400">to</span>
-                            <span class="text-xs font-bold text-primary">${periodEnd}</span>
+                            <span class="text-xs text-gray-600">${freqLabel}:</span>
+                            ${todayDuty?.periodStart && todayDuty?.periodEnd ? `
+                                <span class="text-xs font-bold text-primary">${formatDate(todayDuty.periodStart)}</span>
+                                <span class="text-xs text-gray-400">to</span>
+                                <span class="text-xs font-bold text-primary">${formatDate(todayDuty.periodEnd)}</span>
+                            ` : `
+                                <span class="text-xs font-bold text-primary">${periodStart}</span>
+                                <span class="text-xs text-gray-400">to</span>
+                                <span class="text-xs font-bold text-primary">${periodEnd}</span>
+                            `}
                         </div>
                     </div>
                     
@@ -2467,82 +2473,7 @@
 
         // ==================== SCHEDULE GENERATION ====================
         async function generateSchedule(taskId) {
-            const task = data.tasks.find(t => t.id === taskId);
-            if (!task) return;
-            if (task.recurring === false) return;
-
-            let units = data.units.filter(u => u.status === 'active');
-            if (task.assignment.type === 'specific_group') {
-                const group = data.groups.find(g => g.id === task.assignment.targetGroupId);
-                if (group) units = units.filter(u => group.unitIds.includes(u.id));
-            }
-            if (task.assignment.includedUnitIds?.length > 0) {
-                units = units.filter(u => task.assignment.includedUnitIds.includes(u.id));
-            }
-            if (units.length === 0) return;
-
-            if (task.priorityOrder && task.priorityOrder.length > 0) {
-                const priorityMap = {};
-                task.priorityOrder.forEach((unitId, idx) => {
-                    priorityMap[unitId] = idx;
-                });
-                units = units.slice().sort((a, b) => {
-                    return (priorityMap[a.id] ?? 999) - (priorityMap[b.id] ?? 999);
-                });
-            }
-
-            const startDateStr = task.scheduleStart || today();
-            const endDateStr = task.scheduleEnd;
-            const startDate = new Date(startDateStr);
-            startDate.setHours(0, 0, 0, 0);
-            
-            const todayDate = new Date();
-            todayDate.setHours(0, 0, 0, 0);
-            
-            let maxDays = 90;
-            if (startDate < todayDate) {
-                const daysDiff = Math.floor((todayDate - startDate) / (1000 * 60 * 60 * 24));
-                startDate.setTime(todayDate.getTime());
-                maxDays = 90;
-            }
-            
-            if (endDateStr) {
-                const endDate = new Date(endDateStr);
-                const diffTime = endDate - startDate;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                maxDays = Math.min(diffDays + 30, 90);
-            }
-
-            let rotationIndex = 0;
-            for (let day = 0; day < maxDays; day++) {
-                const date = new Date(startDate);
-                date.setDate(date.getDate() + day);
-                let shouldRun = false;
-                
-                if (task.frequency.type === 'daily') {
-                    shouldRun = true;
-                } else if (task.frequency.type === 'weekly' && date.getDay() === 1) {
-                    shouldRun = true;
-                } else if (task.frequency.type === 'monthly') {
-                    const monthlyDay = 1;
-                    shouldRun = date.getDate() === monthlyDay;
-                } else if (task.frequency.type === 'custom' && task.frequency.customDays) {
-                    shouldRun = day % task.frequency.customDays === 0;
-                }
-                
-                if (shouldRun) {
-                    data.schedules.push({
-                        id: generateId(),
-                        taskId: task.id,
-                        unitId: units[rotationIndex % units.length].id,
-                        date: date.toISOString().split('T')[0],
-                        status: 'pending',
-                        priority: rotationIndex % units.length + 1,
-                        createdAt: Date.now()
-                    });
-                    rotationIndex++;
-                }
-            }
+            await generateScheduleFromToday(taskId);
         }
 
         async function generateScheduleFromToday(taskId, priorityOrderOverride = null) {
@@ -2590,23 +2521,13 @@
                 maxDays = Math.min(diffDays + 30, 90);
             }
 
+            const freq = task.frequency.type;
             let rotationIndex = 0;
-            for (let day = 0; day < maxDays; day++) {
-                const date = new Date(todayDate);
-                date.setDate(date.getDate() + day);
-                let shouldRun = false;
-                
-                if (task.frequency.type === 'daily') {
-                    shouldRun = true;
-                } else if (task.frequency.type === 'weekly' && date.getDay() === 1) {
-                    shouldRun = true;
-                } else if (task.frequency.type === 'monthly') {
-                    shouldRun = date.getDate() === 1;
-                } else if (task.frequency.type === 'custom' && task.frequency.customDays) {
-                    shouldRun = day % task.frequency.customDays === 0;
-                }
-                
-                if (shouldRun) {
+            
+            if (freq === 'daily') {
+                for (let day = 0; day < maxDays; day++) {
+                    const date = new Date(todayDate);
+                    date.setDate(date.getDate() + day);
                     data.schedules.push({
                         id: generateId(),
                         taskId: task.id,
@@ -2614,9 +2535,97 @@
                         date: date.toISOString().split('T')[0],
                         status: 'pending',
                         priority: rotationIndex % units.length + 1,
+                        periodStart: date.toISOString().split('T')[0],
+                        periodEnd: date.toISOString().split('T')[0],
                         createdAt: Date.now()
                     });
                     rotationIndex++;
+                }
+            } else if (freq === 'weekly') {
+                const currentDay = todayDate.getDay();
+                const daysToMonday = currentDay === 0 ? 6 : currentDay - 1;
+                const monday = new Date(todayDate);
+                monday.setDate(todayDate.getDate() - daysToMonday);
+                
+                let weekStart = new Date(monday);
+                let weekCounter = 0;
+                
+                while (weekCounter < maxDays / 7) {
+                    const sunday = new Date(weekStart);
+                    sunday.setDate(weekStart.getDate() + 6);
+                    
+                    const startStr = weekStart.toISOString().split('T')[0];
+                    const endStr = sunday.toISOString().split('T')[0];
+                    
+                    if (weekStart >= todayDate || startStr === todayStr) {
+                        data.schedules.push({
+                            id: generateId(),
+                            taskId: task.id,
+                            unitId: units[rotationIndex % units.length].id,
+                            date: startStr,
+                            status: 'pending',
+                            priority: rotationIndex % units.length + 1,
+                            periodStart: startStr,
+                            periodEnd: endStr,
+                            createdAt: Date.now()
+                        });
+                        rotationIndex++;
+                    }
+                    
+                    weekStart.setDate(weekStart.getDate() + 7);
+                    weekCounter++;
+                }
+            } else if (freq === 'monthly') {
+                let monthStart = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+                let monthCounter = 0;
+                
+                while (monthCounter < 12) {
+                    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+                    
+                    const startStr = monthStart.toISOString().split('T')[0];
+                    const endStr = monthEnd.toISOString().split('T')[0];
+                    
+                    if (monthStart >= todayDate || startStr === todayStr) {
+                        data.schedules.push({
+                            id: generateId(),
+                            taskId: task.id,
+                            unitId: units[rotationIndex % units.length].id,
+                            date: startStr,
+                            status: 'pending',
+                            priority: rotationIndex % units.length + 1,
+                            periodStart: startStr,
+                            periodEnd: endStr,
+                            createdAt: Date.now()
+                        });
+                        rotationIndex++;
+                    }
+                    
+                    monthStart.setMonth(monthStart.getMonth() + 1);
+                    monthCounter++;
+                }
+            } else if (freq === 'custom' && task.frequency.customDays) {
+                const customDays = task.frequency.customDays;
+                for (let day = 0; day < maxDays; day++) {
+                    const date = new Date(todayDate);
+                    date.setDate(todayDate.getDate() + day);
+                    
+                    if (day % customDays === 0) {
+                        const periodEnd = new Date(date);
+                        periodEnd.setDate(date.getDate() + customDays - 1);
+                        
+                        data.schedules.push({
+                            id: generateId(),
+                            taskId: task.id,
+                            unitId: units[rotationIndex % units.length].id,
+                            date: date.toISOString().split('T')[0],
+                            status: 'pending',
+                            priority: rotationIndex % units.length + 1,
+                            periodStart: date.toISOString().split('T')[0],
+                            periodEnd: periodEnd.toISOString().split('T')[0],
+                            createdAt: Date.now()
+                        });
+                        rotationIndex++;
+                    }
                 }
             }
         }
