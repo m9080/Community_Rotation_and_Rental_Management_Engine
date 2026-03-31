@@ -496,15 +496,12 @@
                     <label class="form-label">Select Units</label>
                     <div id="task-units-select" class="max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1"></div>
                 </div>
-                <div>
+                <div id="start-rotation-container">
                     <label class="form-label">Start Rotation From</label>
                     <select id="task-start-unit" class="input-field cursor-pointer">
-                        <option value="0">First in list</option>
-                        <option value="1">Second in list</option>
-                        <option value="2">Third in list</option>
-                        <option value="3">Fourth in list</option>
-                        <option value="4">Fifth in list</option>
+                        <option value="">Select starting unit</option>
                     </select>
+                    <p class="text-xs text-grayTxt mt-1">Choose which tenant starts first in rotation</p>
                 </div>
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="deleteTask()" id="delete-task-btn" class="hidden flex-1 px-4 py-3 bg-danger text-white rounded-xl font-medium hover:bg-red-600 transition">Delete</button>
@@ -1036,10 +1033,15 @@
             unitsSelect.innerHTML = data.units.map(u => {
                 return `
                     <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" value="${u.id}" class="rounded text-primary">
+                        <input type="checkbox" value="${u.id}" class="rounded text-primary unit-checkbox">
                         <span class="text-sm">${u.name}</span>
                     </label>`;
             }).join('') || '<p class="text-sm text-grayTxt p-2">No units available</p>';
+
+            // Add event listener to update start unit dropdown when units are selected
+            unitsSelect.querySelectorAll('.unit-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateStartUnitDropdown);
+            });
 
             if (id) {
                 const task = data.tasks.find(t => t.id === id);
@@ -1053,12 +1055,34 @@
                     unitsSelect.querySelectorAll('input').forEach(c => {
                         if (selectedIds.includes(c.value)) c.checked = true;
                     });
+                    
+                    // Set the start unit
+                    if (task.startUnitId) {
+                        $('task-start-unit').value = task.startUnitId;
+                    }
                 }
             } else {
                 $('task-form').reset();
             }
             
+            updateStartUnitDropdown();
             $('task-modal').classList.remove('hidden');
+        }
+
+        function updateStartUnitDropdown() {
+            const startSelect = $('task-start-unit');
+            const selectedUnits = Array.from($('task-units-select').querySelectorAll('.unit-checkbox:checked'));
+            
+            if (selectedUnits.length === 0) {
+                startSelect.innerHTML = '<option value="">Select units first</option>';
+                return;
+            }
+            
+            startSelect.innerHTML = '<option value="">Select starting tenant</option>' + 
+                selectedUnits.map((cb, idx) => {
+                    const unit = data.units.find(u => u.id === cb.value);
+                    return `<option value="${unit.id}">${idx + 1}. ${unit.name}</option>`;
+                }).join('');
         }
 
         function closeTaskModal() {
@@ -1075,6 +1099,7 @@
             const selectedUnits = Array.from($('task-units-select').querySelectorAll('input:checked')).map(c => c.value);
             const mode = $('task-mode').value;
             const freq = $('task-freq').value;
+            const startUnitId = $('task-start-unit').value;
             
             const taskData = {
                 id: id || generateId(),
@@ -1089,7 +1114,7 @@
                     excludedUnitIds: mode === 'exclude' ? selectedUnits : [],
                     includedUnitIds: mode === 'include' ? selectedUnits : []
                 },
-                startIndex: parseInt($('task-start-unit').value) || 0,
+                startUnitId: startUnitId || null,
                 createdAt: Date.now()
             };
 
@@ -1330,7 +1355,11 @@
                 }
                 
                 if (shouldRun) {
-                    const startIdx = task.startIndex || 0;
+                    let startIdx = 0;
+                    if (task.startUnitId) {
+                        const idx = units.findIndex(u => u.id === task.startUnitId);
+                        if (idx >= 0) startIdx = idx;
+                    }
                     data.schedules.push({
                         id: generateId(),
                         taskId: task.id,
