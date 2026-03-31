@@ -134,13 +134,13 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-card border border-gray-100">
-                        <div class="flex justify-between items-center mb-6 border-b border-gray-50 pb-4">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-50 pb-4">
                             <h3 class="font-bold text-dark text-lg flex items-center gap-2">
-                                <i data-lucide="clock" class="w-5 h-5 text-primary"></i> Live Duty Timeline
+                                <i data-lucide="calendar-check" class="w-5 h-5 text-success"></i> Upcoming Duties
                             </h3>
-                            <span id="today-date-badge" class="text-xs font-bold bg-blue-50 text-primary px-3 py-1 rounded-full">Today</span>
+                            <span id="today-date-badge" class="text-xs font-bold bg-green-50 text-success px-3 py-1 rounded-full">Today</span>
                         </div>
-                        <div id="duty-timeline" class="relative border-l-2 border-gray-100 ml-3 md:ml-4 space-y-6 pb-4 max-h-96 overflow-y-auto">
+                        <div id="duty-timeline" class="space-y-3 max-h-80 overflow-y-auto">
                             <div class="text-center py-8 text-grayTxt">
                                 <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
                                 <p>No duties scheduled</p>
@@ -149,25 +149,32 @@
                     </div>
 
                     <div class="space-y-6">
-                        <div id="sync-card" class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 text-center shadow-sm">
-                            <div id="sync-icon-container" class="relative inline-block">
-                                <i data-lucide="cloud" class="w-10 h-10 text-primary mx-auto mb-3"></i>
-                                <span id="sync-indicator" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-white"></span>
+                        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-5 shadow-sm">
+                            <h3 class="font-bold text-dark text-sm mb-3 flex items-center gap-2">
+                                <i data-lucide="sun" class="w-4 h-4 text-warning"></i> Today's Schedule
+                            </h3>
+                            <div id="today-duties-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <p class="text-sm text-grayTxt">No duties today</p>
                             </div>
-                            <h3 class="font-bold text-dark text-base">Cloud Sync</h3>
-                            <p id="sync-card-text" class="text-xs text-grayTxt mt-1">Connect to GitHub to sync data across devices.</p>
-                            <p id="sync-timestamp" class="text-xs text-success font-medium mt-2 hidden">Last synced: Just now</p>
-                            <button id="sync-card-btn" onclick="switchView('settings')" class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
-                                Connect Now
+                        </div>
+
+                        <div id="sync-card" class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-5 text-center shadow-sm">
+                            <div id="sync-icon-container" class="relative inline-block">
+                                <i data-lucide="cloud" class="w-8 h-8 text-primary mx-auto mb-2"></i>
+                                <span id="sync-indicator" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-success rounded-full border-2 border-white"></span>
+                            </div>
+                            <h3 class="font-bold text-dark text-sm">Cloud Sync</h3>
+                            <p id="sync-card-text" class="text-xs text-grayTxt mt-1">Connect to sync data</p>
+                            <p id="sync-timestamp" class="text-xs text-success font-medium mt-1 hidden"></p>
+                            <button id="sync-card-btn" onclick="switchView('settings')" class="mt-3 bg-primary text-white px-4 py-2 rounded-lg text-xs font-medium">
+                                Connect
                             </button>
                         </div>
 
                         <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100">
-                            <h3 class="font-bold text-dark text-sm mb-4 border-b border-gray-50 pb-2">Recent Units</h3>
-                            <div id="recent-units" class="space-y-3">
-                                <div class="text-center py-4 text-grayTxt">
-                                    <p class="text-sm">No units yet</p>
-                                </div>
+                            <h3 class="font-bold text-dark text-sm mb-3 border-b border-gray-50 pb-2">Recent Units</h3>
+                            <div id="recent-units" class="space-y-2 max-h-40 overflow-y-auto">
+                                <p class="text-sm text-grayTxt">No units yet</p>
                             </div>
                         </div>
                     </div>
@@ -224,9 +231,9 @@
 
             <!-- Duty Schedule View -->
             <div id="view-duty" class="view-section space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100">
-                        <div class="flex justify-between items-center mb-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100 lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-dark flex items-center gap-2">
                                 <i data-lucide="calendar" class="w-5 h-5 text-primary"></i> Master Schedule
                             </h3>
@@ -247,21 +254,24 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200 h-fit">
-                        <div class="flex justify-between items-center mb-6">
-                            <div>
-                                <h3 class="font-bold text-dark text-base">Schedule Rules</h3>
-                                <p class="text-xs text-grayTxt mt-1">Configure automated rotations</p>
-                            </div>
-                            <button onclick="openTaskModal()" class="bg-dark text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-black transition shadow-sm">
-                                <i data-lucide="plus" class="w-4 h-4"></i> New Duty
-                            </button>
+                    <div class="space-y-4">
+                        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
+                            <h3 class="font-bold text-dark text-base mb-4">Today's Duties</h3>
+                            <div id="today-duties-sidebar" class="space-y-2 max-h-60 overflow-y-auto"></div>
                         </div>
-                        
-                        <div id="duty-rules-list" class="space-y-3">
-                            <div class="text-center py-6 text-grayTxt">
-                                <p class="text-sm">No duty rules configured</p>
+
+                        <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h3 class="font-bold text-dark text-base">Schedule Rules</h3>
+                                    <p class="text-xs text-grayTxt mt-1">Configure rotations</p>
+                                </div>
+                                <button onclick="openTaskModal()" class="bg-dark text-white px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-1 hover:bg-black transition shadow-sm">
+                                    <i data-lucide="plus" class="w-4 h-4"></i> New
+                                </button>
                             </div>
+                            
+                            <div id="duty-rules-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
                         </div>
                     </div>
                 </div>
@@ -469,9 +479,18 @@
                         <label class="form-label text-primary">Repeat Every (Days)</label>
                         <input type="number" id="custom-days" min="2" value="7" class="input-field w-24">
                     </div>
-                    <div id="monthly-day-container" class="hidden bg-green-50 p-3 rounded-lg border border-green-100">
-                        <label class="form-label text-success">Select Date</label>
-                        <input type="date" id="monthly-day" class="input-field cursor-pointer">
+                    <div id="schedule-dates-container" class="bg-green-50 p-3 rounded-lg border border-green-100">
+                        <label class="form-label text-success">Schedule Period</label>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div>
+                                <label class="text-xs text-grayTxt">Start Date</label>
+                                <input type="date" id="schedule-start-date" class="input-field cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-xs text-grayTxt">End Date</label>
+                                <input type="date" id="schedule-end-date" class="input-field cursor-pointer">
+                            </div>
+                        </div>
                     </div>
                     <div id="units-selection-section">
                         <label class="form-label">Select Units for Rotation</label>
@@ -644,55 +663,79 @@
             $('stat-groups').textContent = String(data.groups.length).padStart(2, '0');
             $('stat-tasks').textContent = String(data.tasks.length).padStart(2, '0');
             
-            const todayDuties = data.schedules.filter(s => s.date === today());
+            const todayStr = today();
+            const todayDuties = data.schedules.filter(s => s.date === todayStr);
             $('stat-today').textContent = todayDuties.length;
-            $('today-date-badge').textContent = 'Today, ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            $('today-date-badge').textContent = 'Today';
 
             renderDutyTimeline();
+            renderTodayDutiesList();
             renderRecentUnits();
             updateSyncStatus();
         }
 
+        function renderTodayDutiesList() {
+            const container = $('today-duties-list');
+            const todayStr = today();
+            const todayDuties = data.schedules.filter(s => s.date === todayStr);
+
+            if (todayDuties.length === 0) {
+                container.innerHTML = '<p class="text-sm text-grayTxt">No duties today</p>';
+                return;
+            }
+
+            container.innerHTML = todayDuties.map(s => {
+                const task = data.tasks.find(t => t.id === s.taskId);
+                const unit = data.units.find(u => u.id === s.unitId);
+                const statusIcon = s.status === 'completed' ? '✓' : s.status === 'missed' ? '✗' : '⏳';
+                const statusColor = s.status === 'completed' ? 'text-success' : s.status === 'missed' ? 'text-danger' : 'text-warning';
+                return `
+                    <div class="bg-white p-2 rounded-lg border border-gray-100 text-sm">
+                        <p class="font-medium text-xs">${task?.name || 'Task'}</p>
+                        <p class="${statusColor} text-xs mt-1">${statusIcon} ${unit?.name || 'Unit'}</p>
+                    </div>`;
+            }).join('');
+        }
+
         function renderDutyTimeline() {
             const container = $('duty-timeline');
-            const todayDuties = data.schedules.filter(s => s.date === today()).slice(0, 5);
+            const todayStr = today();
+            const upcomingDuties = data.schedules.filter(s => s.date >= todayStr).slice(0, 10);
             
-            if (todayDuties.length === 0) {
+            if (upcomingDuties.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-8 text-grayTxt">
                         <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
-                        <p>No duties for today</p>
+                        <p>No upcoming duties</p>
                     </div>`;
             } else {
-                container.innerHTML = todayDuties.map(s => {
+                container.innerHTML = upcomingDuties.map(s => {
                     const task = data.tasks.find(t => t.id === s.taskId);
                     const unit = data.units.find(u => u.id === s.unitId);
-                    let dotColor = 'bg-gray-300';
+                    const isToday = s.date === todayStr;
                     let badge = '';
-                    let cardClass = 'opacity-70';
+                    let cardClass = '';
+                    let dotColor = 'bg-warning';
                     
                     if (s.status === 'completed') {
                         dotColor = 'bg-success';
-                        badge = '<span class="bg-success/10 text-success px-2.5 py-1 rounded-md text-[10px] font-bold">✓ DONE</span>';
+                        badge = '<span class="bg-success/10 text-success px-2 py-0.5 rounded-full text-xs font-medium">✓ Done</span>';
                     } else if (s.status === 'missed') {
                         dotColor = 'bg-danger';
-                        badge = '<span class="bg-danger/10 text-danger px-2.5 py-1 rounded-md text-[10px] font-bold">❌ MISSED</span>';
-                    } else {
-                        dotColor = 'bg-warning';
-                        cardClass = 'bg-orange-50 -mt-3 -ml-3 p-3 md:p-4 rounded-xl border border-orange-100';
+                        badge = '<span class="bg-danger/10 text-danger px-2 py-0.5 rounded-full text-xs font-medium">✗ Missed</span>';
+                    } else if (isToday) {
+                        badge = '<span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-medium">Today</span>';
                     }
                     
                     return `
-                        <div class="relative pl-6 md:pl-8">
-                            <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full ${dotColor} border-4 border-white shadow-sm"></div>
-                            <div class="${cardClass}">
-                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                    <div>
-                                        <h4 class="font-bold text-dark text-sm">${task?.name || 'Unknown Task'}</h4>
-                                        <p class="text-xs text-grayTxt mt-0.5">Assigned to: <span class="font-semibold">${unit?.name || 'Unknown'}</span></p>
-                                    </div>
+                        <div class="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-100 ${cardClass}">
+                            <div class="w-3 h-3 rounded-full mt-1.5 ${dotColor} shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <p class="font-medium text-sm truncate">${task?.name || 'Unknown Task'}</p>
                                     ${badge}
                                 </div>
+                                <p class="text-xs text-grayTxt">👤 ${unit?.name || 'Unknown'} • ${formatDate(s.date)}</p>
                             </div>
                         </div>`;
                 }).join('');
@@ -1015,6 +1058,12 @@
                 updatePriorityMapping();
             };
 
+            // Add event listener to frequency changes
+            const freqSelect = $('task-freq');
+            freqSelect.onchange = () => {
+                updateScheduleDates();
+            };
+
             // Initialize units based on current target
             updateUnitsForTarget();
 
@@ -1025,11 +1074,10 @@
                     $('task-target').value = task.assignment.type === 'specific_group' ? task.assignment.targetGroupId : 'all';
                     $('task-freq').value = task.frequency.type;
                     
-                    // Set monthly date if applicable
-                    if (task.frequency.day && task.frequency.type === 'monthly') {
-                        const date = new Date();
-                        date.setDate(parseInt(task.frequency.day));
-                        $('monthly-day').value = date.toISOString().split('T')[0];
+                    // Set schedule dates
+                    if (task.scheduleStart) {
+                        $('schedule-start-date').value = task.scheduleStart;
+                        $('schedule-end-date').value = task.scheduleEnd || '';
                     }
                     
                     // Set selected units
@@ -1040,8 +1088,7 @@
                 }
             } else {
                 $('task-form').reset();
-                const today = new Date();
-                $('monthly-day').value = today.toISOString().split('T')[0];
+                updateScheduleDates();
             }
             
             updatePriorityMapping();
@@ -1076,6 +1123,37 @@
             unitsSelect.querySelectorAll('.unit-checkbox').forEach(cb => {
                 cb.addEventListener('change', updatePriorityMapping);
             });
+        }
+
+        function updateScheduleDates() {
+            const freq = $('task-freq').value;
+            const startDateInput = $('schedule-start-date');
+            const endDateInput = $('schedule-end-date');
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            
+            if (!startDateInput.value) {
+                startDateInput.value = todayStr;
+            }
+            
+            let endDate = new Date(startDateInput.value);
+            
+            if (freq === 'daily') {
+                endDate.setMonth(endDate.getMonth() + 3);
+            } else if (freq === 'weekly') {
+                endDate.setMonth(endDate.getMonth() + 6);
+            } else if (freq === 'monthly') {
+                endDate.setFullYear(endDate.getFullYear() + 1);
+            } else {
+                endDate.setDate(endDate.getDate() + 30);
+            }
+            
+            if (!endDateInput.value || endDateInput.value < startDateInput.value) {
+                endDateInput.value = endDate.toISOString().split('T')[0];
+            }
+            
+            // Show/hide custom frequency container
+            $('custom-freq-container').classList.toggle('hidden', freq !== 'custom');
         }
 
         function updatePriorityMapping() {
@@ -1189,8 +1267,10 @@
                 name: $('task-name').value,
                 frequency: { 
                     type: freq,
-                    day: freq === 'monthly' ? new Date($('monthly-day').value).getDate() : null
+                    customDays: freq === 'custom' ? parseInt($('custom-days').value) : null
                 },
+                scheduleStart: $('schedule-start-date').value,
+                scheduleEnd: $('schedule-end-date').value,
                 assignment: {
                     type: $('task-target').value === 'all' ? 'all_units' : 'specific_group',
                     targetGroupId: $('task-target').value === 'all' ? null : $('task-target').value,
@@ -1251,7 +1331,30 @@
         // ==================== CALENDAR & DUTY ====================
         function renderDutyView() {
             renderCalendar();
+            renderTodayDutiesSidebar();
             renderTasks();
+        }
+
+        function renderTodayDutiesSidebar() {
+            const container = $('today-duties-sidebar');
+            const todayStr = today();
+            const todayDuties = data.schedules.filter(s => s.date === todayStr);
+
+            if (todayDuties.length === 0) {
+                container.innerHTML = '<p class="text-sm text-grayTxt">No duties today</p>';
+                return;
+            }
+
+            container.innerHTML = todayDuties.map(s => {
+                const task = data.tasks.find(t => t.id === s.taskId);
+                const unit = data.units.find(u => u.id === s.unitId);
+                const statusColor = s.status === 'completed' ? 'text-success' : s.status === 'missed' ? 'text-danger' : 'text-warning';
+                return `
+                    <div class="bg-white p-2 rounded-lg border border-gray-100 text-xs">
+                        <p class="font-medium">${task?.name || 'Task'}</p>
+                        <p class="${statusColor} mt-1">👤 ${unit?.name || 'Unit'}</p>
+                    </div>`;
+            }).join('');
         }
 
         function renderCalendar() {
@@ -1266,6 +1369,7 @@
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const todayStr = today();
 
             for (let i = 0; i < firstDayIndex; i++) {
                 grid.innerHTML += `<div class="cal-day empty"></div>`;
@@ -1275,15 +1379,23 @@
                 const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const daySchedules = data.schedules.filter(s => s.date === dateString);
                 const hasDuties = daySchedules.length > 0;
-                let dotColor = '';
+                const isToday = dateString === todayStr;
+                
+                let dotColor = 'bg-warning';
+                let bgClass = '';
                 
                 if (hasDuties) {
                     if (daySchedules.some(d => d.status === 'completed')) dotColor = 'bg-success';
                     else if (daySchedules.some(d => d.status === 'missed')) dotColor = 'bg-danger';
-                    else dotColor = 'bg-warning';
+                    else if (isToday) dotColor = 'bg-primary';
                 }
 
-                const isActive = dateString === selectedCalendarDate ? 'active shadow-md' : 'text-dark';
+                if (isToday) bgClass = 'ring-2 ring-primary ring-offset-2';
+                
+                const isActive = dateString === selectedCalendarDate ? 'active shadow-md bg-primary text-white' : 'text-dark ' + bgClass;
+                const isPast = dateString < todayStr && !isToday;
+                if (isPast && hasDuties) bgClass = 'opacity-60';
+
                 grid.innerHTML += `
                     <div class="cal-day ${isActive}" onclick="selectDate('${dateString}', ${year}, ${month}, ${day})">
                         <span>${day}</span>
@@ -1311,7 +1423,26 @@
             const tasks = data.schedules.filter(s => s.date === dateString);
 
             if (tasks.length === 0) {
-                container.innerHTML = `<div class="text-center p-6 border-2 border-dashed border-gray-100 rounded-xl"><p class="text-grayTxt font-medium text-sm">No duties scheduled.</p></div>`;
+                container.innerHTML = `<div class="text-center p-4 border-2 border-dashed border-gray-100 rounded-xl"><p class="text-grayTxt text-sm">No duties scheduled.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = tasks.map(s => {
+                const task = data.tasks.find(t => t.id === s.taskId);
+                const unit = data.units.find(u => u.id === s.unitId);
+                const statusColor = s.status === 'completed' ? 'bg-success/10 border-success text-success' : 
+                                   s.status === 'missed' ? 'bg-danger/10 border-danger text-danger' : 'bg-warning/10 border-warning text-warning';
+                return `
+                    <div class="p-3 rounded-lg border ${statusColor}">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-medium text-sm">${task?.name || 'Unknown Task'}</p>
+                                <p class="text-xs mt-1">👤 ${unit?.name || 'Unknown'}</p>
+                            </div>
+                            <span class="text-xs px-2 py-1 rounded-full bg-white/50">${s.status}</span>
+                        </div>
+                    </div>`;
+            }).join('');
             } else {
                 container.innerHTML = tasks.map(s => {
                     const task = data.tasks.find(t => t.id === s.taskId);
@@ -1412,7 +1543,6 @@
                 const group = data.groups.find(g => g.id === task.assignment.targetGroupId);
                 if (group) units = units.filter(u => group.unitIds.includes(u.id));
             }
-            units = units.filter(u => !task.assignment.excludedUnitIds?.includes(u.id));
             if (task.assignment.includedUnitIds?.length > 0) {
                 units = units.filter(u => task.assignment.includedUnitIds.includes(u.id));
             }
@@ -1429,10 +1559,21 @@
                 });
             }
 
-            const startDate = new Date();
+            // Use schedule start/end dates or default
+            const startDateStr = task.scheduleStart || today();
+            const endDateStr = task.scheduleEnd;
+            const startDate = new Date(startDateStr);
             startDate.setHours(0, 0, 0, 0);
+            
+            let maxDays = 365;
+            if (endDateStr) {
+                const endDate = new Date(endDateStr);
+                const diffTime = endDate - startDate;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                maxDays = Math.min(diffDays + 30, 365);
+            }
 
-            for (let day = 0; day < 365; day++) {
+            for (let day = 0; day < maxDays; day++) {
                 const date = new Date(startDate);
                 date.setDate(date.getDate() + day);
                 let shouldRun = false;
@@ -1442,10 +1583,10 @@
                 } else if (task.frequency.type === 'weekly' && date.getDay() === 1) {
                     shouldRun = true;
                 } else if (task.frequency.type === 'monthly') {
-                    const monthlyDay = parseInt(task.frequency.day) || 1;
-                    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-                    const targetDay = Math.min(monthlyDay, lastDayOfMonth);
-                    shouldRun = date.getDate() === targetDay;
+                    const monthlyDay = 1;
+                    shouldRun = date.getDate() === monthlyDay;
+                } else if (task.frequency.type === 'custom' && task.frequency.customDays) {
+                    shouldRun = day % task.frequency.customDays === 0;
                 }
                 
                 if (shouldRun) {
