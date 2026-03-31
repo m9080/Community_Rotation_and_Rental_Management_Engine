@@ -1072,7 +1072,8 @@
                             <i data-lucide="hand" class="w-4 h-4"></i>
                             Manual Mode - ${manualTasks.length} Task${manualTasks.length > 1 ? 's' : ''}
                         </h4>
-                        <div class="space-y-4">`;
+                        <div class="space-y-4">
+                `;
                 
                 manualTasks.forEach(task => {
                     html += renderPipelineTaskCard(task, todayStr, false);
