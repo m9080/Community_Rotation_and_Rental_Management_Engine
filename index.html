@@ -1022,13 +1022,16 @@
             }
 
             const todayStr = today();
+             
+            const hasTodayDuty = (taskId) => {
+                return data.schedules.some(s => 
+                    s.taskId === taskId && 
+                    (s.date === todayStr || (s.periodStart && s.periodEnd && todayStr >= s.periodStart && todayStr <= s.periodEnd))
+                );
+            };
             
-            const autoTasksWithTodayDuty = data.tasks.filter(t => 
-                t.recurring !== false && data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
-            );
-            const autoTasksWithoutTodayDuty = data.tasks.filter(t => 
-                t.recurring !== false && !data.schedules.some(s => s.taskId === t.id && s.date === todayStr)
-            );
+            const autoTasksWithTodayDuty = data.tasks.filter(t => t.recurring !== false && hasTodayDuty(t.id));
+            const autoTasksWithoutTodayDuty = data.tasks.filter(t => t.recurring !== false && !hasTodayDuty(t.id));
             const manualTasks = data.tasks.filter(t => t.recurring === false);
             
             let html = '';
@@ -1088,7 +1091,12 @@
         
         function renderPipelineTaskCard(task, todayStr, isCurrentlyActive) {
             const taskSchedules = data.schedules.filter(s => s.taskId === task.id).sort((a, b) => new Date(a.date) - new Date(b.date));
-            const todayDuty = taskSchedules.find(s => s.date === todayStr);
+            
+            let todayDuty = taskSchedules.find(s => s.date === todayStr);
+            if (!todayDuty) {
+                todayDuty = taskSchedules.find(s => s.periodStart && s.periodEnd && todayStr >= s.periodStart && todayStr <= s.periodEnd);
+            }
+            
             const currentUnit = todayDuty ? data.units.find(u => u.id === todayDuty.unitId) : null;
             
             const isAutoScheduled = task.recurring !== false;
@@ -1099,7 +1107,7 @@
             if (todayDuty && todayDuty.periodStart && todayDuty.periodEnd) {
                 periodStart = formatDate(todayDuty.periodStart);
                 periodEnd = formatDate(todayDuty.periodEnd);
-            } else {
+            } else if (taskSchedules.length > 0) {
                 const firstSchedule = taskSchedules[0];
                 const lastSchedule = taskSchedules[taskSchedules.length - 1];
                 periodStart = firstSchedule ? formatDate(firstSchedule.periodStart || firstSchedule.date) : '-';
