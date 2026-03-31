@@ -490,12 +490,10 @@
                     <label class="form-label">Select Units</label>
                     <div id="task-units-select" class="max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 space-y-1"></div>
                 </div>
-                <div id="start-rotation-container">
-                    <label class="form-label">Start Rotation From</label>
-                    <select id="task-start-unit" class="input-field cursor-pointer">
-                        <option value="">Select starting unit</option>
-                    </select>
-                    <p class="text-xs text-grayTxt mt-1">Choose which tenant starts first in rotation</p>
+                <div id="priority-mapping-container" class="hidden bg-purple-50 p-4 rounded-xl border border-purple-100">
+                    <label class="form-label text-purple-600">Set Priority Order</label>
+                    <p class="text-xs text-grayTxt mb-3">Assign priority numbers. Rotation follows this order.</p>
+                    <div id="priority-list" class="space-y-2"></div>
                 </div>
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="deleteTask()" id="delete-task-btn" class="hidden flex-1 px-4 py-3 bg-danger text-white rounded-xl font-medium hover:bg-red-600 transition">Delete</button>
@@ -1032,9 +1030,9 @@
                     </label>`;
             }).join('') || '<p class="text-sm text-grayTxt p-2">No units available</p>';
 
-            // Add event listener to update start unit dropdown when units are selected
+            // Add event listener to update priority mapping when units are selected
             unitsSelect.querySelectorAll('.unit-checkbox').forEach(cb => {
-                cb.addEventListener('change', updateStartUnitDropdown);
+                cb.addEventListener('change', updatePriorityMapping);
             });
 
             if (id) {
@@ -1049,34 +1047,86 @@
                     unitsSelect.querySelectorAll('input').forEach(c => {
                         if (selectedIds.includes(c.value)) c.checked = true;
                     });
-                    
-                    // Set the start unit
-                    if (task.startUnitId) {
-                        $('task-start-unit').value = task.startUnitId;
-                    }
                 }
             } else {
                 $('task-form').reset();
             }
             
-            updateStartUnitDropdown();
+            updatePriorityMapping();
             $('task-modal').classList.remove('hidden');
         }
 
-        function updateStartUnitDropdown() {
-            const startSelect = $('task-start-unit');
+        function updatePriorityMapping() {
+            const container = $('priority-mapping-container');
+            const priorityList = $('priority-list');
             const selectedUnits = Array.from($('task-units-select').querySelectorAll('.unit-checkbox:checked'));
             
-            if (selectedUnits.length === 0) {
-                startSelect.innerHTML = '<option value="">Select units first</option>';
+            if (selectedUnits.length < 2) {
+                container.classList.add('hidden');
                 return;
             }
             
-            startSelect.innerHTML = '<option value="">Select starting tenant</option>' + 
-                selectedUnits.map((cb, idx) => {
-                    const unit = data.units.find(u => u.id === cb.value);
-                    return `<option value="${unit.id}">${idx + 1}. ${unit.name}</option>`;
-                }).join('');
+            container.classList.remove('hidden');
+            
+            // Get existing priority order or create default
+            const taskId = $('task-edit-id').value;
+            let priorityOrder = [];
+            
+            if (taskId) {
+                const task = data.tasks.find(t => t.id === taskId);
+                if (task && task.priorityOrder) {
+                    priorityOrder = task.priorityOrder;
+                }
+            }
+            
+            // Create priority list
+            priorityList.innerHTML = selectedUnits.map((cb, idx) => {
+                const unit = data.units.find(u => u.id === cb.value);
+                const currentPriority = priorityOrder.indexOf(unit.id);
+                const priorityNum = currentPriority >= 0 ? currentPriority + 1 : idx + 1;
+                
+                return `
+                    <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-purple-100">
+                        <span class="w-8 h-8 flex items-center justify-center bg-purple-500 text-white rounded-full text-sm font-bold">${priorityNum}</span>
+                        <span class="flex-1 text-sm font-medium">${unit.name}</span>
+                        <select class="priority-select text-xs border rounded p-1" data-unit-id="${unit.id}">
+                            ${selectedUnits.map((_, i) => `<option value="${i + 1}" ${priorityNum === i + 1 ? 'selected' : ''}>Priority ${i + 1}</option>`).join('')}
+                        </select>
+                    </div>`;
+            }).join('');
+            
+            // Add event listeners to priority selects
+            priorityList.querySelectorAll('.priority-select').forEach(select => {
+                select.addEventListener('change', reorderPriorities);
+            });
+        }
+
+        function reorderPriorities() {
+            const priorityList = $('priority-list');
+            const selects = Array.from(priorityList.querySelectorAll('.priority-select'));
+            const priorities = selects.map(s => parseInt(s.value));
+            
+            // Check for duplicates
+            const duplicates = priorities.filter((p, i) => priorities.indexOf(p) !== i);
+            if (duplicates.length > 0) {
+                showToast('Each unit must have unique priority!');
+                return;
+            }
+            
+            // Reorder the display based on priority
+            const items = Array.from(priorityList.children);
+            items.sort((a, b) => {
+                const aVal = parseInt(a.querySelector('.priority-select').value);
+                const bVal = parseInt(b.querySelector('.priority-select').value);
+                return aVal - bVal;
+            });
+            
+            items.forEach((item, idx) => {
+                item.querySelector('span:first-child').textContent = idx + 1;
+            });
+            
+            priorityList.innerHTML = '';
+            items.forEach(item => priorityList.appendChild(item));
         }
 
         function closeTaskModal() {
@@ -1093,7 +1143,22 @@
             const selectedUnits = Array.from($('task-units-select').querySelectorAll('input:checked')).map(c => c.value);
             const mode = $('task-mode').value;
             const freq = $('task-freq').value;
-            const startUnitId = $('task-start-unit').value;
+            
+            // Get priority order from the priority selects
+            const prioritySelects = Array.from($('priority-list').querySelectorAll('.priority-select'));
+            let priorityOrder = selectedUnits;
+            
+            if (prioritySelects.length > 0) {
+                // Create a mapping of unit ID to priority
+                const priorityMap = {};
+                prioritySelects.forEach(sel => {
+                    priorityMap[sel.dataset.unitId] = parseInt(sel.value);
+                });
+                // Sort units by priority
+                priorityOrder = selectedUnits.slice().sort((a, b) => {
+                    return (priorityMap[a] || 999) - (priorityMap[b] || 999);
+                });
+            }
             
             const taskData = {
                 id: id || generateId(),
@@ -1108,7 +1173,7 @@
                     excludedUnitIds: mode === 'exclude' ? selectedUnits : [],
                     includedUnitIds: mode === 'include' ? selectedUnits : []
                 },
-                startUnitId: startUnitId || null,
+                priorityOrder: priorityOrder,
                 createdAt: Date.now()
             };
 
@@ -1326,6 +1391,17 @@
             }
             if (units.length === 0) return;
 
+            // Apply priority order if set
+            if (task.priorityOrder && task.priorityOrder.length > 0) {
+                const priorityMap = {};
+                task.priorityOrder.forEach((unitId, idx) => {
+                    priorityMap[unitId] = idx;
+                });
+                units = units.slice().sort((a, b) => {
+                    return (priorityMap[a.id] ?? 999) - (priorityMap[b.id] ?? 999);
+                });
+            }
+
             const startDate = new Date();
             startDate.setHours(0, 0, 0, 0);
 
@@ -1346,15 +1422,10 @@
                 }
                 
                 if (shouldRun) {
-                    let startIdx = 0;
-                    if (task.startUnitId) {
-                        const idx = units.findIndex(u => u.id === task.startUnitId);
-                        if (idx >= 0) startIdx = idx;
-                    }
                     data.schedules.push({
                         id: generateId(),
                         taskId: task.id,
-                        unitId: units[(startIdx + day) % units.length].id,
+                        unitId: units[day % units.length].id,
                         date: date.toISOString().split('T')[0],
                         status: 'pending',
                         createdAt: Date.now()
